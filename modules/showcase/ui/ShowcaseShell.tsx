@@ -316,6 +316,9 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Event / Ticketing',
     items: [
+      { id: 'evnt-navbar',           title: 'EventNavbar',            category: 'Domain', abbr: 'En' },
+      { id: 'evnt-card',             title: 'EventCard',              category: 'Domain', abbr: 'Ec' },
+      { id: 'evnt-list-card',        title: 'EventListCard',          category: 'Domain', abbr: 'El' },
       { id: 'evnt-hero-card',        title: 'EventHeroCard',          category: 'Domain', abbr: 'Eh' },
       { id: 'evnt-ticket-tier',      title: 'TicketTierSelector',     category: 'Domain', abbr: 'Tt' },
       { id: 'evnt-seat-map',         title: 'EventSeatMapSelector',   category: 'Domain', abbr: 'Sm' },
@@ -399,6 +402,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'theme-news',    title: 'News Site',        category: 'Theme', abbr: 'Nw', href: '/theme/news/' },
       { id: 'theme-shop',    title: 'E-Commerce Shop',  category: 'Theme', abbr: 'Sh', href: '/theme/shop/' },
       { id: 'theme-rental',  title: 'Vehicle Rental',   category: 'Theme', abbr: 'Mv', href: '/theme/rental/' },
+      { id: 'theme-tickets', title: 'Ticketing',        category: 'Theme', abbr: 'Tk', href: '/theme/tickets/' },
     ],
   },
 ];
