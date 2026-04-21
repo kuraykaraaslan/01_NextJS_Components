@@ -100,13 +100,31 @@ export function VehicleMapInner({
           pathOptions={{
             color:       zone.color,
             fillColor:   zone.color,
-            fillOpacity: 0.12,
-            weight:      2,
-            dashArray:   '6 4',
+            fillOpacity: 0.14,
+            weight:      2.5,
+            dashArray:   '8 5',
+            lineCap:     'round',
+            lineJoin:    'round',
           }}
         >
-          <Tooltip sticky direction="center" permanent={false} className="leaflet-tooltip-zone">
-            <span style={{ fontWeight: 600, fontSize: 12 }}>{zone.name}</span>
+          <Tooltip
+            sticky
+            direction="center"
+            permanent={false}
+            opacity={0.92}
+          >
+            <div style={{ textAlign: 'center', lineHeight: 1.4 }}>
+              <div style={{
+                display: 'inline-block',
+                width: 10, height: 10,
+                borderRadius: '50%',
+                background: zone.color,
+                marginRight: 5,
+                verticalAlign: 'middle',
+              }} />
+              <strong style={{ fontSize: 12 }}>{zone.name}</strong>
+              <div style={{ fontSize: 11, color: '#6b7280' }}>Servis bölgesi</div>
+            </div>
           </Tooltip>
         </Polygon>
       ))}

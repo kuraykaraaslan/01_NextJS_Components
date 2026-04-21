@@ -384,8 +384,9 @@ const NAV_GROUPS: NavGroup[] = [
     label: 'Themes',
     sectionStart: 'Themes',
     items: [
-      { id: 'theme-news', title: 'News Site',        category: 'Theme', abbr: 'Nw', href: '/theme/news/' },
-      { id: 'theme-shop', title: 'E-Commerce Shop',  category: 'Theme', abbr: 'Sh', href: '/theme/shop/' },
+      { id: 'theme-news',    title: 'News Site',        category: 'Theme', abbr: 'Nw', href: '/theme/news/' },
+      { id: 'theme-shop',    title: 'E-Commerce Shop',  category: 'Theme', abbr: 'Sh', href: '/theme/shop/' },
+      { id: 'theme-rental',  title: 'Vehicle Rental',   category: 'Theme', abbr: 'Mv', href: '/theme/rental/' },
     ],
   },
 ];

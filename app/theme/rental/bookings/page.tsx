@@ -133,7 +133,7 @@ export default function BookingsPage() {
             vehicle={activeVehicle}
             pricingMode="minute"
             startTime={new Date(Date.now() - 1000 * 60 * 37)}
-            userPosition={[41.085, 29.025]}
+            userPosition={[41.062, 28.988]}
             onEndRental={() => setRentalEnded(true)}
           />
         </div>

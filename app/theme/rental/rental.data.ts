@@ -64,47 +64,93 @@ export type Testimonial = {
 };
 
 // ─── Service zones ─────────────────────────────────────────────────────────────
-// Polygons are defined as [lat, lng] arrays (Istanbul districts)
+// Polygons are defined as [lat, lng] arrays.
+// Shapes approximate real Istanbul district boundaries (not rectangles).
 
 export const SERVICE_ZONES: ServiceZone[] = [
   {
     id: 'z1',
-    name: 'Kadıköy & Üsküdar',
+    name: 'Kadıköy',
     color: '#3b82f6',
+    // Fan-shaped coastal district on Asian side — wider inland, narrows at Haydarpaşa coast
     polygon: [
-      [40.985, 29.012], [40.985, 29.068], [41.020, 29.068], [41.020, 29.012],
+      [40.982, 29.006],  // W coast (Haydarpaşa)
+      [40.968, 29.012],  // SW (Moda sahil)
+      [40.965, 29.040],  // S (Fenerbahçe)
+      [40.970, 29.070],  // SE (Bostancı yönü)
+      [40.992, 29.076],  // E
+      [41.003, 29.062],  // NE
+      [41.004, 29.032],  // N
+      [40.998, 29.010],  // NW (Haydarpaşa/Harem)
     ],
   },
   {
     id: 'z2',
-    name: 'Beşiktaş & Şişli',
+    name: 'Beşiktaş',
     color: '#8b5cf6',
+    // Elongated N–S coastal strip on the European Bosphorus shore
     polygon: [
-      [41.028, 28.958], [41.028, 29.022], [41.078, 29.022], [41.078, 28.958],
+      [41.028, 28.972],  // S (Dolmabahçe/Kabataş)
+      [41.025, 28.998],  // SE (Beşiktaş iskele)
+      [41.038, 29.022],  // E
+      [41.058, 29.020],  // NE (Ortaköy)
+      [41.072, 29.010],  // NNE (Kuruçeşme)
+      [41.078, 28.990],  // N (Bebek)
+      [41.072, 28.962],  // NW (Arnavutköy)
+      [41.052, 28.952],  // W
+      [41.035, 28.958],  // SW
     ],
   },
   {
     id: 'z3',
-    name: 'Levent & Sarıyer',
+    name: 'Şişli',
     color: '#22c55e',
+    // Trapezoidal inland district, wider at top; covers Nişantaşı → Levent
     polygon: [
-      [41.072, 28.998], [41.072, 29.082], [41.210, 29.082], [41.210, 28.998],
+      [41.048, 28.962],  // S (Harbiye)
+      [41.045, 28.995],  // SE (Nişantaşı)
+      [41.060, 29.008],  // E (Bomonti)
+      [41.070, 29.008],  // NE (Osmanbey)
+      [41.088, 29.002],  // NNE (Mecidiyeköy)
+      [41.098, 28.988],  // N
+      [41.095, 28.948],  // NW
+      [41.078, 28.940],  // W (Zincirlikuyu)
+      [41.058, 28.945],  // SW
     ],
   },
   {
     id: 'z4',
-    name: 'Ataşehir & Maltepe',
+    name: 'Üsküdar',
     color: '#f59e0b',
+    // Large Asian coastal district; follows Bosphorus coast on west, irregular inland
     polygon: [
-      [40.918, 29.082], [40.918, 29.172], [40.992, 29.172], [40.992, 29.082],
+      [41.030, 29.005],  // SW coast
+      [41.008, 29.015],  // S (Harem/Salacak)
+      [41.005, 29.042],  // SE inner
+      [41.012, 29.072],  // E
+      [41.030, 29.082],  // NE
+      [41.052, 29.085],  // ENE
+      [41.070, 29.075],  // NNE
+      [41.075, 29.050],  // N
+      [41.068, 29.018],  // NW inner
+      [41.048, 29.008],  // NW coast
     ],
   },
   {
     id: 'z5',
-    name: 'Pendik & Çekmeköy',
+    name: 'Ataşehir & Maltepe',
     color: '#ef4444',
+    // Compact inland + coastal district; wider on east, notched at NW corner
     polygon: [
-      [40.848, 29.175], [40.848, 29.315], [41.042, 29.315], [41.042, 29.175],
+      [40.998, 29.082],  // NW
+      [40.998, 29.120],  // N
+      [40.995, 29.162],  // NE
+      [40.978, 29.172],  // E
+      [40.956, 29.165],  // SE
+      [40.908, 29.150],  // S (Maltepe sahil)
+      [40.908, 29.105],  // SW
+      [40.922, 29.082],  // W
+      [40.960, 29.076],  // NW inner notch
     ],
   },
 ];
@@ -255,8 +301,8 @@ export const VEHICLES: VehicleCardItem[] = [
     year: 2023,
     mileageLimit: 350,
     description: 'Experience the future of driving. Long range, lightning fast, zero emissions.',
-    lat: 41.079,
-    lng: 29.018,
+    lat: 41.080,
+    lng: 28.992,  // Levent — inside Şişli zone
   },
   {
     id: '5',
@@ -280,8 +326,8 @@ export const VEHICLES: VehicleCardItem[] = [
     year: 2022,
     mileageLimit: 400,
     description: 'Pure driving pleasure. Premium materials, responsive handling, and executive style.',
-    lat: 41.050,
-    lng: 28.997,
+    lat: 41.052,
+    lng: 28.992,  // Nişantaşı — inside Şişli zone
   },
   {
     id: '6',
@@ -381,7 +427,7 @@ export const VEHICLES: VehicleCardItem[] = [
     mileageLimit: 500,
     description: 'Understated elegance. Redefine what a business trip feels like.',
     lat: 41.082,
-    lng: 29.042,
+    lng: 28.978,  // Etiler — inside Şişli zone
   },
   {
     id: '10',
@@ -400,13 +446,13 @@ export const VEHICLES: VehicleCardItem[] = [
     transmission: 'automatic',
     fuelType: 'electric',
     features: ['800V fast charging', 'V2L technology', 'AR HUD', 'Meridian audio'],
-    location: 'Çekmeköy',
+    location: 'Üsküdar',
     available: true,
     year: 2023,
     mileageLimit: 400,
     description: '800V ultra-fast charging means minimal downtime. Adventure-ready from day one.',
-    lat: 41.030,
-    lng: 29.192,
+    lat: 41.038,
+    lng: 29.042,  // inside Üsküdar zone
   },
   {
     id: '11',
@@ -425,13 +471,13 @@ export const VEHICLES: VehicleCardItem[] = [
     transmission: 'manual',
     fuelType: 'petrol',
     features: ['10" touchscreen', 'Full LED lights', 'Wireless charging', 'ACC'],
-    location: 'Pendik',
+    location: 'Maltepe',
     available: true,
     year: 2022,
     mileageLimit: 250,
     description: 'Spanish passion meets German engineering. Sharp looks at a sensible price.',
-    lat: 40.876,
-    lng: 29.232,
+    lat: 40.952,
+    lng: 29.125,  // inside Ataşehir & Maltepe zone
   },
   {
     id: '12',
@@ -450,13 +496,13 @@ export const VEHICLES: VehicleCardItem[] = [
     transmission: 'automatic',
     fuelType: 'hybrid',
     features: ['4WD mode', 'Toyota Safety Sense', 'JBL audio', 'Power tailgate'],
-    location: 'Sarıyer',
+    location: 'Beşiktaş',
     available: true,
     year: 2023,
     mileageLimit: 350,
     description: 'The go-anywhere SUV. City streets or mountain roads — equally at home.',
-    lat: 41.170,
-    lng: 29.052,
+    lat: 41.062,
+    lng: 28.970,  // inside Beşiktaş zone
   },
 ];
 

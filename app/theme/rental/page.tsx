@@ -72,7 +72,7 @@ function HeroBanner() {
 
 // Tesla Model 3 is parked in Levent (inside zone z3 "Levent & Sarıyer")
 const DEMO_VEHICLE = ALL_VEHICLES.find((v) => v.id === '4')!;
-const DEMO_USER_POS: [number, number] = [41.085, 29.025]; // inside zone z3
+const DEMO_USER_POS: [number, number] = [41.062, 28.988]; // inside Şişli zone
 
 function ActiveRentalDemo() {
   const [dismissed, setDismissed] = useState(false);
