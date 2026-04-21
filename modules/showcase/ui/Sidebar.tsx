@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { cn } from '@/libs/utils/cn';
 
 export type NavItem = {
@@ -11,12 +12,15 @@ export type NavItem = {
 export type NavGroup = {
   label: string;
   items: NavItem[];
+  sectionStart?: string;
 };
 
 const categoryStyles: Record<string, string> = {
   Atom:     'bg-info-subtle text-info-fg',
   Molecule: 'bg-primary-subtle text-primary',
   Organism: 'bg-success-subtle text-success-fg',
+  App:      'bg-warning-subtle text-warning-fg',
+  Domain:   'bg-error-subtle text-error-fg',
 };
 
 type NavContentProps = {
@@ -27,6 +31,38 @@ type NavContentProps = {
 };
 
 function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps) {
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => {
+    const initial = new Set<string>();
+    for (const g of groups) {
+      if (g.items.some((i) => i.id === selectedId)) {
+        initial.add(g.label);
+      }
+    }
+    if (initial.size === 0 && groups[0]) initial.add(groups[0].label);
+    return initial;
+  });
+
+  useEffect(() => {
+    const group = groups.find((g) => g.items.some((i) => i.id === selectedId));
+    if (group) {
+      setExpandedGroups((prev) => {
+        if (prev.has(group.label)) return prev;
+        const next = new Set(prev);
+        next.add(group.label);
+        return next;
+      });
+    }
+  }, [selectedId, groups]);
+
+  function toggleGroup(label: string) {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
+  }
+
   return (
     <>
       <div
@@ -45,69 +81,104 @@ function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps
         )}
       </div>
 
-      <nav aria-label="Component navigation" className="flex-1 overflow-y-auto px-2 py-3 space-y-5">
-        {groups.map((group) => (
-          <div key={group.label}>
-            {!collapsed && (
-              <p className="px-3 mb-1 text-xs font-medium text-text-secondary uppercase tracking-wider">
-                {group.label}
-              </p>
-            )}
-            {collapsed && (
-              <div className="px-2 mb-1">
-                <div className="h-px bg-border" />
-              </div>
-            )}
-            <ul className="space-y-0.5" role="list">
-              {group.items.map((item) => {
-                const isActive = selectedId === item.id;
-                return (
-                  <li key={item.id}>
-                    <button
-                      type="button"
-                      title={collapsed ? `${item.title} (${item.category})` : undefined}
-                      aria-current={isActive ? 'page' : undefined}
-                      onClick={() => onSelect(item.id)}
-                      className={cn(
-                        'w-full flex items-center gap-3 rounded-lg text-sm transition-colors text-left',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
-                        collapsed ? 'justify-center p-2.5' : 'px-3 py-2',
-                        isActive
-                          ? 'bg-primary-subtle text-primary font-medium'
-                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'flex items-center justify-center rounded-md text-xs font-bold shrink-0',
-                          collapsed ? 'w-8 h-8' : 'w-6 h-6',
-                          isActive
-                            ? 'bg-primary text-primary-fg'
-                            : 'bg-surface-sunken text-text-secondary'
-                        )}
-                      >
-                        {item.abbr}
-                      </span>
-                      {!collapsed && (
-                        <>
-                          <span className="flex-1 truncate">{item.title}</span>
+      <nav aria-label="Component navigation" className="flex-1 overflow-y-auto px-2 py-3 space-y-1">
+        {groups.map((group) => {
+          const isExpanded = collapsed || expandedGroups.has(group.label);
+          const hasActive = group.items.some((i) => i.id === selectedId);
+          return (
+            <div key={group.label}>
+              {!collapsed && group.sectionStart && (
+                <div className="flex items-center gap-2 px-3 pt-3 pb-1">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-text-disabled shrink-0">
+                    {group.sectionStart}
+                  </span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+              )}
+              {collapsed && group.sectionStart && (
+                <div className="px-2 py-1.5">
+                  <div className="h-px bg-border" />
+                </div>
+              )}
+              {collapsed ? null : (
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.label)}
+                  className={cn(
+                    'w-full flex items-center justify-between px-3 py-1.5 rounded-md text-xs font-medium uppercase tracking-wider transition-colors mb-0.5',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+                    hasActive
+                      ? 'text-text-primary'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
+                  )}
+                >
+                  <span>{group.label}</span>
+                  <span
+                    className={cn(
+                      'transition-transform duration-200',
+                      isExpanded ? 'rotate-0' : '-rotate-90'
+                    )}
+                    aria-hidden="true"
+                  >
+                    ▾
+                  </span>
+                </button>
+              )}
+
+              {isExpanded && (
+                <ul className="space-y-0.5 mb-2" role="list">
+                  {group.items.map((item) => {
+                    const isActive = selectedId === item.id;
+                    return (
+                      <li key={item.id}>
+                        <button
+                          type="button"
+                          title={collapsed ? `${item.title} (${item.category})` : undefined}
+                          aria-current={isActive ? 'page' : undefined}
+                          onClick={() => onSelect(item.id)}
+                          className={cn(
+                            'w-full flex items-center gap-3 rounded-lg text-sm transition-colors text-left',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+                            collapsed ? 'justify-center p-2.5' : 'px-3 py-2',
+                            isActive
+                              ? 'bg-primary-subtle text-primary font-medium'
+                              : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
+                          )}
+                        >
                           <span
                             className={cn(
-                              'text-xs px-1.5 py-0.5 rounded-full font-medium shrink-0',
-                              categoryStyles[item.category] ?? 'bg-surface-sunken text-text-secondary'
+                              'flex items-center justify-center rounded-md text-xs font-bold shrink-0',
+                              collapsed ? 'w-8 h-8' : 'w-6 h-6',
+                              isActive
+                                ? 'bg-primary text-primary-fg'
+                                : 'bg-surface-sunken text-text-secondary'
                             )}
                           >
-                            {item.category}
+                            {item.abbr}
                           </span>
-                        </>
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+                          {!collapsed && (
+                            <>
+                              <span className="flex-1 truncate">{item.title}</span>
+                              <span
+                                className={cn(
+                                  'text-xs px-1.5 py-0.5 rounded-full font-medium shrink-0',
+                                  categoryStyles[item.category] ?? 'bg-surface-sunken text-text-secondary'
+                                )}
+                              >
+                                {item.category}
+                              </span>
+                            </>
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          );
+        })}
       </nav>
     </>
   );

@@ -20,12 +20,25 @@ const sizeClasses: Record<ButtonSize, string> = {
   xl: 'px-6 py-3 text-lg',
 };
 
+const iconOnlySizeClasses: Record<ButtonSize, string> = {
+  xs: 'p-1 text-xs',
+  sm: 'p-1.5 text-sm',
+  md: 'p-2 text-sm',
+  lg: 'p-2.5 text-base',
+  xl: 'p-3 text-lg',
+};
+
 type ButtonProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
   disabled?: boolean;
   loading?: boolean;
+  iconLeft?: React.ReactNode;
+  iconRight?: React.ReactNode;
+  iconOnly?: boolean;
+  fullWidth?: boolean;
+  selected?: boolean;
   'data-testid'?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -35,6 +48,11 @@ export function Button({
   size = 'md',
   disabled,
   loading,
+  iconLeft,
+  iconRight,
+  iconOnly = false,
+  fullWidth = false,
+  selected = false,
   'data-testid': testId,
   className,
   ...props
@@ -44,18 +62,24 @@ export function Button({
       type="button"
       disabled={disabled || loading}
       aria-busy={loading}
+      aria-pressed={selected ? true : undefined}
       data-testid={testId}
       className={cn(
-        'inline-flex items-center gap-2 rounded-md font-medium transition-colors',
+        'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variantClasses[variant],
-        sizeClasses[size],
+        iconOnly ? iconOnlySizeClasses[size] : sizeClasses[size],
+        fullWidth && 'w-full',
+        selected && 'ring-2 ring-border-focus',
         className
       )}
       {...props}
     >
+      {loading && <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full shrink-0" aria-hidden="true" />}
+      {!loading && iconLeft && <span aria-hidden="true" className="shrink-0">{iconLeft}</span>}
       {children}
+      {!loading && iconRight && <span aria-hidden="true" className="shrink-0">{iconRight}</span>}
     </button>
   );
 }

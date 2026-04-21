@@ -1,6 +1,7 @@
 import { cn } from '@/libs/utils/cn';
 
 type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary';
+type BadgeSize = 'sm' | 'md' | 'lg';
 
 const variantMap: Record<BadgeVariant, string> = {
   success: 'bg-success-subtle text-success-fg',
@@ -11,24 +12,64 @@ const variantMap: Record<BadgeVariant, string> = {
   primary: 'bg-primary-subtle text-primary',
 };
 
+const sizeMap: Record<BadgeSize, string> = {
+  sm: 'px-1.5 py-0 text-[10px]',
+  md: 'px-2 py-0.5 text-xs',
+  lg: 'px-3 py-1 text-sm',
+};
+
+const dotColorMap: Record<BadgeVariant, string> = {
+  success: 'bg-success',
+  error:   'bg-error',
+  warning: 'bg-warning',
+  info:    'bg-info',
+  neutral: 'bg-text-disabled',
+  primary: 'bg-primary',
+};
+
 export function Badge({
   children,
   variant = 'neutral',
+  size = 'md',
+  dot = false,
+  dismissible = false,
+  onDismiss,
   className,
 }: {
   children: React.ReactNode;
   variant?: BadgeVariant;
+  size?: BadgeSize;
+  dot?: boolean;
+  dismissible?: boolean;
+  onDismiss?: () => void;
   className?: string;
 }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
+        'inline-flex items-center gap-1 rounded-full font-medium',
         variantMap[variant],
+        sizeMap[size],
         className
       )}
     >
+      {dot && (
+        <span
+          className={cn('h-1.5 w-1.5 rounded-full shrink-0', dotColorMap[variant])}
+          aria-hidden="true"
+        />
+      )}
       {children}
+      {dismissible && (
+        <button
+          type="button"
+          aria-label="Remove"
+          onClick={onDismiss}
+          className="ml-0.5 leading-none hover:opacity-70 transition-opacity focus-visible:outline-none rounded-full"
+        >
+          ✕
+        </button>
+      )}
     </span>
   );
 }

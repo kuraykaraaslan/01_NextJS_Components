@@ -10,6 +10,8 @@ export function Modal({
   children,
   footer,
   size = 'md',
+  fullscreen = false,
+  scrollable = false,
   className,
 }: {
   open: boolean;
@@ -19,6 +21,8 @@ export function Modal({
   children?: React.ReactNode;
   footer?: React.ReactNode;
   size?: 'sm' | 'md' | 'lg';
+  fullscreen?: boolean;
+  scrollable?: boolean;
   className?: string;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -47,7 +51,10 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className={cn(
+        'fixed inset-0 z-50 flex p-4',
+        fullscreen ? 'items-stretch justify-stretch' : 'items-center justify-center'
+      )}
       aria-modal="true"
       role="dialog"
       aria-labelledby={titleId}
@@ -62,13 +69,13 @@ export function Modal({
         ref={panelRef}
         tabIndex={-1}
         className={cn(
-          'relative z-10 w-full rounded-xl border border-border bg-surface-raised shadow-xl flex flex-col',
+          'relative z-10 w-full border border-border bg-surface-raised shadow-xl flex flex-col',
           'focus-visible:outline-none',
-          sizeClass,
+          fullscreen ? 'rounded-none max-w-none max-h-none h-full' : cn('rounded-xl', sizeClass),
           className
         )}
       >
-        <div className="flex items-start justify-between gap-3 px-6 py-4 border-b border-border">
+        <div className="flex items-start justify-between gap-3 px-6 py-4 border-b border-border shrink-0">
           <div>
             <h2 id={titleId} className="text-base font-semibold text-text-primary">{title}</h2>
             {description && (
@@ -84,9 +91,13 @@ export function Modal({
             ✕
           </button>
         </div>
-        {children && <div className="px-6 py-4 flex-1">{children}</div>}
+        {children && (
+          <div className={cn('px-6 py-4 flex-1', scrollable && 'overflow-y-auto')}>
+            {children}
+          </div>
+        )}
         {footer && (
-          <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+          <div className="px-6 py-4 border-t border-border flex justify-end gap-2 shrink-0">
             {footer}
           </div>
         )}

@@ -4,11 +4,17 @@ import { useState } from 'react';
 
 type AlertVariant = 'success' | 'warning' | 'error' | 'info';
 
-const variantMap: Record<AlertVariant, { container: string; icon: string }> = {
-  success: { container: 'bg-success-subtle border-success text-success-fg', icon: '✓' },
-  warning: { container: 'bg-warning-subtle border-warning text-warning-fg', icon: '⚠' },
-  error:   { container: 'bg-error-subtle border-error text-error-fg',       icon: '✕' },
-  info:    { container: 'bg-info-subtle border-info text-info-fg',          icon: 'ℹ' },
+const variantMap: Record<AlertVariant, { container: string; defaultIcon: string }> = {
+  success: { container: 'bg-success-subtle border-success text-success-fg', defaultIcon: '✓' },
+  warning: { container: 'bg-warning-subtle border-warning text-warning-fg', defaultIcon: '⚠' },
+  error:   { container: 'bg-error-subtle border-error text-error-fg',       defaultIcon: '✕' },
+  info:    { container: 'bg-info-subtle border-info text-info-fg',          defaultIcon: 'ℹ' },
+};
+
+export type AlertAction = {
+  label: string;
+  href?: string;
+  onClick?: () => void;
 };
 
 export function AlertBanner({
@@ -16,18 +22,22 @@ export function AlertBanner({
   title,
   message,
   dismissible = false,
+  action,
+  icon,
   className,
 }: {
   variant?: AlertVariant;
   title?: string;
   message: string;
   dismissible?: boolean;
+  action?: AlertAction;
+  icon?: React.ReactNode;
   className?: string;
 }) {
   const [dismissed, setDismissed] = useState(false);
   if (dismissed) return null;
 
-  const { container, icon } = variantMap[variant];
+  const { container, defaultIcon } = variantMap[variant];
 
   return (
     <div
@@ -38,10 +48,32 @@ export function AlertBanner({
         className
       )}
     >
-      <span aria-hidden="true" className="mt-0.5 shrink-0 font-bold">{icon}</span>
-      <div className="flex-1 text-sm">
+      <span aria-hidden="true" className="mt-0.5 shrink-0 font-bold">
+        {icon ?? defaultIcon}
+      </span>
+      <div className="flex-1 text-sm min-w-0">
         {title && <p className="font-semibold">{title}</p>}
         <p className={cn(title && 'mt-0.5')}>{message}</p>
+        {action && (
+          <div className="mt-2">
+            {action.href ? (
+              <a
+                href={action.href}
+                className="text-xs font-semibold underline underline-offset-2 hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
+              >
+                {action.label}
+              </a>
+            ) : (
+              <button
+                type="button"
+                onClick={action.onClick}
+                className="text-xs font-semibold underline underline-offset-2 hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
+              >
+                {action.label}
+              </button>
+            )}
+          </div>
+        )}
       </div>
       {dismissible && (
         <button
