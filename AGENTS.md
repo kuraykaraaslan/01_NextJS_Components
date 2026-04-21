@@ -239,6 +239,7 @@ Each theme typically covers:
 |-------|-------|-------------------|
 | News site | `/theme/news/` | `modules/domain/news/` |
 | E-commerce shop | `/theme/shop/` | `modules/domain/ecommerce/` |
+| Vehicle rental (Moovy) | `/theme/rental/` | `modules/domain/mobility/` |
 
 ### Adding a new theme
 
