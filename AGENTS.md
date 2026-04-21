@@ -196,6 +196,61 @@ type ShowcaseComponent = {
 
 ---
 
+## Layer 5 — `app/theme/` (Full-Page Demos)
+
+Complete, multi-page site demos that wire domain components into a realistic product experience. Each theme is a self-contained Next.js route subtree with its own layout, pages, and any theme-specific shared data.
+
+```
+app/theme/
+└── <vertical>/           ← one directory per demo (e.g. news/, shop/, saas/)
+    ├── layout.tsx         ← site shell: header, nav, footer — default export
+    ├── page.tsx           ← homepage / landing — default export
+    ├── <section>/
+    │   ├── page.tsx       ← section index page
+    │   └── [slug]/
+    │       └── page.tsx   ← dynamic detail page
+    └── *.data.ts          ← static sample data shared across pages (no default export)
+```
+
+### Rules for theme pages
+
+1. **`layout.tsx` is a Client Component** (`'use client'`) — it owns interactive shell state (mobile menu open, search value, etc.).
+2. **`page.tsx` files are Server Components** by default — no `'use client'` unless the page itself manages state.
+3. **Shared sample data lives in `*.data.ts`** files inside the theme directory, not inside components. Components receive data as props; pages import and pass it down.
+4. **Do not duplicate domain components** — compose from `modules/domain/<vertical>/` and `modules/ui/`. Only create theme-local components for layout wiring that has no domain equivalent.
+5. **Dynamic routes use `generateStaticParams`** to enumerate known slugs from the data file.
+6. **`<main id="main-content">`** in `layout.tsx` — required for the skip-link accessibility pattern.
+7. **No real data fetching** — themes use static sample data. `async` page components are allowed but only to `await params` (Next.js 16 async params API).
+
+### Page anatomy
+
+Each theme typically covers:
+
+| Page | Route | Purpose |
+|------|-------|---------|
+| Homepage | `/theme/<v>/` | Hero / above-the-fold + content sections |
+| Listing | `/theme/<v>/<section>/` | Filtered, paginated content index |
+| Detail | `/theme/<v>/<section>/[slug]/` | Single item deep-dive |
+| (optional) Dashboard | `/theme/<v>/dashboard/` | Authenticated-feel management view |
+
+### Existing themes
+
+| Theme | Route | Domain layer used |
+|-------|-------|-------------------|
+| News site | `/theme/news/` | `modules/domain/news/` |
+| E-commerce shop | `/theme/shop/` | `modules/domain/ecommerce/` |
+
+### Adding a new theme
+
+1. Create `app/theme/<vertical>/` directory.
+2. Write `layout.tsx` (header + footer, `'use client'`).
+3. Write `page.tsx` (homepage, Server Component).
+4. Add sub-pages as needed (`<section>/page.tsx`, `[slug]/page.tsx`).
+5. Put all sample data in `<vertical>.data.ts` (or per-section `*.data.ts` files).
+6. Register the theme in the table above.
+
+---
+
 ## Design Tokens
 
 CSS variables defined in `app/globals.css`. Use these in Tailwind classes — never hardcode hex values.
