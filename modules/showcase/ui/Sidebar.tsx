@@ -7,6 +7,7 @@ export type NavItem = {
   title: string;
   category: string;
   abbr: string;
+  href?: string;
 };
 
 export type NavGroup = {
@@ -21,6 +22,7 @@ const categoryStyles: Record<string, string> = {
   Organism: 'bg-success-subtle text-success-fg',
   App:      'bg-warning-subtle text-warning-fg',
   Domain:   'bg-error-subtle text-error-fg',
+  Theme:    'bg-secondary text-primary-fg',
 };
 
 type NavContentProps = {
@@ -130,47 +132,65 @@ function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps
                 <ul className="space-y-0.5 mb-2" role="list">
                   {group.items.map((item) => {
                     const isActive = selectedId === item.id;
-                    return (
-                      <li key={item.id}>
-                        <button
-                          type="button"
-                          title={collapsed ? `${item.title} (${item.category})` : undefined}
-                          aria-current={isActive ? 'page' : undefined}
-                          onClick={() => onSelect(item.id)}
+                    const sharedClassName = cn(
+                      'w-full flex items-center gap-3 rounded-lg text-sm transition-colors text-left',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+                      collapsed ? 'justify-center p-2.5' : 'px-3 py-2',
+                      isActive
+                        ? 'bg-primary-subtle text-primary font-medium'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
+                    );
+                    const sharedContent = (
+                      <>
+                        <span
                           className={cn(
-                            'w-full flex items-center gap-3 rounded-lg text-sm transition-colors text-left',
-                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
-                            collapsed ? 'justify-center p-2.5' : 'px-3 py-2',
+                            'flex items-center justify-center rounded-md text-xs font-bold shrink-0',
+                            collapsed ? 'w-8 h-8' : 'w-6 h-6',
                             isActive
-                              ? 'bg-primary-subtle text-primary font-medium'
-                              : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
+                              ? 'bg-primary text-primary-fg'
+                              : 'bg-surface-sunken text-text-secondary'
                           )}
                         >
-                          <span
-                            className={cn(
-                              'flex items-center justify-center rounded-md text-xs font-bold shrink-0',
-                              collapsed ? 'w-8 h-8' : 'w-6 h-6',
-                              isActive
-                                ? 'bg-primary text-primary-fg'
-                                : 'bg-surface-sunken text-text-secondary'
-                            )}
+                          {item.abbr}
+                        </span>
+                        {!collapsed && (
+                          <>
+                            <span className="flex-1 truncate">{item.title}</span>
+                            <span
+                              className={cn(
+                                'text-xs px-1.5 py-0.5 rounded-full font-medium shrink-0',
+                                categoryStyles[item.category] ?? 'bg-surface-sunken text-text-secondary'
+                              )}
+                            >
+                              {item.category}
+                            </span>
+                          </>
+                        )}
+                      </>
+                    );
+                    return (
+                      <li key={item.id}>
+                        {item.href ? (
+                          <a
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={collapsed ? `${item.title} (${item.category})` : undefined}
+                            className={sharedClassName}
                           >
-                            {item.abbr}
-                          </span>
-                          {!collapsed && (
-                            <>
-                              <span className="flex-1 truncate">{item.title}</span>
-                              <span
-                                className={cn(
-                                  'text-xs px-1.5 py-0.5 rounded-full font-medium shrink-0',
-                                  categoryStyles[item.category] ?? 'bg-surface-sunken text-text-secondary'
-                                )}
-                              >
-                                {item.category}
-                              </span>
-                            </>
-                          )}
-                        </button>
+                            {sharedContent}
+                          </a>
+                        ) : (
+                          <button
+                            type="button"
+                            title={collapsed ? `${item.title} (${item.category})` : undefined}
+                            aria-current={isActive ? 'page' : undefined}
+                            onClick={() => onSelect(item.id)}
+                            className={sharedClassName}
+                          >
+                            {sharedContent}
+                          </button>
+                        )}
                       </li>
                     );
                   })}

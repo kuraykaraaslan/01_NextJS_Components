@@ -379,6 +379,15 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'govt-complaint-form',   title: 'ComplaintRequestForm',       category: 'Domain', abbr: 'Cf' },
     ],
   },
+  // ─── Themes ───────────────────────────────────────────────────────────────────
+  {
+    label: 'Themes',
+    sectionStart: 'Themes',
+    items: [
+      { id: 'theme-news', title: 'News Site',        category: 'Theme', abbr: 'Nw', href: '/theme/news/' },
+      { id: 'theme-shop', title: 'E-Commerce Shop',  category: 'Theme', abbr: 'Sh', href: '/theme/shop/' },
+    ],
+  },
 ];
 
 const categoryStyles: Record<string, string> = {
@@ -387,6 +396,7 @@ const categoryStyles: Record<string, string> = {
   Organism: 'bg-success-subtle text-success-fg',
   App:      'bg-warning-subtle text-warning-fg',
   Domain:   'bg-error-subtle text-error-fg',
+  Theme:    'bg-secondary text-primary-fg',
 };
 
 // ─── SourceBlock ───────────────────────────────────────────────────────────────
