@@ -379,6 +379,18 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'govt-complaint-form',   title: 'ComplaintRequestForm',       category: 'Domain', abbr: 'Cf' },
     ],
   },
+  // ─── Mobility ─────────────────────────────────────────────────────────────────
+  {
+    label: 'Mobility / Rental',
+    sectionStart: 'Mobility',
+    items: [
+      { id: 'mb-vehicle-card',  title: 'VehicleCard',         category: 'Domain', abbr: 'Vc' },
+      { id: 'mb-search-panel',  title: 'VehicleSearchPanel',  category: 'Domain', abbr: 'Vs' },
+      { id: 'mb-specs-panel',   title: 'VehicleSpecsPanel',   category: 'Domain', abbr: 'Sp' },
+      { id: 'mb-rental-start',  title: 'RentalStartPanel',    category: 'Domain', abbr: 'Rs' },
+      { id: 'mb-active-rental', title: 'ActiveRentalPanel',   category: 'Domain', abbr: 'Ar' },
+    ],
+  },
   // ─── Themes ───────────────────────────────────────────────────────────────────
   {
     label: 'Themes',

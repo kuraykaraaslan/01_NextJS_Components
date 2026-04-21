@@ -24,6 +24,7 @@ import { buildVideoData } from './sections/domain-video.showcase';
 import { buildEnergyData } from './sections/domain-energy.showcase';
 import { buildLegalData } from './sections/domain-legal.showcase';
 import { buildGovernmentData } from './sections/domain-government.showcase';
+import { buildMobilityData }   from './sections/domain-mobility.showcase';
 
 export function buildShowcaseData() {
   return [
@@ -51,5 +52,6 @@ export function buildShowcaseData() {
     ...buildEnergyData(),
     ...buildLegalData(),
     ...buildGovernmentData(),
+    ...buildMobilityData(),
   ];
 }
