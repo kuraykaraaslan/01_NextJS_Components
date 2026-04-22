@@ -3,7 +3,7 @@ import { Button } from '@/modules/ui/Button';
 import { Badge } from '@/modules/ui/Badge';
 import { Avatar } from '@/modules/ui/Avatar';
 import { Spinner } from '@/modules/ui/Spinner';
-import { SkeletonLine, SkeletonAvatar, SkeletonText, SkeletonCard } from '@/modules/ui/Skeleton';
+import { SkeletonLine, SkeletonAvatar, SkeletonText, SkeletonCard, SkeletonTableRow } from '@/modules/ui/Skeleton';
 import { AvatarGroup } from '@/modules/ui/Avatar';
 import { ButtonGroup } from '@/modules/ui/ButtonGroup';
 import { SkipLink, LiveRegion } from '@/modules/ui/SkipLink';
@@ -32,6 +32,51 @@ function BadgeDismissibleDemo() {
       ))}
       {tags.length === 0 && <span className="text-sm text-text-secondary">All dismissed</span>}
     </div>
+  );
+}
+
+function ButtonLoadingDemo() {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Button variant="primary" loading>
+        Saving…
+      </Button>
+      <Button variant="outline" loading>
+        Loading details
+      </Button>
+    </div>
+  );
+}
+
+function AvatarImageDemo() {
+  const imageSrc = `data:image/svg+xml;utf8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><rect width="128" height="128" rx="64" fill="#3b82f6"/><text x="64" y="74" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="white">JD</text></svg>`
+  )}`;
+
+  return (
+    <div className="flex items-center gap-4">
+      <Avatar src={imageSrc} name="Jane Doe" size="md" />
+      <Avatar src={imageSrc} name="Jane Doe" size="md" status="online" />
+      <div>
+        <p className="text-sm font-medium text-text-primary">Image source</p>
+        <p className="text-xs text-text-secondary">Uses the same sizing and status rules</p>
+      </div>
+    </div>
+  );
+}
+
+function ButtonGroupVariantDemo({ variant }: { variant: 'primary' | 'secondary' | 'ghost' | 'outline' }) {
+  return (
+    <ButtonGroup
+      value="week"
+      onChange={() => {}}
+      variant={variant}
+      items={[
+        { value: 'day', label: 'Day' },
+        { value: 'week', label: 'Week' },
+        { value: 'month', label: 'Month' },
+      ]}
+    />
   );
 }
 
@@ -142,6 +187,11 @@ export function Button({ children, variant = 'primary', size = 'md', disabled, l
             </div>
           ),
           code: `<Button variant="outline" selected>Selected</Button>`,
+        },
+        {
+          title: 'Loading state',
+          preview: <ButtonLoadingDemo />,
+          code: `<Button variant="primary" loading>Saving…</Button>`,
         },
       ],
     },
@@ -262,6 +312,11 @@ export function Avatar({ src, name, size = 'md', className }) {
     <p className="text-xs text-text-secondary">john@example.com</p>
   </div>
 </div>`,
+        },
+        {
+          title: 'Image source',
+          preview: <AvatarImageDemo />,
+          code: `<Avatar src="/avatar.jpg" name="Jane Doe" />`,
         },
         {
           title: 'Status dot',
@@ -399,6 +454,21 @@ export function SkeletonCard({ className }) {
           preview: <div className="w-full max-w-sm"><SkeletonCard /></div>,
           code: `<SkeletonCard />`,
         },
+        {
+          title: 'Table rows',
+          preview: (
+            <div className="w-full overflow-hidden rounded-lg border border-border">
+              <table className="w-full">
+                <tbody>
+                  <SkeletonTableRow cols={4} />
+                  <SkeletonTableRow cols={4} />
+                  <SkeletonTableRow cols={4} />
+                </tbody>
+              </table>
+            </div>
+          ),
+          code: `<table className="w-full"><tbody><SkeletonTableRow cols={4} /></tbody></table>`,
+        },
       ],
     },
     // ── New components ─────────────────────────────────────────────────────
@@ -429,6 +499,27 @@ export function SkeletonCard({ className }) {
           ),
           code: `<ButtonGroup size="sm" value="a" onChange={setV} items={[...]} />\n<ButtonGroup size="md" value="a" onChange={setV} items={[...]} />`,
           layout: 'stack' as const,
+        },
+        {
+          title: 'Primary / secondary / ghost',
+          layout: 'stack' as const,
+          preview: (
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Primary</p>
+                <ButtonGroupVariantDemo variant="primary" />
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Secondary</p>
+                <ButtonGroupVariantDemo variant="secondary" />
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Ghost</p>
+                <ButtonGroupVariantDemo variant="ghost" />
+              </div>
+            </div>
+          ),
+          code: `<ButtonGroup variant="primary" value="week" onChange={setV} items={[...]} />\n<ButtonGroup variant="secondary" value="week" onChange={setV} items={[...]} />\n<ButtonGroup variant="ghost" value="week" onChange={setV} items={[...]} />`,
         },
       ],
     },
