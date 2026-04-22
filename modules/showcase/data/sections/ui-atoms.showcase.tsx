@@ -475,7 +475,7 @@ export function SkeletonCard({ className }) {
     {
       id: 'button-group',
       title: 'ButtonGroup',
-      category: 'Atom',
+      category: 'Molecule',
       abbr: 'BG',
       description: 'Segmented button group for mutually-exclusive options. Supports multiple variants and sizes.',
       filePath: 'modules/ui/ButtonGroup.tsx',

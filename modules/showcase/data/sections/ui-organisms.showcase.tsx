@@ -4,7 +4,8 @@ import { Badge } from '@/modules/ui/Badge';
 import { Textarea } from '@/modules/ui/Textarea';
 import { Card } from '@/modules/ui/Card';
 import { AlertBanner } from '@/modules/ui/AlertBanner';
-import { Toast } from '@/modules/ui/Toast';
+import { Toast, ToastRegion } from '@/modules/ui/Toast';
+import { Slider } from '@/modules/ui/Slider';
 import { EmptyState } from '@/modules/ui/EmptyState';
 import { Pagination } from '@/modules/ui/Pagination';
 import { Modal } from '@/modules/ui/Modal';
@@ -21,7 +22,7 @@ import { AdvancedDataTable } from '@/modules/ui/AdvancedDataTable';
 import { Popover } from '@/modules/ui/Popover';
 import { TreeView } from '@/modules/ui/TreeView';
 import { Stepper } from '@/modules/ui/Stepper';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
 
 function ModalDemo() {
@@ -107,6 +108,88 @@ function ModalFullscreenDemo() {
       </Modal>
     </div>
   );
+}
+
+const TOAST_CORNERS = ['top-right', 'top-left', 'bottom-right', 'bottom-left'] as const;
+const TOAST_VARIANTS = ['success', 'info', 'warning', 'error'] as const;
+type ToastCorner = typeof TOAST_CORNERS[number];
+type ToastVariantDemo = typeof TOAST_VARIANTS[number];
+type ToastItem = { id: number; variant: ToastVariantDemo; message: string; position: ToastCorner };
+
+function ToastRegionDemo() {
+  const idRef = useRef(0);
+  const varIdxRef = useRef(0);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [position, setPosition] = useState<ToastCorner>('top-right');
+
+  function fire() {
+    const id = ++idRef.current;
+    const variant = TOAST_VARIANTS[varIdxRef.current % TOAST_VARIANTS.length];
+    varIdxRef.current++;
+    const label = variant.charAt(0).toUpperCase() + variant.slice(1);
+    setToasts((prev) => [...prev, { id, variant, message: `${label} notification`, position }]);
+  }
+
+  function remove(id: number) {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        {TOAST_CORNERS.map((p) => (
+          <button key={p} onClick={() => setPosition(p)}
+            className={`px-2 py-1 rounded text-xs border transition-colors ${position === p ? 'bg-primary text-primary-fg border-primary' : 'border-border text-text-secondary hover:bg-surface-overlay'}`}>
+            {p}
+          </button>
+        ))}
+      </div>
+      <Button variant="primary" size="sm" onClick={fire}>Toast ekle</Button>
+      {TOAST_CORNERS.map((pos) => (
+        <ToastRegion key={pos} position={pos}>
+          {toasts.filter((t) => t.position === pos).map((t) => (
+            <Toast key={t.id} variant={t.variant} message={t.message} onDismiss={() => remove(t.id)} />
+          ))}
+        </ToastRegion>
+      ))}
+    </div>
+  );
+}
+
+function ModalSizesDemo() {
+  const [size, setSize] = useState<'sm' | 'md' | 'lg' | null>(null);
+  return (
+    <div className="flex gap-2 flex-wrap">
+      {(['sm', 'md', 'lg'] as const).map((s) => (
+        <Button key={s} variant="outline" size="sm" onClick={() => setSize(s)}>Open {s.toUpperCase()}</Button>
+      ))}
+      {size && (
+        <Modal open onClose={() => setSize(null)} title={`Modal — ${size.toUpperCase()}`} size={size}
+          description="This demo shows the three available size variants."
+          footer={<Button variant="primary" onClick={() => setSize(null)}>Close</Button>}>
+          <p className="text-sm text-text-secondary">Max-width: {size === 'sm' ? '384px' : size === 'md' ? '448px' : '512px'}.</p>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function SliderDemo() {
+  const slides = [
+    <div key="a" className="h-40 bg-primary-subtle flex items-center justify-center rounded-xl"><span className="text-lg font-semibold text-primary">Slide 1</span></div>,
+    <div key="b" className="h-40 bg-success-subtle flex items-center justify-center rounded-xl"><span className="text-lg font-semibold text-success-fg">Slide 2</span></div>,
+    <div key="c" className="h-40 bg-warning-subtle flex items-center justify-center rounded-xl"><span className="text-lg font-semibold text-warning">Slide 3</span></div>,
+  ];
+  return <Slider slides={slides} />;
+}
+
+function SliderAutoPlayDemo() {
+  const slides = [
+    <div key="a" className="h-36 bg-primary flex items-center justify-center rounded-xl"><span className="text-base font-semibold text-white">Auto A</span></div>,
+    <div key="b" className="h-36 bg-secondary flex items-center justify-center rounded-xl"><span className="text-base font-semibold text-white">Auto B</span></div>,
+    <div key="c" className="h-36 bg-error flex items-center justify-center rounded-xl"><span className="text-base font-semibold text-white">Auto C</span></div>,
+  ];
+  return <Slider slides={slides} autoPlay autoPlayInterval={2000} />;
 }
 
 function ToastActionDemo() {
@@ -243,6 +326,17 @@ export function Card({ title, subtitle, headerRight, footer, children, variant =
           code: `<Card title="Confirm deletion" footer={<><Button variant="outline" size="sm">Cancel</Button><Button variant="danger" size="sm">Delete</Button></>}>\n  <p>This action is irreversible.</p>\n</Card>`,
         },
         {
+          title: 'Flat',
+          preview: (
+            <div className="w-full max-w-sm">
+              <Card variant="flat" title="Flat card">
+                <p className="text-sm text-text-secondary">No shadow, uses page background color.</p>
+              </Card>
+            </div>
+          ),
+          code: `<Card variant="flat" title="Flat card">\n  <p>No shadow, uses page background color.</p>\n</Card>`,
+        },
+        {
           title: 'Outline',
           preview: (
             <div className="w-full max-w-sm">
@@ -329,6 +423,15 @@ export function AlertBanner({ variant = 'info', title, message, dismissible = fa
           layout: 'stack' as const,
         },
         {
+          title: 'Link CTA (action.href)',
+          preview: (
+            <AlertBanner variant="info" title="Documentation updated" message="New guides are available for the latest API changes."
+              action={{ label: 'Read docs', href: '#' }} />
+          ),
+          code: `<AlertBanner variant="info" title="Documentation updated" message="New guides are available."\n  action={{ label: 'Read docs', href: '/docs/api' }} />`,
+          layout: 'stack' as const,
+        },
+        {
           title: 'Custom icon',
           preview: (
             <AlertBanner variant="info" message="Custom icon override example." icon={<span>🚀</span>} />
@@ -383,6 +486,12 @@ export function Toast({ variant = 'info', message, duration, onDismiss, classNam
           title: 'With action (Undo)',
           preview: <ToastActionDemo />,
           code: `<Toast variant="info" message="Item moved to trash."\n  action={{ label: 'Undo', onClick: handleUndo }} />`,
+        },
+        {
+          title: 'ToastRegion — positions',
+          layout: 'stack' as const,
+          preview: <ToastRegionDemo />,
+          code: `// Wrap toasts in ToastRegion to position them on screen:\n<ToastRegion position="top-right">\n  <Toast variant="success" message="Saved!" onDismiss={remove} />\n  <Toast variant="info" message="Update available." onDismiss={remove} />\n</ToastRegion>\n\n// Available positions:\n// 'top-right' | 'top-left' | 'top-center'\n// 'bottom-right' | 'bottom-left' | 'bottom-center'`,
         },
       ],
     },
@@ -514,6 +623,11 @@ export function Modal({ open, onClose, title, description, children, footer, siz
           title: 'Confirmation dialog',
           preview: <ModalDemo />,
           code: `const [open, setOpen] = useState(false);\n<Button variant="primary" onClick={() => setOpen(true)}>Open Modal</Button>\n<Modal open={open} onClose={() => setOpen(false)} title="Confirm action"\n  description="Are you sure you want to proceed?"\n  footer={<><Button variant="outline">Cancel</Button><Button variant="danger">Delete</Button></>}>\n  <p>This will permanently delete all selected items.</p>\n</Modal>`,
+        },
+        {
+          title: 'Sizes (sm / md / lg)',
+          preview: <ModalSizesDemo />,
+          code: `<Modal open={open} onClose={onClose} title="Small" size="sm">...</Modal>\n<Modal open={open} onClose={onClose} title="Medium" size="md">...</Modal>\n<Modal open={open} onClose={onClose} title="Large" size="lg">...</Modal>`,
         },
         {
           title: 'Scrollable body',
@@ -1331,6 +1445,55 @@ export function PageHeader({ title, subtitle, badge, actions, className }) {
             </div>
           ),
           code: `<Popover placement="top" trigger={<Button>Top</Button>}><div>...</div></Popover>\n<Popover placement="right" trigger={<Button>Right</Button>}><div>...</div></Popover>`,
+        },
+      ],
+    },
+    {
+      id: 'slider',
+      title: 'Slider',
+      category: 'Molecule',
+      abbr: 'Sl',
+      description: 'Erişilebilir carousel. role="region" + aria-roledescription="carousel" + slide aria etiketleri dahildir. Otomatik oynatma, ok tuşları ve dot navigasyon desteklenir.',
+      filePath: 'modules/ui/Slider.tsx',
+      sourceCode: `'use client';\nimport { cn } from '@/libs/utils/cn';\nimport { useState, useEffect, useCallback, useRef } from 'react';\n\nexport function Slider({ slides, autoPlay = false, autoPlayInterval = 4000, showDots = true, showArrows = true, loop = true, className, slideClassName }) {\n  const [current, setCurrent] = useState(0);\n  const total = slides.length;\n  const goTo = useCallback((index) => setCurrent(loop ? ((index + total) % total) : Math.max(0, Math.min(index, total - 1))), [loop, total]);\n  const prev = () => goTo(current - 1);\n  const next = () => goTo(current + 1);\n  useEffect(() => {\n    if (!autoPlay || total <= 1) return;\n    const t = setInterval(() => setCurrent((c) => (c + 1) % total), autoPlayInterval);\n    return () => clearInterval(t);\n  }, [autoPlay, autoPlayInterval, total]);\n  return (\n    <div className={cn('relative overflow-hidden rounded-xl', className)} role="region" aria-label="Content slider" aria-roledescription="carousel">\n      <div className="flex transition-transform duration-350 ease-in-out" style={{ transform: \`translateX(-\${current * 100}%)\` }}>\n        {slides.map((slide, i) => (\n          <div key={i} role="group" aria-roledescription="slide" aria-label={\`Slide \${i + 1} of \${total}\`} aria-hidden={i !== current} className={cn('w-full shrink-0', slideClassName)}>{slide}</div>\n        ))}\n      </div>\n      {showArrows && (loop || current > 0) && <button onClick={prev} aria-label="Previous slide" className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center">‹</button>}\n      {showArrows && (loop || current < total - 1) && <button onClick={next} aria-label="Next slide" className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center">›</button>}\n      {showDots && total > 1 && (\n        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10" role="tablist" aria-label="Slide indicators">\n          {slides.map((_, i) => <button key={i} role="tab" aria-selected={i === current} aria-label={\`Go to slide \${i + 1}\`} onClick={() => goTo(i)} className={cn('h-2 rounded-full transition-all', i === current ? 'w-5 bg-white' : 'w-2 bg-white/40')} />)}\n        </div>\n      )}\n    </div>\n  );\n}`,
+      variants: [
+        {
+          title: 'Default',
+          layout: 'stack' as const,
+          preview: (
+            <div className="w-full max-w-md">
+              <SliderDemo />
+            </div>
+          ),
+          code: `<Slider\n  slides={[\n    <HeroSlide title="Slide 1" />,\n    <HeroSlide title="Slide 2" />,\n    <HeroSlide title="Slide 3" />,\n  ]}\n/>`,
+        },
+        {
+          title: 'Auto-play',
+          layout: 'stack' as const,
+          preview: (
+            <div className="w-full max-w-md">
+              <SliderAutoPlayDemo />
+            </div>
+          ),
+          code: `<Slider slides={slides} autoPlay autoPlayInterval={2000} />`,
+        },
+        {
+          title: 'No arrows / no loop',
+          layout: 'stack' as const,
+          preview: (
+            <div className="w-full max-w-md">
+              <Slider
+                loop={false}
+                showArrows={false}
+                slides={[
+                  <div key="a" className="h-32 bg-surface-sunken flex items-center justify-center rounded-xl text-sm text-text-secondary">Slide 1 — dots only, no loop</div>,
+                  <div key="b" className="h-32 bg-surface-sunken flex items-center justify-center rounded-xl text-sm text-text-secondary">Slide 2</div>,
+                  <div key="c" className="h-32 bg-surface-sunken flex items-center justify-center rounded-xl text-sm text-text-secondary">Slide 3</div>,
+                ]}
+              />
+            </div>
+          ),
+          code: `<Slider slides={slides} showArrows={false} loop={false} />`,
         },
       ],
     },

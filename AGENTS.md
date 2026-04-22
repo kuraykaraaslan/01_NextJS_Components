@@ -51,6 +51,7 @@ Stateless or locally-stateful primitive components. No business logic, no extern
 | DatePicker | `DatePicker.tsx` | `value`, `onChange`, `min`, `max` |
 | SkipLink | `SkipLink.tsx` | `href` — accessibility skip-to-content |
 | LiveRegion | `LiveRegion.tsx` | `message`, `politeness` — ARIA live region |
+| Spinner | `Spinner.tsx` | `size` (xs–xl) — CSS border-based loading indicator |
 
 ### Molecules — composed from atoms
 
@@ -83,6 +84,8 @@ Stateless or locally-stateful primitive components. No business logic, no extern
 | SearchBar | `SearchBar.tsx` | `value`, `onChange`, `onClear`, `placeholder` |
 | DateRangePicker | `DateRangePicker.tsx` | `start`, `end`, `onChange` |
 | ContentScoreBar | `ContentScoreBar.tsx` | `score` (0–100), `label`, `thresholds` |
+| DropdownMenu | `DropdownMenu.tsx` | `trigger`, `items` (label\|icon\|danger\|disabled\|separator), `align` (left\|right) |
+| Slider | `Slider.tsx` | `slides`, `autoPlay`, `autoPlayInterval`, `showDots`, `showArrows`, `loop` — accessible carousel |
 
 ---
 
@@ -193,6 +196,7 @@ type ShowcaseComponent = {
 2. Open the matching `sections/*.showcase.tsx` file (or create one for a new domain).
 3. Add a `ShowcaseComponent` entry with at least 2 variants.
 4. Import and spread the builder in `showcase.data.tsx`.
+5. **Add the component to `showcase.menu.ts`** — the sidebar is driven by this static list, not auto-generated from the data. Without this step the component will not appear in the navigation.
 
 ---
 

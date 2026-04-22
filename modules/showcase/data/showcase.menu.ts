@@ -5,7 +5,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: 'Atoms',
     items: [
       { id: 'button',       title: 'Button',            category: 'Atom', abbr: 'Bt' },
-      { id: 'button-group', title: 'ButtonGroup',       category: 'Atom', abbr: 'BG' },
+      { id: 'button-group', title: 'ButtonGroup',       category: 'Molecule', abbr: 'BG' },
       { id: 'badge',        title: 'Badge',             category: 'Atom', abbr: 'Bg' },
       { id: 'avatar',       title: 'Avatar',            category: 'Atom', abbr: 'Av' },
       { id: 'spinner',      title: 'Spinner',           category: 'Atom', abbr: 'Sp' },
@@ -54,8 +54,18 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'tree-view',           title: 'TreeView',           category: 'Organism', abbr: 'Tv' },
       { id: 'content-score-bar',   title: 'ContentScoreBar',    category: 'Organism', abbr: 'Cs' },
       { id: 'page-header',         title: 'PageHeader',         category: 'Organism', abbr: 'Ph' },
+      { id: 'slider',              title: 'Slider',             category: 'Molecule', abbr: 'Sl' },
     ],
-  }
+  },
+  {
+    label: 'App Concepts',
+    sectionStart: 'App Concepts',
+    items: [
+      { id: 'top-navbar',        title: 'TopNavbar',       category: 'App', abbr: 'TN' },
+      { id: 'nav-drawer',        title: 'NavDrawer',       category: 'App', abbr: 'ND' },
+      { id: 'dashboard-shell',   title: 'DashboardShell',  category: 'App', abbr: 'DS' },
+    ],
+  },
 ];
 
 export default NAV_GROUPS;
