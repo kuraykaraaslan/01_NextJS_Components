@@ -14,8 +14,26 @@ import { ComboBox } from '@/modules/ui/ComboBox';
 import { MultiSelect } from '@/modules/ui/MultiSelect';
 import { FileInput } from '@/modules/ui/FileInput';
 import { DateRangePicker, TimePicker } from '@/modules/ui/DateRangePicker';
+import { countries, getEmojiFlag } from 'countries-list';
 import { useState } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
+
+const COUNTRY_OPTIONS = Object.entries(countries)
+  .map(([code, data]) => ({ value: code, label: `${getEmojiFlag(code as keyof typeof countries)} ${data.name}` }))
+  .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }));
+
+function CountryMultiSelectDemo() {
+  const [v, setV] = useState<string[]>([]);
+  return (
+    <div className="w-full max-w-sm space-y-1">
+      <MultiSelect id="cms-demo" label="Countries" options={COUNTRY_OPTIONS}
+        placeholder="Select countries…" value={v} onChange={setV} hint="Select one or more countries." />
+      {v.length > 0 && (
+        <p className="text-xs text-text-secondary">Selected: {v.join(', ')}</p>
+      )}
+    </div>
+  );
+}
 
 function InputDemoControlled({ prefixIcon, suffixIcon, clearable, success, readOnly, showCount }: {
   prefixIcon?: React.ReactNode; suffixIcon?: React.ReactNode;
@@ -381,6 +399,17 @@ export function Select({ id, label, options, placeholder, hint, error, disabled,
             </div>
           ),
           code: `<Select id="country" label="Country" options={[...]} disabled />`,
+        },
+        {
+          title: 'With countries',
+          preview: (
+            <div className="w-full max-w-xs">
+              <Select id="sc-sl-countries" label="Country" placeholder="Select a country…"
+                hint="Powered by countries-list."
+                options={COUNTRY_OPTIONS} />
+            </div>
+          ),
+          code: `import { countries, getEmojiFlag } from 'countries-list';\n\nconst COUNTRY_OPTIONS = Object.entries(countries)\n  .map(([code, data]) => ({ value: code, label: \`\${getEmojiFlag(code)} \${data.name}\` }))\n  .sort((a, b) => a.label.localeCompare(b.label));\n\n<Select id="country" label="Country" placeholder="Select a country…"\n  options={COUNTRY_OPTIONS} hint="Powered by countries-list." />`,
         },
       ],
     },
@@ -792,6 +821,12 @@ export function ComboBox({ id, label, options, value, onChange, placeholder = 'S
               error="Please select at least one tag." />
           ),
           code: `<MultiSelect id="ms" label="Tags" options={[...]} error="Please select at least one tag." />`,
+        },
+        {
+          title: 'With countries',
+          layout: 'stack' as const,
+          preview: <CountryMultiSelectDemo />,
+          code: `import { countries, getEmojiFlag } from 'countries-list';\n\nconst COUNTRY_OPTIONS = Object.entries(countries)\n  .map(([code, data]) => ({ value: code, label: \`\${getEmojiFlag(code)} \${data.name}\` }))\n  .sort((a, b) => a.label.localeCompare(b.label));\n\nfunction Demo() {\n  const [v, setV] = useState([]);\n  return (\n    <MultiSelect id="ms-countries" label="Countries"\n      options={COUNTRY_OPTIONS} placeholder="Select countries…"\n      value={v} onChange={setV} hint="Select one or more countries." />\n  );\n}`,
         },
       ],
     },
