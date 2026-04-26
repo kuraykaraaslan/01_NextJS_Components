@@ -1,155 +1,103 @@
 'use client';
+import { cn } from '@/libs/utils/cn';
 import { useState } from 'react';
 import { Badge } from '@/modules/ui/Badge';
-import { DropdownMenu } from '@/modules/ui/DropdownMenu';
-import { SearchBar } from '@/modules/ui/SearchBar';
-import { Avatar } from '@/modules/ui/Avatar';
-import { Toggle } from '@/modules/ui/Toggle';
-import { Button } from '@/modules/ui/Button';
 
-const NAV_ITEMS = [
-  { id: 'dashboard', icon: '🏠', label: 'Dashboard', count: 0  },
-  { id: 'analytics', icon: '📈', label: 'Analytics',  count: 0  },
-  { id: 'projects',  icon: '📁', label: 'Projects',   count: 5  },
-  { id: 'tasks',     icon: '✅', label: 'Tasks',      count: 12 },
-  { id: 'reports',   icon: '📊', label: 'Reports',    count: 2  },
-];
+export type AppSidebarNavItem = {
+  id: string;
+  label: string;
+  icon?: React.ReactNode;
+  badge?: number;
+};
 
-const WORKSPACES = [
-  { label: 'Acme Corp' },
-  { label: 'Side Project' },
-  { label: 'Open Source' },
-  { type: 'separator' as const },
-  { label: '+ Add workspace' },
-];
+export type AppSidebarNavGroup = {
+  label?: string;
+  items: AppSidebarNavItem[];
+};
+
+type AppSidebarProps = {
+  navGroups?: AppSidebarNavGroup[];
+  navItems?: AppSidebarNavItem[];
+  activeId?: string;
+  onSelect?: (id: string) => void;
+  defaultCollapsed?: boolean;
+  footer?: React.ReactNode;
+  className?: string;
+};
 
 export function AppSidebar({
-  activeItem = 'dashboard',
-  workspaceName = 'Acme Corp',
-}: {
-  activeItem?: string;
-  workspaceName?: string;
-}) {
-  const [collapsed, setCollapsed] = useState(false);
-  const [active, setActive]       = useState(activeItem);
-  const [query, setQuery]         = useState('');
-
-  const filtered = NAV_ITEMS.filter((i) =>
-    i.label.toLowerCase().includes(query.toLowerCase())
-  );
+  navGroups,
+  navItems,
+  activeId,
+  onSelect,
+  defaultCollapsed = false,
+  footer,
+  className,
+}: AppSidebarProps) {
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+  const groups: AppSidebarNavGroup[] = navGroups ?? (navItems ? [{ items: navItems }] : []);
 
   return (
     <div
-      className={`
-        flex flex-col border border-border rounded-xl bg-surface-raised overflow-hidden
-        transition-all duration-200
-        ${collapsed ? 'w-16' : 'w-56'}
-      `}
-      style={{ minHeight: 380 }}
-    >
-      {/* Workspace switcher */}
-      <div className="flex items-center justify-between px-3 py-3 border-b border-border">
-        {!collapsed && (
-          <DropdownMenu
-            trigger={
-              <button
-                type="button"
-                className="flex items-center gap-1.5 text-sm font-semibold text-text-primary hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
-              >
-                <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
-                <span className="truncate max-w-[100px]">{workspaceName}</span>
-                <span aria-hidden="true" className="text-text-disabled">▾</span>
-              </button>
-            }
-            items={WORKSPACES}
-          />
-        )}
-        {collapsed && (
-          <span className="h-2 w-2 rounded-full bg-primary mx-auto" aria-hidden="true" />
-        )}
-      </div>
-
-      {/* Collapse toggle */}
-      <div className={`px-3 py-2 border-b border-border ${collapsed ? 'flex justify-center' : ''}`}>
-        {collapsed ? (
-          <Button
-            variant="ghost"
-            size="xs"
-            iconOnly
-            aria-label="Expand sidebar"
-            onClick={() => setCollapsed(false)}
-          >
-            ▶
-          </Button>
-        ) : (
-          <Toggle
-            id="sidebar-collapse-toggle"
-            label="Collapsed view"
-            checked={collapsed}
-            onChange={setCollapsed}
-            size="sm"
-          />
-        )}
-      </div>
-
-      {/* Search */}
-      {!collapsed && (
-        <div className="px-3 py-2 border-b border-border">
-          <SearchBar
-            id="sidebar-search"
-            placeholder="Filter nav…"
-            value={query}
-            onChange={setQuery}
-          />
-        </div>
+      className={cn(
+        'flex flex-col flex-1 min-h-0 transition-all duration-200',
+        collapsed ? 'w-14' : 'w-56',
+        className
       )}
+    >
+      <div className={cn('flex items-center px-2 py-2 border-b border-border', collapsed ? 'justify-center' : 'justify-end')}>
+        <button
+          type="button"
+          onClick={() => setCollapsed((v) => !v)}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className="p-1.5 rounded text-text-secondary hover:text-text-primary hover:bg-surface-overlay transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+        >
+          <span aria-hidden="true" className={cn('block text-lg transition-transform', collapsed ? 'rotate-180' : '')}>‹</span>
+        </button>
+      </div>
 
-      {/* Nav items */}
-      <nav className="flex-1 px-2 py-2 space-y-0.5 overflow-y-auto" aria-label="Sidebar navigation">
-        {filtered.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setActive(item.id)}
-            title={collapsed ? item.label : undefined}
-            aria-label={collapsed ? item.label : undefined}
-            className={`
-              w-full flex items-center gap-2 rounded-md text-sm transition-colors
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus
-              ${collapsed ? 'justify-center px-2 py-2' : 'px-3 py-2'}
-              ${active === item.id
-                ? 'bg-primary-subtle text-primary font-semibold'
-                : 'text-text-primary hover:bg-surface-overlay'
-              }
-            `}
-          >
-            <span aria-hidden="true">{item.icon}</span>
-            {!collapsed && (
-              <>
-                <span className="flex-1 text-left">{item.label}</span>
-                {item.count > 0 && (
-                  <Badge variant="neutral" size="sm">{item.count}</Badge>
-                )}
-              </>
+      <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4" aria-label="Sidebar navigation">
+        {groups.map((group, gi) => (
+          <div key={group.label ?? gi}>
+            {group.label && !collapsed && (
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-text-disabled px-3 mb-1">
+                {group.label}
+              </p>
             )}
-          </button>
+            <div className="space-y-0.5">
+              {group.items.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-current={item.id === activeId ? 'page' : undefined}
+                  title={collapsed ? item.label : undefined}
+                  onClick={() => onSelect?.(item.id)}
+                  className={cn(
+                    'w-full flex items-center gap-2.5 rounded-lg text-sm transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+                    collapsed ? 'justify-center px-2 py-2' : 'px-3 py-2 text-left',
+                    item.id === activeId
+                      ? 'bg-primary-subtle text-primary font-medium'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
+                  )}
+                >
+                  {item.icon && <span aria-hidden="true" className="shrink-0 w-4 text-center">{item.icon}</span>}
+                  {!collapsed && <span className="flex-1 truncate">{item.label}</span>}
+                  {!collapsed && item.badge != null && item.badge > 0 && (
+                    <Badge variant="primary" size="sm">{item.badge}</Badge>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         ))}
-
-        {filtered.length === 0 && !collapsed && (
-          <p className="text-xs text-text-secondary px-3 py-2">No matches</p>
-        )}
       </nav>
 
-      {/* User avatar at bottom */}
-      <div className={`border-t border-border px-3 py-3 flex items-center gap-2 ${collapsed ? 'justify-center' : ''}`}>
-        <Avatar name="Alice Johnson" size="sm" status="online" />
-        {!collapsed && (
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-text-primary truncate">Alice Johnson</p>
-            <Badge variant="primary" size="sm">Admin</Badge>
-          </div>
-        )}
-      </div>
+      {footer && (
+        <div className={cn('border-t border-border shrink-0', collapsed ? 'flex justify-center px-2 py-3' : '')}>
+          {footer}
+        </div>
+      )}
     </div>
   );
 }

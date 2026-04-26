@@ -1,8 +1,8 @@
 'use client';
 import { useMemo, useState } from 'react';
-import { DashboardShell } from '@/modules/app/DashboardShell';
-import { DashboardSidebar } from '@/modules/app/DashboardSidebar';
-import { DashboardTopBar } from '@/modules/app/DashboardTopBar';
+import { AppShell } from '@/modules/app/AppShell';
+import { AppSidebar } from '@/modules/app/AppSidebar';
+import { AppTopBar } from '@/modules/app/AppTopBar';
 import { Widget } from './Widget';
 import { CopyButton } from './CopyButton';
 import { DarkModeToggle } from './DarkModeToggle';
@@ -132,7 +132,7 @@ export function ShowcaseShell() {
   );
 
   return (
-    <DashboardShell
+    <AppShell
       logo={
         <div>
           <p className="text-sm font-semibold text-text-primary">UI Showcase</p>
@@ -140,7 +140,7 @@ export function ShowcaseShell() {
         </div>
       }
       sidebar={
-        <DashboardSidebar
+        <AppSidebar
           navGroups={navGroups}
           activeId={selectedId}
           onSelect={setSelectedId}
@@ -155,7 +155,13 @@ export function ShowcaseShell() {
           }
         />
       }
-      topbar={<DashboardTopBar actions={<DarkModeToggle />} />}
+      topbar={
+        <AppTopBar>
+          <div className="ml-auto">
+            <DarkModeToggle />
+          </div>
+        </AppTopBar>
+      }
     >
       <div className="mb-2">
         <div className="flex items-center gap-3 mb-1">
@@ -183,6 +189,6 @@ export function ShowcaseShell() {
       </div>
 
       <SourceBlock filePath={selected.filePath} sourceCode={selected.sourceCode} />
-    </DashboardShell>
+    </AppShell>
   );
 }
