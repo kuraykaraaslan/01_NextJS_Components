@@ -9,11 +9,13 @@ export type DropdownItem =
 export function DropdownMenu({
   trigger,
   items,
+  header,
   align = 'left',
   className,
 }: {
   trigger: React.ReactNode;
   items: DropdownItem[];
+  header?: React.ReactNode;
   align?: 'left' | 'right';
   className?: string;
 }) {
@@ -53,6 +55,11 @@ export function DropdownMenu({
             align === 'right' ? 'right-0' : 'left-0'
           )}
         >
+          {header && (
+            <div className="border-b border-border mb-1">
+              {header}
+            </div>
+          )}
           {items.map((item, i) => {
             if (item.type === 'separator') {
               return <div key={i} role="separator" className="my-1 border-t border-border" />;
