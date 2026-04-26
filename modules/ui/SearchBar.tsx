@@ -42,7 +42,7 @@ export function SearchBar({
       </span>
       <input
         id={id}
-        type="search"
+        type="text"
         role="searchbox"
         value={currentValue}
         onChange={handleChange}

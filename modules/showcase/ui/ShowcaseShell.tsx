@@ -1,14 +1,14 @@
 'use client';
-import { useState } from 'react';
-import { Sidebar, type NavGroup } from './Sidebar';
-import { TopBar } from './TopBar';
+import { useMemo, useState } from 'react';
+import { DashboardShell } from '@/modules/app/DashboardShell';
+import { DashboardSidebar } from '@/modules/app/DashboardSidebar';
+import { DashboardTopBar } from '@/modules/app/DashboardTopBar';
 import { Widget } from './Widget';
 import { CopyButton } from './CopyButton';
+import { DarkModeToggle } from './DarkModeToggle';
 import { cn } from '@/libs/utils/cn';
 import { buildShowcaseData, type ShowcaseVariant } from '@/modules/showcase/data/showcase.data';
-import NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
-// ─── Nav groups ────────────────────────────────────────────────────────────────
-
+import SHOWCASE_NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
 
 const categoryStyles: Record<string, string> = {
   Atom:     'bg-info-subtle text-info-fg',
@@ -18,8 +18,6 @@ const categoryStyles: Record<string, string> = {
   Domain:   'bg-error-subtle text-error-fg',
   Theme:    'bg-secondary text-primary-fg',
 };
-
-// ─── SourceBlock ───────────────────────────────────────────────────────────────
 
 function SourceBlock({ filePath, sourceCode }: { filePath: string; sourceCode: string }) {
   const [open, setOpen] = useState(false);
@@ -62,8 +60,6 @@ function SourceBlock({ filePath, sourceCode }: { filePath: string; sourceCode: s
   );
 }
 
-// ─── VariantBlock ──────────────────────────────────────────────────────────────
-
 function VariantBlock({ variant }: { variant: ShowcaseVariant }) {
   const stack = variant.layout === 'stack';
 
@@ -79,7 +75,6 @@ function VariantBlock({ variant }: { variant: ShowcaseVariant }) {
             ? 'flex-col divide-y'
             : 'flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x'
         )}>
-          {/* Preview */}
           <div className={cn('flex flex-col', !stack && 'sm:w-2/5')}>
             <div className="px-3 py-1.5 border-b border-border bg-surface-overlay">
               <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">Preview</span>
@@ -99,7 +94,6 @@ function VariantBlock({ variant }: { variant: ShowcaseVariant }) {
               </div>
             </div>
           </div>
-          {/* Code */}
           <div className={cn('flex flex-col bg-surface-sunken overflow-x-auto', !stack && 'flex-1')}>
             <div className="px-3 py-1.5 border-b border-border bg-surface-overlay">
               <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">Code</span>
@@ -114,69 +108,81 @@ function VariantBlock({ variant }: { variant: ShowcaseVariant }) {
   );
 }
 
-// ─── Shell ────────────────────────────────────────────────────────────────────
-
 export function ShowcaseShell() {
   const data = buildShowcaseData();
   const dataMap = Object.fromEntries(data.map((c) => [c.id, c]));
 
-  const [selectedId, setSelectedId]             = useState('button');
-  const [sidebarCollapsed, setSidebarCollapsed]   = useState(false);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
+  const [selectedId, setSelectedId] = useState('button');
   const selected = dataMap[selectedId];
 
+  const navGroups = useMemo(() =>
+    SHOWCASE_NAV_GROUPS.map((group) => ({
+      label: group.label,
+      items: group.items.map((item) => ({
+        id: item.id,
+        label: item.title,
+        icon: (
+          <span className="flex items-center justify-center w-5 h-5 rounded text-[10px] font-bold bg-surface-sunken text-text-secondary">
+            {item.abbr}
+          </span>
+        ),
+      })),
+    })),
+    []
+  );
+
   return (
-    <div className="flex min-h-screen bg-surface-base font-sans antialiased">
-      <Sidebar
-        groups={NAV_GROUPS}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
-        collapsed={sidebarCollapsed}
-        mobileOpen={mobileSidebarOpen}
-        onMobileClose={() => setMobileSidebarOpen(false)}
-      />
-
-      <div className="flex-1 flex flex-col min-w-0">
-        <TopBar
-          title={selected.title}
-          subtitle={`UI Showcase › ${selected.category}`}
-          sidebarCollapsed={sidebarCollapsed}
-          onSidebarToggle={() => setSidebarCollapsed((c) => !c)}
-          onMobileMenuOpen={() => setMobileSidebarOpen(true)}
-        />
-
-        <main className="flex-1 overflow-auto p-6">
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-2xl font-bold text-text-primary leading-tight">
-                {selected.title}
-              </h2>
-              <span
-                className={cn(
-                  'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium',
-                  categoryStyles[selected.category]
-                )}
-              >
-                {selected.category}
-              </span>
-            </div>
-            <p className="text-sm text-text-secondary max-w-2xl">{selected.description}</p>
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {selected.variants.map((variant) => (
-              <div key={variant.title} className={variant.layout === 'stack' ? 'xl:col-span-2' : ''}>
-                <VariantBlock variant={variant} />
+    <DashboardShell
+      logo={
+        <div>
+          <p className="text-sm font-semibold text-text-primary">UI Showcase</p>
+          <p className="text-xs text-text-secondary">Component library</p>
+        </div>
+      }
+      sidebar={
+        <DashboardSidebar
+          navGroups={navGroups}
+          activeId={selectedId}
+          onSelect={setSelectedId}
+          footer={
+            <div className="p-3 flex items-center gap-2">
+              <span className="w-7 h-7 rounded-full bg-primary-subtle flex items-center justify-center text-xs font-bold text-primary shrink-0" aria-hidden="true">D</span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-text-primary truncate">Developer</p>
+                <p className="text-[10px] text-text-secondary truncate">Component Library</p>
               </div>
-            ))}
-          </div>
-
-          <div className="mt-4">
-            <SourceBlock filePath={selected.filePath} sourceCode={selected.sourceCode} />
-          </div>
-        </main>
+            </div>
+          }
+        />
+      }
+      topbar={<DashboardTopBar actions={<DarkModeToggle />} />}
+    >
+      <div className="mb-2">
+        <div className="flex items-center gap-3 mb-1">
+          <h2 className="text-2xl font-bold text-text-primary leading-tight">
+            {selected.title}
+          </h2>
+          <span
+            className={cn(
+              'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium',
+              categoryStyles[selected.category]
+            )}
+          >
+            {selected.category}
+          </span>
+        </div>
+        <p className="text-sm text-text-secondary max-w-2xl">{selected.description}</p>
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {selected.variants.map((variant) => (
+          <div key={variant.title} className={variant.layout === 'stack' ? 'xl:col-span-2' : ''}>
+            <VariantBlock variant={variant} />
+          </div>
+        ))}
+      </div>
+
+      <SourceBlock filePath={selected.filePath} sourceCode={selected.sourceCode} />
+    </DashboardShell>
   );
 }

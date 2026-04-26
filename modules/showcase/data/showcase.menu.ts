@@ -28,7 +28,6 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'date-range-picker', title: 'DateRangePicker',  category: 'Molecule', abbr: 'Dr' },
       { id: 'checkbox-group',    title: 'CheckboxGroup',    category: 'Molecule', abbr: 'Cg' },
       { id: 'tag-input',         title: 'TagInput',         category: 'Molecule', abbr: 'Ti' },
-      { id: 'combo-box',         title: 'ComboBox',         category: 'Molecule', abbr: 'Cx' },
       { id: 'file-input',        title: 'FileInput',        category: 'Molecule', abbr: 'Fi' },
     ],
   },

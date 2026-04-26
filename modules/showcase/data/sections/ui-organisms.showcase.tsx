@@ -4,7 +4,7 @@ import { Badge } from '@/modules/ui/Badge';
 import { Textarea } from '@/modules/ui/Textarea';
 import { Card } from '@/modules/ui/Card';
 import { AlertBanner } from '@/modules/ui/AlertBanner';
-import { Toast, ToastRegion } from '@/modules/ui/Toast';
+import { ToastProvider, toast, useToastStore } from '@/modules/ui/Toast';
 import { Slider } from '@/modules/ui/Slider';
 import { EmptyState } from '@/modules/ui/EmptyState';
 import { Pagination } from '@/modules/ui/Pagination';
@@ -22,7 +22,7 @@ import { AdvancedDataTable } from '@/modules/ui/AdvancedDataTable';
 import { Popover } from '@/modules/ui/Popover';
 import { TreeView } from '@/modules/ui/TreeView';
 import { Stepper } from '@/modules/ui/Stepper';
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
 
 function ModalDemo() {
@@ -110,51 +110,88 @@ function ModalFullscreenDemo() {
   );
 }
 
-const TOAST_CORNERS = ['top-right', 'top-left', 'bottom-right', 'bottom-left'] as const;
-const TOAST_VARIANTS = ['success', 'info', 'warning', 'error'] as const;
-type ToastCorner = typeof TOAST_CORNERS[number];
-type ToastVariantDemo = typeof TOAST_VARIANTS[number];
-type ToastItem = { id: number; variant: ToastVariantDemo; message: string; position: ToastCorner };
-
-function ToastRegionDemo() {
-  const idRef = useRef(0);
-  const varIdxRef = useRef(0);
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const [position, setPosition] = useState<ToastCorner>('top-right');
-
-  function fire() {
-    const id = ++idRef.current;
-    const variant = TOAST_VARIANTS[varIdxRef.current % TOAST_VARIANTS.length];
-    varIdxRef.current++;
-    const label = variant.charAt(0).toUpperCase() + variant.slice(1);
-    setToasts((prev) => [...prev, { id, variant, message: `${label} notification`, position }]);
-  }
-
-  function remove(id: number) {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  }
-
+function ToastVariantsDemo() {
+  const { clear } = useToastStore();
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
-        {TOAST_CORNERS.map((p) => (
-          <button key={p} onClick={() => setPosition(p)}
-            className={`px-2 py-1 rounded text-xs border transition-colors ${position === p ? 'bg-primary text-primary-fg border-primary' : 'border-border text-text-secondary hover:bg-surface-overlay'}`}>
-            {p}
-          </button>
-        ))}
+        <Button size="sm" variant="primary"   onClick={() => toast.success('Değişiklikler kaydedildi.')}>Success</Button>
+        <Button size="sm" variant="outline"   onClick={() => toast.info('Yeni bir güncelleme mevcut.')}>Info</Button>
+        <Button size="sm" variant="secondary" onClick={() => toast.warning('Oturum 5 dk sonra sona erecek.')}>Warning</Button>
+        <Button size="sm" variant="danger"    onClick={() => toast.error('Kaydetme başarısız oldu.')}>Error</Button>
+        <Button size="sm" variant="ghost"     onClick={clear}>Temizle</Button>
       </div>
-      <Button variant="primary" size="sm" onClick={fire}>Toast ekle</Button>
-      {TOAST_CORNERS.map((pos) => (
-        <ToastRegion key={pos} position={pos}>
-          {toasts.filter((t) => t.position === pos).map((t) => (
-            <Toast key={t.id} variant={t.variant} message={t.message} onDismiss={() => remove(t.id)} />
-          ))}
-        </ToastRegion>
-      ))}
+      <ToastProvider position="top-right" />
     </div>
   );
 }
+
+function ToastTitleDemo() {
+  const { clear } = useToastStore();
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button size="sm" variant="primary" onClick={() =>
+        toast.success('Dosya yüklendi.', { title: 'Yükleme tamamlandı' })
+      }>Title + Message</Button>
+      <Button size="sm" variant="danger" onClick={() =>
+        toast.error('Sunucuya bağlanılamadı. Ağ bağlantınızı kontrol edin.', { title: 'Bağlantı hatası' })
+      }>Title + Error</Button>
+      <Button size="sm" variant="ghost" onClick={clear}>Temizle</Button>
+    </div>
+  );
+}
+
+function ToastActionsDemo() {
+  const { clear } = useToastStore();
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button size="sm" variant="outline" onClick={() =>
+        toast.info('Öğe çöp kutusuna taşındı.', {
+          title: 'Silindi',
+          actions: [
+            { label: 'Geri Al', onClick: (dismiss) => { alert('Geri alındı!'); dismiss(); } },
+            { label: 'Kalıcı sil', onClick: (dismiss) => { alert('Kalıcı silindi'); dismiss(); }, variant: 'danger' },
+          ],
+        })
+      }>İki action</Button>
+      <Button size="sm" variant="outline" onClick={() =>
+        toast.success('Rapor oluşturuldu.', {
+          actions: [{ label: 'İndir', onClick: (dismiss) => { alert('İndiriliyor...'); dismiss(); } }],
+        })
+      }>Tek action</Button>
+      <Button size="sm" variant="ghost" onClick={clear}>Temizle</Button>
+    </div>
+  );
+}
+
+function ToastLoadingDemo() {
+  const { clear } = useToastStore();
+  function firePromise() {
+    toast.promise(
+      new Promise<string>((res) => setTimeout(() => res('rapor.pdf'), 2500)),
+      {
+        loading: 'Rapor oluşturuluyor...',
+        success: (file) => `${file} başarıyla oluşturuldu.`,
+        error:   'Rapor oluşturulamadı.',
+      },
+    );
+  }
+  function fireError() {
+    toast.promise(
+      new Promise<void>((_, rej) => setTimeout(() => rej(new Error('Timeout')), 2000)),
+      { loading: 'Veri gönderiliyor...', success: 'Gönderildi!', error: 'Gönderme başarısız oldu.' },
+    );
+  }
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button size="sm" variant="primary" onClick={firePromise}>promise() → success</Button>
+      <Button size="sm" variant="danger"  onClick={fireError}>promise() → error</Button>
+      <Button size="sm" variant="outline" onClick={() => toast.loading('İşleniyor...')}>loading()</Button>
+      <Button size="sm" variant="ghost"   onClick={clear}>Temizle</Button>
+    </div>
+  );
+}
+
 
 function ModalSizesDemo() {
   const [size, setSize] = useState<'sm' | 'md' | 'lg' | null>(null);
@@ -192,22 +229,6 @@ function SliderAutoPlayDemo() {
   return <Slider slides={slides} autoPlay autoPlayInterval={2000} />;
 }
 
-function ToastActionDemo() {
-  const [show, setShow] = useState(false);
-  return (
-    <div className="space-y-2">
-      <Button variant="outline" size="sm" onClick={() => setShow(true)}>Show Toast with Action</Button>
-      {show && (
-        <Toast
-          variant="info"
-          message="Item moved to trash."
-          action={{ label: 'Undo', onClick: () => alert('Undone!') }}
-          onDismiss={() => setShow(false)}
-        />
-      )}
-    </div>
-  );
-}
 
 function TreeViewDemo() {
   const [sel, setSel] = useState<string | undefined>();
@@ -446,52 +467,59 @@ export function AlertBanner({ variant = 'info', title, message, dismissible = fa
       title: 'Toast',
       category: 'Organism',
       abbr: 'To',
-      description: 'Auto-dismiss bildirimi (error hariç). 4–6s sonra kaybolur. ToastRegion konteyneri ile fixed konumda render edilir.',
+      description: 'Zustand store üzerinden yönetilen bildirim sistemi. Hover\'da dondurma, progress bar, title, actions, loading ve promise desteği.',
       filePath: 'modules/ui/Toast.tsx',
-      sourceCode: `'use client';
-import { cn } from '@/libs/utils/cn';
-import { useEffect, useState } from 'react';
+      sourceCode: `// Mount once at app root
+<ToastProvider position="top-right" />
 
-const variantMap = {
-  success: { container: 'bg-success-subtle border-success text-success-fg', icon: '✓' },
-  warning: { container: 'bg-warning-subtle border-warning text-warning-fg', icon: '⚠' },
-  error:   { container: 'bg-error-subtle border-error text-error-fg',       icon: '✕' },
-  info:    { container: 'bg-info-subtle border-info text-info-fg',          icon: 'ℹ' },
-};
+// Fire from anywhere
+import { toast } from '@/modules/ui/Toast';
 
-export function Toast({ variant = 'info', message, duration, onDismiss, className }) {
-  const [visible, setVisible] = useState(true);
-  useEffect(() => {
-    if (variant === 'error') return;
-    const t = setTimeout(() => { setVisible(false); onDismiss?.(); }, duration ?? 5000);
-    return () => clearTimeout(t);
-  }, [variant, duration, onDismiss]);
-  if (!visible) return null;
-  const { container, icon } = variantMap[variant];
-  return (
-    <div role={variant === 'error' ? 'alert' : undefined} aria-live={variant === 'error' ? undefined : 'polite'}
-      className={cn('max-w-sm w-full rounded-lg border p-4 shadow-lg flex items-start gap-3 pointer-events-auto', container, className)}>
-      <span aria-hidden="true" className="mt-0.5 shrink-0 font-bold">{icon}</span>
-      <p className="text-sm font-medium flex-1">{message}</p>
-      <button type="button" aria-label="Dismiss" onClick={() => { setVisible(false); onDismiss?.(); }} className="shrink-0 hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded">✕</button>
-    </div>
-  );
-}`,
+toast.success('Kaydedildi.');
+toast.error('Hata oluştu.', { title: 'Bağlantı hatası' });
+toast.loading('İşleniyor...');
+toast.promise(fetchData(), {
+  loading: 'Yükleniyor...',
+  success: (d) => \`\${d.name} yüklendi.\`,
+  error:   'Yüklenemedi.',
+});
+
+// With actions
+toast.info('Öğe silindi.', {
+  actions: [
+    { label: 'Geri Al', onClick: (dismiss) => { undo(); dismiss(); } },
+    { label: 'Kalıcı sil', onClick: (d) => { purge(); d(); }, variant: 'danger' },
+  ],
+});
+
+// Programmatic control
+toast.update(id, { message: 'Güncellendi.' });
+toast.dismiss(id);
+const { clear } = useToastStore();`,
       variants: [
-        { title: 'Success', preview: <Toast variant="success" message="Profile saved successfully." />, code: `<Toast variant="success" message="Profile saved successfully." />` },
-        { title: 'Warning', preview: <Toast variant="warning" message="Your session will expire in 5 minutes." />, code: `<Toast variant="warning" message="Your session will expire in 5 minutes." />` },
-        { title: 'Error (no auto-dismiss)', preview: <Toast variant="error" message="Failed to save. Please try again." />, code: `<Toast variant="error" message="Failed to save. Please try again." />` },
-        { title: 'Info', preview: <Toast variant="info" message="New comment added to your post." />, code: `<Toast variant="info" message="New comment added to your post." />` },
         {
-          title: 'With action (Undo)',
-          preview: <ToastActionDemo />,
-          code: `<Toast variant="info" message="Item moved to trash."\n  action={{ label: 'Undo', onClick: handleUndo }} />`,
+          title: 'Variants',
+          layout: 'stack' as const,
+          preview: <ToastVariantsDemo />,
+          code: `toast.success('Kaydedildi.');\ntoast.info('Güncelleme mevcut.');\ntoast.warning('Oturum sona eriyor.');\ntoast.error('Sunucu hatası.'); // persistent`,
         },
         {
-          title: 'ToastRegion — positions',
+          title: 'Title + Message',
           layout: 'stack' as const,
-          preview: <ToastRegionDemo />,
-          code: `// Wrap toasts in ToastRegion to position them on screen:\n<ToastRegion position="top-right">\n  <Toast variant="success" message="Saved!" onDismiss={remove} />\n  <Toast variant="info" message="Update available." onDismiss={remove} />\n</ToastRegion>\n\n// Available positions:\n// 'top-right' | 'top-left' | 'top-center'\n// 'bottom-right' | 'bottom-left' | 'bottom-center'`,
+          preview: <ToastTitleDemo />,
+          code: `toast.success('Dosya yüklendi.', { title: 'Yükleme tamamlandı' });\ntoast.error('Sunucuya bağlanılamadı.', { title: 'Bağlantı hatası' });`,
+        },
+        {
+          title: 'Actions',
+          layout: 'stack' as const,
+          preview: <ToastActionsDemo />,
+          code: `toast.info('Öğe silindi.', {\n  title: 'Silindi',\n  actions: [\n    { label: 'Geri Al', onClick: (dismiss) => { undo(); dismiss(); } },\n    { label: 'Kalıcı sil', onClick: (d) => { purge(); d(); }, variant: 'danger' },\n  ],\n});`,
+        },
+        {
+          title: 'Loading & Promise',
+          layout: 'stack' as const,
+          preview: <ToastLoadingDemo />,
+          code: `// Loading state (persistent until updated)\ntoast.loading('İşleniyor...');\n\n// Promise: auto-transitions loading → success/error\ntoast.promise(fetchData(), {\n  loading: 'Yükleniyor...',\n  success: (data) => \`\${data.name} hazır.\`,\n  error: 'Yüklenemedi.',\n});`,
         },
       ],
     },
@@ -981,8 +1009,13 @@ export function TabGroup({ tabs, defaultTab, label = 'Tabs', className }) {
           title: 'Lazy panels',
           layout: 'stack' as const,
           preview: (() => {
+            function LazyTabContent({ label, onMount }: { label: string; onMount: () => void }) {
+              useEffect(() => { onMount(); }, []);
+              return <p className="text-sm text-text-secondary">{label} mounted on first activation.</p>;
+            }
             function LazyDemo() {
               const [log, setLog] = useState<string[]>(['Tab 1 mounted']);
+              const addLog = (entry: string) => setLog((l) => l.includes(entry) ? l : [...l, entry]);
               return (
                 <div className="w-full space-y-2">
                   <TabGroup
@@ -990,8 +1023,8 @@ export function TabGroup({ tabs, defaultTab, label = 'Tabs', className }) {
                     lazy
                     tabs={[
                       { id: 't1', label: 'Tab 1', content: <p className="text-sm text-text-secondary">Always mounted (initial).</p> },
-                      { id: 't2', label: 'Tab 2', content: (() => { setLog((l) => l.includes('Tab 2 mounted') ? l : [...l, 'Tab 2 mounted']); return <p className="text-sm text-text-secondary">Mounted on first activation.</p>; })() },
-                      { id: 't3', label: 'Tab 3', content: (() => { setLog((l) => l.includes('Tab 3 mounted') ? l : [...l, 'Tab 3 mounted']); return <p className="text-sm text-text-secondary">Mounted on first activation.</p>; })() },
+                      { id: 't2', label: 'Tab 2', content: <LazyTabContent label="Tab 2" onMount={() => addLog('Tab 2 mounted')} /> },
+                      { id: 't3', label: 'Tab 3', content: <LazyTabContent label="Tab 3" onMount={() => addLog('Tab 3 mounted')} /> },
                     ]}
                   />
                   <p className="text-xs text-text-disabled">Mount log: {log.join(' → ')}</p>

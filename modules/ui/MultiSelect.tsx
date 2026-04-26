@@ -2,7 +2,7 @@
 import { cn } from '@/libs/utils/cn';
 import { useEffect, useRef, useState } from 'react';
 
-export type MultiSelectOption = { value: string; label: string; disabled?: boolean };
+export type MultiSelectOption = { value: string; label: string; icon?: React.ReactNode; disabled?: boolean };
 
 export function MultiSelect({
   id,
@@ -14,6 +14,7 @@ export function MultiSelect({
   hint,
   error,
   disabled,
+  searchable,
   className,
 }: {
   id: string;
@@ -25,13 +26,20 @@ export function MultiSelect({
   hint?: string;
   error?: string;
   disabled?: boolean;
+  searchable?: boolean;
   className?: string;
 }) {
   const [internal, setInternal] = useState<string[]>(value ?? []);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const selected = value !== undefined ? value : internal;
+
+  const filtered = searchable && search
+    ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
+    : options;
 
   function toggle(v: string) {
     const next = selected.includes(v)
@@ -47,14 +55,14 @@ export function MultiSelect({
   }
 
   useEffect(() => {
+    if (!open) { setSearch(''); return; }
+    if (searchable) setTimeout(() => searchRef.current?.focus(), 30);
     function onOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener('mousedown', onOutside);
     return () => document.removeEventListener('mousedown', onOutside);
-  }, []);
+  }, [open, searchable]);
 
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'Escape') setOpen(false);
@@ -104,6 +112,7 @@ export function MultiSelect({
                 key={v}
                 className="inline-flex items-center gap-1 rounded-full bg-primary-subtle text-primary text-xs font-medium px-2 py-0.5"
               >
+                {opt?.icon && <span className="shrink-0">{opt.icon}</span>}
                 {opt?.label ?? v}
                 <button
                   type="button"
@@ -121,50 +130,73 @@ export function MultiSelect({
       </div>
 
       {open && (
-        <ul
-          role="listbox"
-          aria-labelledby={`${id}-label`}
-          aria-multiselectable="true"
-          className="z-20 w-full rounded-md border border-border bg-surface-raised shadow-lg py-1 max-h-48 overflow-y-auto"
-        >
-          {options.map((opt) => {
-            const checked = selected.includes(opt.value);
-            return (
-              <li
-                key={opt.value}
-                role="option"
-                aria-selected={checked}
-                aria-disabled={opt.disabled}
-                onClick={() => !opt.disabled && toggle(opt.value)}
-                onKeyDown={(e) => {
-                  if ((e.key === 'Enter' || e.key === ' ') && !opt.disabled) {
-                    e.preventDefault();
-                    toggle(opt.value);
-                  }
-                }}
-                tabIndex={opt.disabled ? -1 : 0}
+        <div className="z-20 w-full rounded-md border border-border bg-surface-raised shadow-lg overflow-hidden">
+          {searchable && (
+            <div className="p-2 border-b border-border">
+              <input
+                ref={searchRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search…"
                 className={cn(
-                  'flex items-center gap-2 px-3 py-2 text-sm cursor-pointer select-none',
-                  'hover:bg-surface-overlay transition-colors',
-                  'focus-visible:outline-none focus-visible:bg-surface-overlay',
-                  checked && 'text-primary font-medium',
-                  opt.disabled && 'opacity-50 cursor-not-allowed'
+                  'block w-full rounded-md border border-border bg-surface-base px-3 py-1.5 text-sm',
+                  'text-text-primary placeholder:text-text-disabled',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
                 )}
-              >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    'h-4 w-4 rounded border-2 flex items-center justify-center shrink-0 text-[10px]',
-                    checked ? 'bg-primary border-primary text-primary-fg' : 'border-border bg-surface-base'
-                  )}
-                >
-                  {checked && '✓'}
-                </span>
-                {opt.label}
-              </li>
-            );
-          })}
-        </ul>
+              />
+            </div>
+          )}
+          <ul
+            role="listbox"
+            aria-labelledby={`${id}-label`}
+            aria-multiselectable="true"
+            className="py-1 max-h-48 overflow-y-auto"
+          >
+            {filtered.length === 0 ? (
+              <li className="px-3 py-4 text-sm text-center text-text-secondary">No results found.</li>
+            ) : (
+              filtered.map((opt) => {
+                const checked = selected.includes(opt.value);
+                return (
+                  <li
+                    key={opt.value}
+                    role="option"
+                    aria-selected={checked}
+                    aria-disabled={opt.disabled}
+                    onClick={() => !opt.disabled && toggle(opt.value)}
+                    onKeyDown={(e) => {
+                      if ((e.key === 'Enter' || e.key === ' ') && !opt.disabled) {
+                        e.preventDefault();
+                        toggle(opt.value);
+                      }
+                    }}
+                    tabIndex={opt.disabled ? -1 : 0}
+                    className={cn(
+                      'flex items-center gap-2 px-3 py-2 text-sm cursor-pointer select-none',
+                      'hover:bg-surface-overlay transition-colors',
+                      'focus-visible:outline-none focus-visible:bg-surface-overlay',
+                      checked && 'text-primary font-medium',
+                      opt.disabled && 'opacity-50 cursor-not-allowed'
+                    )}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        'h-4 w-4 rounded border-2 flex items-center justify-center shrink-0 text-[10px]',
+                        checked ? 'bg-primary border-primary text-primary-fg' : 'border-border bg-surface-base'
+                      )}
+                    >
+                      {checked && '✓'}
+                    </span>
+                    {opt.icon && <span className="shrink-0" aria-hidden="true">{opt.icon}</span>}
+                    {opt.label}
+                  </li>
+                );
+              })
+            )}
+          </ul>
+        </div>
       )}
 
       {hint && !error && <p id={hintId} className="text-xs text-text-secondary">{hint}</p>}

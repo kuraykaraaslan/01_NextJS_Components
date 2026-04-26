@@ -10,17 +10,25 @@ import { Toggle } from '@/modules/ui/Toggle';
 import { DatePicker } from '@/modules/ui/DatePicker';
 import { CheckboxGroup } from '@/modules/ui/CheckboxGroup';
 import { TagInput } from '@/modules/ui/TagInput';
-import { ComboBox } from '@/modules/ui/ComboBox';
 import { MultiSelect } from '@/modules/ui/MultiSelect';
 import { FileInput } from '@/modules/ui/FileInput';
 import { DateRangePicker, TimePicker } from '@/modules/ui/DateRangePicker';
-import { countries, getEmojiFlag } from 'countries-list';
+import { countries } from 'countries-list';
+import * as Flags from 'country-flag-icons/react/3x2';
 import { useState } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
 
 const COUNTRY_OPTIONS = Object.entries(countries)
-  .map(([code, data]) => ({ value: code, label: `${getEmojiFlag(code as keyof typeof countries)} ${data.name}` }))
+  .map(([code, data]) => {
+    const Flag = Flags[code as keyof typeof Flags] as React.ComponentType<React.SVGProps<SVGSVGElement>> | undefined;
+    return {
+      value: code,
+      label: data.name,
+      icon: Flag ? <Flag style={{ width: 20, height: 14, borderRadius: 2 }} /> : null,
+    };
+  })
   .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }));
+
 
 function CountryMultiSelectDemo() {
   const [v, setV] = useState<string[]>([]);
@@ -372,44 +380,91 @@ export function Select({ id, label, options, placeholder, hint, error, disabled,
 }`,
       variants: [
         {
-          title: 'Default',
-          preview: (
-            <div className="w-full max-w-xs">
-              <Select id="sc-sl-default" label="Country" placeholder="Select a country" hint="Choose your country of residence."
-                options={[{ value: 'tr', label: 'Turkey' }, { value: 'us', label: 'United States' }, { value: 'de', label: 'Germany' }]} />
-            </div>
-          ),
-          code: `<Select id="country" label="Country" placeholder="Select a country"\n  options={[{ value: 'tr', label: 'Turkey' }, ...]} hint="Choose your country." />`,
+          title: 'Controlled',
+          preview: (() => {
+            const ROLES = [
+              { value: 'admin',  label: 'Admin'  },
+              { value: 'editor', label: 'Editor' },
+              { value: 'viewer', label: 'Viewer' },
+              { value: 'guest',  label: 'Guest'  },
+            ];
+            function ControlledSelectDemo() {
+              const [role, setRole] = useState('editor');
+              return (
+                <div className="w-full max-w-xs">
+                  <Select id="sc-sl-role" label="Role" options={ROLES} value={role}
+                    hint={`Selected: ${ROLES.find(r => r.value === role)?.label}`}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRole(e.target.value)} />
+                </div>
+              );
+            }
+            return <ControlledSelectDemo />;
+          })(),
+          code: `const ROLES = [\n  { value: 'admin', label: 'Admin' },\n  { value: 'editor', label: 'Editor' },\n  { value: 'viewer', label: 'Viewer' },\n];\n\nconst [role, setRole] = useState('editor');\n<Select id="role" label="Role" options={ROLES} value={role}\n  onChange={(e) => setRole(e.target.value)} />`,
         },
         {
-          title: 'Error',
-          preview: (
-            <div className="w-full max-w-xs">
-              <Select id="sc-sl-error" label="Country" placeholder="Select a country" error="Please select a country."
-                options={[{ value: 'tr', label: 'Turkey' }]} required />
-            </div>
-          ),
-          code: `<Select id="country" label="Country" placeholder="Select a country" error="Please select a country." required />`,
+          title: 'With icons',
+          preview: (() => {
+            const STATUSES = [
+              { value: 'active',   label: 'Active',   icon: <span className="text-success text-xs">●</span> },
+              { value: 'inactive', label: 'Inactive', icon: <span className="text-text-disabled text-xs">●</span> },
+              { value: 'pending',  label: 'Pending',  icon: <span className="text-warning text-xs">●</span> },
+              { value: 'banned',   label: 'Banned',   icon: <span className="text-error text-xs">●</span> },
+            ];
+            function IconSelectDemo() {
+              const [status, setStatus] = useState('active');
+              return (
+                <div className="w-full max-w-xs">
+                  <Select id="sc-sl-status" label="Status" options={STATUSES} value={status}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatus(e.target.value)} />
+                </div>
+              );
+            }
+            return <IconSelectDemo />;
+          })(),
+          code: `const STATUSES = [\n  { value: 'active',   label: 'Active',   icon: <span className="text-success">●</span> },\n  { value: 'inactive', label: 'Inactive', icon: <span className="text-text-disabled">●</span> },\n  { value: 'pending',  label: 'Pending',  icon: <span className="text-warning">●</span> },\n];\n\n<Select id="status" label="Status" options={STATUSES} value={status} onChange={setStatus} />`,
         },
         {
-          title: 'Disabled',
+          title: 'Validation states',
           preview: (
-            <div className="w-full max-w-xs">
-              <Select id="sc-sl-disabled" label="Country" options={[{ value: 'tr', label: 'Turkey' }]} disabled />
+            <div className="w-full max-w-xs space-y-3">
+              <Select id="sc-sl-error" label="Plan" placeholder="Select a plan" required
+                error="Please select a plan."
+                options={[{ value: 'free', label: 'Free' }, { value: 'pro', label: 'Pro' }, { value: 'team', label: 'Team' }]} />
+              <Select id="sc-sl-disabled" label="Plan" disabled
+                options={[{ value: 'pro', label: 'Pro' }]} value="pro" />
             </div>
           ),
-          code: `<Select id="country" label="Country" options={[...]} disabled />`,
+          code: `<Select id="plan" label="Plan" placeholder="Select a plan" required\n  error="Please select a plan." options={[...]} />\n\n<Select id="plan" label="Plan" disabled options={[...]} value="pro" />`,
         },
         {
           title: 'With countries',
           preview: (
             <div className="w-full max-w-xs">
               <Select id="sc-sl-countries" label="Country" placeholder="Select a country…"
-                hint="Powered by countries-list."
+                hint="Powered by countries-list + country-flag-icons."
                 options={COUNTRY_OPTIONS} />
             </div>
           ),
           code: `import { countries, getEmojiFlag } from 'countries-list';\n\nconst COUNTRY_OPTIONS = Object.entries(countries)\n  .map(([code, data]) => ({ value: code, label: \`\${getEmojiFlag(code)} \${data.name}\` }))\n  .sort((a, b) => a.label.localeCompare(b.label));\n\n<Select id="country" label="Country" placeholder="Select a country…"\n  options={COUNTRY_OPTIONS} hint="Powered by countries-list." />`,
+        },
+        {
+          title: 'Searchable',
+          preview: (() => {
+            function SearchableSelectDemo() {
+              const [val, setVal] = useState('');
+              return (
+                <div className="w-full max-w-xs">
+                  <Select id="sc-sl-search" label="Country" placeholder="Select a country…" searchable
+                    hint="Type to filter the list."
+                    options={COUNTRY_OPTIONS} value={val}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setVal(e.target.value)} />
+                </div>
+              );
+            }
+            return <SearchableSelectDemo />;
+          })(),
+          code: `<Select id="country" label="Country" placeholder="Select a country…" searchable\n  options={COUNTRY_OPTIONS} value={val} onChange={(e) => setVal(e.target.value)}\n  hint="Type to filter the list." />`,
         },
       ],
     },
@@ -654,17 +709,17 @@ export function CheckboxGroup({ legend, options, selected, onChange, disabled, e
           title: 'Default',
           preview: (() => {
             function CheckboxGroupDemo() {
-              const [sel, setSel] = useState<string[]>(['React', 'TypeScript']);
-              return <CheckboxGroup legend="Tech stack" options={['React','Vue','Angular','TypeScript','JavaScript','Node.js']} selected={sel} onChange={setSel} />;
+              const [sel, setSel] = useState<string[]>(['react', 'typescript']);
+              return <CheckboxGroup legend="Tech stack" options={[{value:'react',label:'React'},{value:'vue',label:'Vue'},{value:'angular',label:'Angular'},{value:'typescript',label:'TypeScript'},{value:'javascript',label:'JavaScript'},{value:'nodejs',label:'Node.js'}]} selected={sel} onChange={setSel} />;
             }
             return <CheckboxGroupDemo />;
           })(),
-          code: `const [selected, setSelected] = useState(['React', 'TypeScript']);\n<CheckboxGroup\n  legend="Tech stack"\n  options={['React','Vue','Angular','TypeScript','JavaScript','Node.js']}\n  selected={selected}\n  onChange={setSelected}\n/>`,
+          code: `const [selected, setSelected] = useState(['react', 'typescript']);\n<CheckboxGroup\n  legend="Tech stack"\n  options={[\n    { value: 'react', label: 'React' },\n    { value: 'vue', label: 'Vue' },\n    { value: 'typescript', label: 'TypeScript' },\n  ]}\n  selected={selected}\n  onChange={setSelected}\n/>`,
         },
         {
           title: 'Disabled',
-          preview: <CheckboxGroup legend="Permissions" options={['Read','Write','Delete']} selected={['Read']} onChange={() => {}} disabled />,
-          code: `<CheckboxGroup legend="Permissions" options={['Read','Write','Delete']} selected={['Read']} onChange={() => {}} disabled />`,
+          preview: <CheckboxGroup legend="Permissions" options={[{value:'read',label:'Read'},{value:'write',label:'Write'},{value:'delete',label:'Delete'}]} selected={['read']} onChange={() => {}} disabled />,
+          code: `<CheckboxGroup\n  legend="Permissions"\n  options={[\n    { value: 'read', label: 'Read' },\n    { value: 'write', label: 'Write' },\n    { value: 'delete', label: 'Delete' },\n  ]}\n  selected={['read']}\n  onChange={() => {}}\n  disabled\n/>`,
         },
       ],
     },
@@ -732,73 +787,6 @@ export function TagInput({ id, label, hint, error, value, onChange, placeholder 
       ],
     },
     {
-      id: 'combo-box',
-      title: 'ComboBox',
-      category: 'Molecule',
-      abbr: 'Cx',
-      description: 'Arama özellikli custom select dropdown. role="listbox" / role="option" ARIA pattern, portal olmadan tam keyboard desteği, clearable prop.',
-      filePath: 'modules/ui/ComboBox.tsx',
-      sourceCode: `'use client';
-import { cn } from '@/libs/utils/cn';
-import { useEffect, useRef, useState } from 'react';
-
-export function ComboBox({ id, label, options, value, onChange, placeholder = 'Select…', searchPlaceholder = 'Search…', hint, error, disabled, required, clearable = true, className }) {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  // outside click + Escape handlers
-  const filtered = search ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase())) : options;
-  return (
-    <div className={cn('space-y-1', className)}>
-      <label className="block text-sm font-medium text-text-primary">{label}</label>
-      <button type="button" onClick={() => !disabled && setOpen((p) => !p)} disabled={disabled} aria-haspopup="listbox" aria-expanded={open}
-        className={cn('flex w-full items-center justify-between rounded-md border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-sunken', error ? 'border-error ring-1 ring-error bg-error-subtle' : 'border-border bg-surface-base')}>
-        <span className="truncate">{options.find((o) => o.value === value)?.label ?? placeholder}</span>
-        <span aria-hidden="true" className={cn('ml-2 shrink-0 text-text-disabled text-xs transition-transform', open && 'rotate-180')}>▾</span>
-      </button>
-      {open && (
-        <div role="listbox" className="relative z-50 mt-1 w-full rounded-lg border border-border bg-surface-raised shadow-lg overflow-hidden">
-          <div className="p-2 border-b border-border"><input ref={searchRef} type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={searchPlaceholder} className="block w-full rounded-md border border-border bg-surface-base px-3 py-1.5 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus" /></div>
-          <div className="max-h-48 overflow-y-auto py-1">
-            {filtered.map((opt) => <button key={opt.value} role="option" aria-selected={opt.value === value} onClick={() => { onChange(opt.value); setOpen(false); }} className={cn('w-full px-3 py-2 text-left text-sm', opt.value === value ? 'bg-primary-subtle text-primary' : 'text-text-primary hover:bg-surface-overlay')}>{opt.label}</button>)}
-          </div>
-        </div>
-      )}
-      {hint && !error && <p className="text-xs text-text-secondary">{hint}</p>}
-      {error && <p className="text-xs text-error" role="alert">{error}</p>}
-    </div>
-  );
-}`,
-      variants: [
-        {
-          title: 'Default',
-          preview: (() => {
-            function ComboBoxDemo() {
-              const [val, setVal] = useState('');
-              const COUNTRIES = [
-                { value: 'tr', label: 'Turkey' }, { value: 'us', label: 'United States' },
-                { value: 'de', label: 'Germany' }, { value: 'fr', label: 'France' },
-                { value: 'gb', label: 'United Kingdom' }, { value: 'jp', label: 'Japan' },
-                { value: 'ca', label: 'Canada' }, { value: 'au', label: 'Australia' },
-              ];
-              return <div className="w-full max-w-xs"><ComboBox id="sc-cx-default" label="Country" options={COUNTRIES} value={val} onChange={setVal} hint="Type to filter the list." /></div>;
-            }
-            return <ComboBoxDemo />;
-          })(),
-          code: `const [val, setVal] = useState('');\n<ComboBox\n  id="country"\n  label="Country"\n  options={[{ value: 'tr', label: 'Turkey' }, ...]}\n  value={val}\n  onChange={setVal}\n  hint="Type to filter the list."\n/>`,
-        },
-        {
-          title: 'Error / Disabled',
-          preview: (
-            <div className="w-full max-w-xs space-y-3">
-              <ComboBox id="sc-cx-err" label="Framework" options={[{value:'react',label:'React'},{value:'vue',label:'Vue'}]} value="" onChange={() => {}} error="Please select a framework." required />
-              <ComboBox id="sc-cx-dis" label="Framework" options={[{value:'react',label:'React'}]} value="react" onChange={() => {}} disabled />
-            </div>
-          ),
-          code: `<ComboBox id="fw" label="Framework" options={[...]} value="" onChange={setVal} error="Please select a framework." required />\n<ComboBox id="fw" label="Framework" options={[...]} value="react" onChange={() => {}} disabled />`,
-        },
-      ],
-    },
-    {
       id: 'multi-select',
       title: 'MultiSelect',
       category: 'Molecule',
@@ -827,6 +815,22 @@ export function ComboBox({ id, label, options, value, onChange, placeholder = 'S
           layout: 'stack' as const,
           preview: <CountryMultiSelectDemo />,
           code: `import { countries, getEmojiFlag } from 'countries-list';\n\nconst COUNTRY_OPTIONS = Object.entries(countries)\n  .map(([code, data]) => ({ value: code, label: \`\${getEmojiFlag(code)} \${data.name}\` }))\n  .sort((a, b) => a.label.localeCompare(b.label));\n\nfunction Demo() {\n  const [v, setV] = useState([]);\n  return (\n    <MultiSelect id="ms-countries" label="Countries"\n      options={COUNTRY_OPTIONS} placeholder="Select countries…"\n      value={v} onChange={setV} hint="Select one or more countries." />\n  );\n}`,
+        },
+        {
+          title: 'Searchable',
+          layout: 'stack' as const,
+          preview: (() => {
+            function SearchableMultiSelectDemo() {
+              const [v, setV] = useState<string[]>([]);
+              return (
+                <MultiSelect id="ms-search" label="Countries" searchable
+                  options={COUNTRY_OPTIONS} placeholder="Search and select…"
+                  value={v} onChange={setV} hint="Type to filter the list." />
+              );
+            }
+            return <SearchableMultiSelectDemo />;
+          })(),
+          code: `<MultiSelect id="countries" label="Countries" searchable\n  options={COUNTRY_OPTIONS} placeholder="Search and select…"\n  value={v} onChange={setV} hint="Type to filter the list." />`,
         },
       ],
     },
