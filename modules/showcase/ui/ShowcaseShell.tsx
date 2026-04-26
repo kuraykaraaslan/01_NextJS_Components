@@ -113,6 +113,7 @@ export function ShowcaseShell() {
   const dataMap = Object.fromEntries(data.map((c) => [c.id, c]));
 
   const [selectedId, setSelectedId] = useState('button');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const selected = dataMap[selectedId];
 
   const navGroups = useMemo(() =>
@@ -139,18 +140,24 @@ export function ShowcaseShell() {
           <p className="text-xs text-text-secondary">Component library</p>
         </div>
       }
+      compactLogo={<span className="text-sm font-black text-primary">UI</span>}
+      sidebarCollapsed={sidebarCollapsed}
       sidebar={
         <AppSidebar
           navGroups={navGroups}
           activeId={selectedId}
           onSelect={setSelectedId}
+          collapsed={sidebarCollapsed}
+          onCollapsedChange={setSidebarCollapsed}
           footer={
-            <div className="p-3 flex items-center gap-2">
+            <div className={cn('p-3 flex items-center', sidebarCollapsed ? 'justify-center' : 'gap-2')}>
               <span className="w-7 h-7 rounded-full bg-primary-subtle flex items-center justify-center text-xs font-bold text-primary shrink-0" aria-hidden="true">D</span>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-text-primary truncate">Developer</p>
-                <p className="text-[10px] text-text-secondary truncate">Component Library</p>
-              </div>
+              {!sidebarCollapsed && (
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-text-primary truncate">Developer</p>
+                  <p className="text-[10px] text-text-secondary truncate">Component Library</p>
+                </div>
+              )}
             </div>
           }
         />

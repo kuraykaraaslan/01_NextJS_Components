@@ -55,6 +55,7 @@ const NAV_ITEMS = [
 
 function AppShellFullDemo() {
   const [activeId, setActiveId] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const allItems = NAV_GROUPS.flatMap((g) => g.items);
   const activeLabel = allItems.find((i) => i.id === activeId)?.label ?? '';
 
@@ -62,18 +63,24 @@ function AppShellFullDemo() {
     <div className="w-full rounded-xl overflow-hidden border border-border" style={{ height: 480 }}>
       <AppShell
         logo={<span className="text-base font-black text-primary tracking-tight">Acme</span>}
+        compactLogo={<span className="text-sm font-black text-primary">A</span>}
+        sidebarCollapsed={sidebarCollapsed}
         sidebar={
           <AppSidebar
             navGroups={NAV_GROUPS}
             activeId={activeId}
             onSelect={setActiveId}
+            collapsed={sidebarCollapsed}
+            onCollapsedChange={setSidebarCollapsed}
             footer={
-              <div className="p-3 flex items-center gap-2">
+              <div className={sidebarCollapsed ? 'p-3 flex items-center justify-center' : 'p-3 flex items-center gap-2'}>
                 <Avatar name="Jane Doe" size="sm" status="online" />
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold text-text-primary truncate">Jane Doe</p>
-                  <p className="text-[10px] text-text-secondary truncate">Admin</p>
-                </div>
+                {!sidebarCollapsed && (
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-text-primary truncate">Jane Doe</p>
+                    <p className="text-[10px] text-text-secondary truncate">Admin</p>
+                  </div>
+                )}
               </div>
             }
           />
@@ -337,18 +344,25 @@ export function buildAppPatternsData(): ShowcaseComponent[] {
       sourceCode: `'use client';
 import { cn } from '@/libs/utils/cn';
 
-export function AppShell({ logo, sidebar, topbar, children, className, ...rest }) {
+export function AppShell({ logo, compactLogo, sidebarCollapsed = false, sidebar, topbar, children, className, ...rest }) {
+  const logoContent = sidebarCollapsed && compactLogo ? compactLogo : (logo ?? compactLogo);
+
   return (
-    <div className={cn('flex h-full min-h-screen bg-surface-base', className)} {...rest}>
+    <div className={cn('flex h-screen overflow-hidden bg-surface-base', className)} {...rest}>
       {sidebar && (
-        <aside className="hidden lg:flex flex-col shrink-0 border-r border-border bg-surface-raised">
-          {logo && (
-            <div className="flex items-center h-14 px-4 border-b border-border shrink-0">{logo}</div>
+        <aside className="relative hidden lg:flex flex-col h-full min-h-0 shrink-0 border-r border-border bg-surface-raised">
+          {logoContent && (
+            <div className={cn(
+              'absolute inset-x-0 top-0 z-10 flex items-center h-14 border-b border-border bg-surface-raised overflow-hidden',
+              sidebarCollapsed && compactLogo ? 'justify-center px-2' : 'px-4'
+            )}>{logoContent}</div>
           )}
-          {sidebar}
+          <div className={cn('flex min-h-0 flex-1', logoContent && 'pt-14')}>
+            {sidebar}
+          </div>
         </aside>
       )}
-      <div className="flex flex-1 flex-col min-w-0">
+      <div className="flex flex-1 flex-col min-w-0 min-h-0">
         {topbar && (
           <header className="sticky top-0 z-30 flex items-center h-14 px-4 border-b border-border bg-surface-raised/90 backdrop-blur shrink-0">
             {topbar}
@@ -366,13 +380,19 @@ export function AppShell({ logo, sidebar, topbar, children, className, ...rest }
           title: 'Sidebar + topbar + content',
           layout: 'stack' as const,
           preview: <AppShellFullDemo />,
-          code: `<AppShell
+          code: `const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+<AppShell
   logo={<span className="font-black text-primary">Acme</span>}
+  compactLogo={<span className="font-black text-primary">A</span>}
+  sidebarCollapsed={sidebarCollapsed}
   sidebar={
     <AppSidebar
       navGroups={navGroups}
       activeId={activeId}
       onSelect={setActiveId}
+      collapsed={sidebarCollapsed}
+      onCollapsedChange={setSidebarCollapsed}
       footer={<Avatar name="Jane Doe" size="sm" status="online" />}
     />
   }
@@ -420,38 +440,44 @@ import { cn } from '@/libs/utils/cn';
 import { useState } from 'react';
 import { Badge } from '@/modules/ui/Badge';
 
-export function AppSidebar({ navGroups, navItems, activeId, onSelect, defaultCollapsed = false, footer, className, ...rest }) {
-  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+export function AppSidebar({ navGroups, navItems, activeId, onSelect, collapsed, defaultCollapsed = false, onCollapsedChange, footer, className, ...rest }) {
+  const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
+  const isCollapsed = collapsed ?? internalCollapsed;
   const groups = navGroups ?? (navItems ? [{ items: navItems }] : []);
 
+  const setCollapsed = (next) => {
+    if (collapsed === undefined) setInternalCollapsed(next);
+    onCollapsedChange?.(next);
+  };
+
   return (
-    <div className={cn('flex flex-col flex-1 min-h-0 transition-all duration-200', collapsed ? 'w-14' : 'w-56', className)} {...rest}>
-      <div className={cn('flex items-center px-2 py-2 border-b border-border', collapsed ? 'justify-center' : 'justify-end')}>
-        <button type="button" onClick={() => setCollapsed((v) => !v)}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+    <div data-collapsed={isCollapsed ? 'true' : 'false'} className={cn('flex flex-col flex-1 min-h-0 transition-all duration-200', isCollapsed ? 'w-14' : 'w-56', className)} {...rest}>
+      <div className={cn('flex items-center px-2 py-2 border-b border-border', isCollapsed ? 'justify-center' : 'justify-end')}>
+        <button type="button" onClick={() => setCollapsed(!isCollapsed)}
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className="p-1.5 rounded text-text-secondary hover:bg-surface-overlay transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus">
-          <span aria-hidden="true" className={cn('block text-lg transition-transform', collapsed ? 'rotate-180' : '')}>‹</span>
+          <span aria-hidden="true" className={cn('block text-lg transition-transform', isCollapsed ? 'rotate-180' : '')}>‹</span>
         </button>
       </div>
       <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4" aria-label="Sidebar navigation">
         {groups.map((group, gi) => (
           <div key={group.label ?? gi}>
-            {group.label && !collapsed && (
+            {group.label && !isCollapsed && (
               <p className="text-[10px] font-semibold uppercase tracking-widest text-text-disabled px-3 mb-1">{group.label}</p>
             )}
             <div className="space-y-0.5">
               {group.items.map((item) => (
                 <button key={item.id} type="button"
                   aria-current={item.id === activeId ? 'page' : undefined}
-                  title={collapsed ? item.label : undefined}
+                  title={isCollapsed ? item.label : undefined}
                   onClick={() => onSelect?.(item.id)}
                   className={cn('w-full flex items-center gap-2.5 rounded-lg text-sm transition-colors',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
-                    collapsed ? 'justify-center px-2 py-2' : 'px-3 py-2 text-left',
+                    isCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2 text-left',
                     item.id === activeId ? 'bg-primary-subtle text-primary font-medium' : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay')}>
                   {item.icon && <span aria-hidden="true" className="shrink-0 w-4 text-center">{item.icon}</span>}
-                  {!collapsed && <span className="flex-1 truncate">{item.label}</span>}
-                  {!collapsed && item.badge > 0 && <Badge variant="primary" size="sm">{item.badge}</Badge>}
+                  {!isCollapsed && <span className="flex-1 truncate">{item.label}</span>}
+                  {!isCollapsed && item.badge > 0 && <Badge variant="primary" size="sm">{item.badge}</Badge>}
                 </button>
               ))}
             </div>
@@ -459,7 +485,7 @@ export function AppSidebar({ navGroups, navItems, activeId, onSelect, defaultCol
         ))}
       </nav>
       {footer && (
-        <div className={cn('border-t border-border shrink-0', collapsed ? 'flex justify-center px-2 py-3' : '')}>{footer}</div>
+        <div className={cn('border-t border-border shrink-0', isCollapsed ? 'flex justify-center px-2 py-3' : '')}>{footer}</div>
       )}
     </div>
   );
