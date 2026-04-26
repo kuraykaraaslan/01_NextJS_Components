@@ -12,7 +12,7 @@ export type AppNavItem = {
 type AppNavProps = {
   logo?: React.ReactNode;
   navItems?: AppNavItem[];
-  actions?: React.ReactNode;
+  children?: React.ReactNode;
   sticky?: boolean;
   bordered?: boolean;
   className?: string;
@@ -21,7 +21,7 @@ type AppNavProps = {
 export function AppNav({
   logo,
   navItems = [],
-  actions,
+  children,
   sticky = false,
   bordered = true,
   className,
@@ -83,9 +83,9 @@ export function AppNav({
         ))}
       </nav>
 
-      {actions && (
+      {children && (
         <div className="flex items-center gap-2 ml-auto shrink-0">
-          {actions}
+          {children}
         </div>
       )}
     </header>

@@ -211,13 +211,10 @@ function AppNavMarketingDemo() {
       <AppNav
         logo={<span className="text-base font-bold text-primary">Acme</span>}
         navItems={NAV_ITEMS}
-        actions={
-          <>
-            <Button variant="ghost" size="sm">Log in</Button>
-            <Button variant="primary" size="sm">Sign up</Button>
-          </>
-        }
-      />
+      >
+        <Button variant="ghost" size="sm">Log in</Button>
+        <Button variant="primary" size="sm">Sign up</Button>
+      </AppNav>
       <div className="px-6 py-6 text-sm text-text-secondary bg-surface-base">
         Page content — resize window to see mobile hamburger.
       </div>
@@ -236,8 +233,9 @@ function AppNavAppDemo() {
           { label: 'Reports'   },
           { label: 'Settings'  },
         ]}
-        actions={<UserMenu user={DEMO_USER} />}
-      />
+      >
+        <UserMenu user={DEMO_USER} />
+      </AppNav>
       <div className="px-6 py-6 text-sm text-text-secondary bg-surface-base">Page content</div>
     </div>
   );
@@ -560,7 +558,7 @@ import { cn } from '@/libs/utils/cn';
 import { NavDrawer } from '@/modules/app/NavDrawer';
 import { Button } from '@/modules/ui/Button';
 
-export function AppNav({ logo, navItems = [], actions, sticky = false, bordered = true, className, ...rest }) {
+export function AppNav({ logo, navItems = [], children, sticky = false, bordered = true, className, ...rest }) {
   return (
     <header className={cn('w-full flex items-center gap-3 px-4 py-3 bg-surface-raised',
       bordered && 'border-b border-border', sticky && 'sticky top-0 z-40', className)} {...rest}>
@@ -588,7 +586,7 @@ export function AppNav({ logo, navItems = [], actions, sticky = false, bordered 
           </a>
         ))}
       </nav>
-      {actions && <div className="flex items-center gap-2 ml-auto shrink-0">{actions}</div>}
+      {children && <div className="flex items-center gap-2 ml-auto shrink-0">{children}</div>}
     </header>
   );
 }`,
@@ -604,13 +602,10 @@ export function AppNav({ logo, navItems = [], actions, sticky = false, bordered 
     { label: 'Products', href: '/products' },
     { label: 'Pricing',  href: '/pricing' },
   ]}
-  actions={
-    <>
-      <Button variant="ghost" size="sm">Log in</Button>
-      <Button variant="primary" size="sm">Sign up</Button>
-    </>
-  }
-/>`,
+>
+  <Button variant="ghost" size="sm">Log in</Button>
+  <Button variant="primary" size="sm">Sign up</Button>
+</AppNav>`,
         },
         {
           title: 'App bar (links + UserMenu)',
@@ -623,8 +618,9 @@ export function AppNav({ logo, navItems = [], actions, sticky = false, bordered 
     { label: 'Analytics' },
     { label: 'Reports' },
   ]}
-  actions={<UserMenu user={currentUser} />}
-/>`,
+>
+  <UserMenu user={currentUser} />
+</AppNav>`,
         },
       ],
     },
