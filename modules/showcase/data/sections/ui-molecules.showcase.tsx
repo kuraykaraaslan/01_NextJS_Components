@@ -11,6 +11,7 @@ import { DatePicker } from '@/modules/ui/DatePicker';
 import { CheckboxGroup } from '@/modules/ui/CheckboxGroup';
 import { TagInput } from '@/modules/ui/TagInput';
 import { MultiSelect } from '@/modules/ui/MultiSelect';
+import { ComboBox, type ComboBoxOption } from '@/modules/ui/ComboBox';
 import { FileInput } from '@/modules/ui/FileInput';
 import { DateRangePicker, TimePicker } from '@/modules/ui/DateRangePicker';
 import { countries } from 'countries-list';
@@ -28,6 +29,14 @@ const COUNTRY_OPTIONS = Object.entries(countries)
     };
   })
   .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }));
+
+const COMBO_OPTIONS: ComboBoxOption[] = [
+  { value: 'nextjs', label: 'Next.js', description: 'App Router framework' },
+  { value: 'react', label: 'React', description: 'UI library for components' },
+  { value: 'typescript', label: 'TypeScript', description: 'Typed JavaScript' },
+  { value: 'tailwind', label: 'Tailwind CSS', description: 'Utility-first CSS toolkit' },
+  { value: 'storybook', label: 'Storybook', description: 'Component documentation workspace' },
+];
 
 
 function CountryMultiSelectDemo() {
@@ -103,6 +112,53 @@ function MultiSelectDemo() {
       onChange={setV}
       placeholder="Pick frameworks…"
     />
+  );
+}
+
+function ComboBoxDemo() {
+  const [value, setValue] = useState('nextjs');
+  return (
+    <div className="w-full max-w-sm space-y-1">
+      <ComboBox
+        id="cb-demo"
+        label="Framework"
+        options={COMBO_OPTIONS}
+        value={value}
+        onChange={setValue}
+        hint="Search or pick from the list."
+      />
+      <p className="text-xs text-text-secondary">Selected: {value || 'none'}</p>
+    </div>
+  );
+}
+
+function AsyncComboBoxDemo() {
+  const [value, setValue] = useState('');
+
+  async function search(query: string) {
+    const normalized = query.trim().toLowerCase();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+
+    if (!normalized) return COMBO_OPTIONS;
+    return COMBO_OPTIONS.filter((opt) => (
+      opt.label.toLowerCase().includes(normalized)
+      || opt.description?.toLowerCase().includes(normalized)
+    ));
+  }
+
+  return (
+    <div className="w-full max-w-sm space-y-1">
+      <ComboBox
+        id="cb-async"
+        label="Async search"
+        options={COMBO_OPTIONS}
+        value={value}
+        onChange={setValue}
+        onSearch={search}
+        placeholder="Type to search..."
+      />
+      <p className="text-xs text-text-secondary">Selected: {value || 'none'}</p>
+    </div>
   );
 }
 
@@ -835,6 +891,29 @@ export function TagInput({ id, label, hint, error, value, onChange, placeholder 
       ],
     },
     {
+      id: 'combo-box',
+      title: 'ComboBox',
+      category: 'Molecule',
+      abbr: 'Cb',
+      description: 'Single-select combobox with type-to-filter behavior, keyboard navigation, and optional async search.',
+      filePath: 'modules/ui/ComboBox.tsx',
+      sourceCode: `'use client';\nimport { cn } from '@/libs/utils/cn';\nimport { useState } from 'react';\n\nexport function ComboBox({ id, label, options, value, onChange, onSearch }) {\n  // searchable single-select combobox with async search support\n}`,
+      variants: [
+        {
+          title: 'Controlled selection',
+          layout: 'stack' as const,
+          preview: <ComboBoxDemo />,
+          code: `function Demo() {\n  const [value, setValue] = useState('nextjs');\n  return (\n    <ComboBox\n      id="framework"\n      label="Framework"\n      options={COMBO_OPTIONS}\n      value={value}\n      onChange={setValue}\n    />\n  );\n}`,
+        },
+        {
+          title: 'Async search',
+          layout: 'stack' as const,
+          preview: <AsyncComboBoxDemo />,
+          code: `<ComboBox id="search" label="Async search" options={COMBO_OPTIONS} onSearch={search} value={value} onChange={setValue} />`,
+        },
+      ],
+    },
+    {
       id: 'file-input',
       title: 'FileInput',
       category: 'Molecule',
@@ -854,6 +933,12 @@ export function TagInput({ id, label, hint, error, value, onChange, placeholder 
           layout: 'stack' as const,
           preview: <FileInput id="fi-multi" label="Attachments" multiple hint="Up to 5 MB each" maxSizeBytes={5 * 1024 * 1024} />,
           code: `<FileInput id="attachments" label="Attachments" multiple hint="Up to 5 MB each" maxSizeBytes={5242880} />`,
+        },
+        {
+          title: 'With upload action',
+          layout: 'stack' as const,
+          preview: <FileInput id="fi-upload" label="Project attachments" multiple hint="Up to 5 MB each" maxSizeBytes={5 * 1024 * 1024} onUpload={async (files) => { await new Promise((r) => setTimeout(r, 800)); console.log('uploaded', files); }} uploadLabel="Upload" />,
+          code: `<FileInput id="attachments" label="Project attachments" multiple maxSizeBytes={5242880}\n  onUpload={uploadFiles} uploadLabel="Upload" />`,
         },
         {
           title: 'Disabled',

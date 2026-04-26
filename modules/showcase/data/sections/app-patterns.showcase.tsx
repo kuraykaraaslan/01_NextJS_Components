@@ -5,12 +5,24 @@ import { AppTopBar } from '@/modules/app/AppTopBar';
 import { AppNav } from '@/modules/app/AppNav';
 import { NavDrawer } from '@/modules/app/NavDrawer';
 import { UserMenu } from '@/modules/app/UserMenu';
-import { GlobalSearch } from '@/modules/app/GlobalSearch';
+import { GlobalSearch, type SearchResult } from '@/modules/app/GlobalSearch';
+import { AppCommandBar, type CommandItem } from '@/modules/app/AppCommandBar';
+import { ConfirmDialog } from '@/modules/app/ConfirmDialog';
+import { Form } from '@/modules/app/Form';
+import { Input } from '@/modules/ui/Input';
+import { Select } from '@/modules/ui/Select';
+import { MultiSelect } from '@/modules/ui/MultiSelect';
+import { Toggle } from '@/modules/ui/Toggle';
+import { Textarea } from '@/modules/ui/Textarea';
+import { DataListingPage } from '@/modules/app/DataListingPage';
+import { DetailHeader } from '@/modules/app/DetailHeader';
+import { FilterBar, type FilterField, type FilterValues } from '@/modules/app/FilterBar';
 import { Avatar } from '@/modules/ui/Avatar';
 import { Badge } from '@/modules/ui/Badge';
 import { Button } from '@/modules/ui/Button';
 import { Card } from '@/modules/ui/Card';
 import { useState } from 'react';
+import type { TableColumn } from '@/modules/ui/Table';
 import type { ShowcaseComponent } from '../showcase.types';
 
 // ── Shared demo data ────────────────────────────────────────────────────────
@@ -51,6 +63,84 @@ const NAV_ITEMS = [
   { label: 'Blog',     href: '#' },
 ];
 
+const SEARCH_RESULTS: SearchResult[] = [
+  { id: 'dash', label: 'Dashboard', description: 'Overview page', icon: '🏠', category: 'Pages' },
+  { id: 'users', label: 'Users', description: 'Manage team members', icon: '👥', category: 'Pages' },
+  { id: 'billing', label: 'Billing', description: 'Invoices and plans', icon: '💳', category: 'Settings' },
+  { id: 'audit', label: 'Audit Logs', description: 'Security and activity logs', icon: '🧾', category: 'Settings' },
+  { id: 'new-project', label: 'Create Project', description: 'Quick action', icon: '➕', category: 'Actions' },
+];
+
+type TeamRow = {
+  name: string;
+  role: string;
+  status: 'Active' | 'Invited' | 'Suspended';
+};
+
+const TEAM_COLUMNS: TableColumn<TeamRow>[] = [
+  { key: 'name', header: 'Name', sortable: true },
+  { key: 'role', header: 'Role', sortable: true },
+  {
+    key: 'status',
+    header: 'Status',
+    render: (row) => (
+      <Badge
+        variant={
+          row.status === 'Active'
+            ? 'success'
+            : row.status === 'Invited'
+              ? 'info'
+              : 'warning'
+        }
+      >
+        {row.status}
+      </Badge>
+    ),
+  },
+];
+
+const TEAM_ROWS: TeamRow[] = [
+  { name: 'Jane Doe', role: 'Admin', status: 'Active' },
+  { name: 'John Smith', role: 'Editor', status: 'Invited' },
+  { name: 'Mina Park', role: 'Viewer', status: 'Active' },
+  { name: 'Ali Kaya', role: 'Editor', status: 'Suspended' },
+];
+
+
+const FILTER_FIELDS: FilterField[] = [
+  {
+    type: 'select',
+    id: 'status',
+    label: 'Status',
+    options: [
+      { value: 'active', label: 'Active' },
+      { value: 'invited', label: 'Invited' },
+      { value: 'suspended', label: 'Suspended' },
+    ],
+    placeholder: 'All statuses',
+  },
+  {
+    type: 'multiselect',
+    id: 'role',
+    label: 'Role',
+    options: [
+      { value: 'admin', label: 'Admin' },
+      { value: 'editor', label: 'Editor' },
+      { value: 'viewer', label: 'Viewer' },
+    ],
+    placeholder: 'Any role',
+  },
+  { type: 'daterange', id: 'period', label: 'Created at' },
+  { type: 'tags', id: 'tags', label: 'Tags', placeholder: 'Add filter tag…' },
+];
+
+const INITIAL_FILTER_VALUES: FilterValues = {
+  status: '',
+  role: [],
+  period: { start: null, end: null },
+  tags: [],
+};
+
 // ── Demo components ─────────────────────────────────────────────────────────
 
 function AppShellFullDemo() {
@@ -72,17 +162,17 @@ function AppShellFullDemo() {
             onSelect={setActiveId}
             collapsed={sidebarCollapsed}
             onCollapsedChange={setSidebarCollapsed}
-            footer={
-              <div className={sidebarCollapsed ? 'p-3 flex items-center justify-center' : 'p-3 flex items-center gap-2'}>
+            footer={({ collapsed }) => (
+              <div className={collapsed ? 'p-3 flex items-center justify-center' : 'p-3 flex items-center gap-2'}>
                 <Avatar name="Jane Doe" size="sm" status="online" />
-                {!sidebarCollapsed && (
+                {!collapsed && (
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-text-primary truncate">Jane Doe</p>
                     <p className="text-[10px] text-text-secondary truncate">Admin</p>
                   </div>
                 )}
               </div>
-            }
+            )}
           />
         }
         topbar={
@@ -149,15 +239,17 @@ function AppSidebarExpandedDemo() {
           navGroups={NAV_GROUPS}
           activeId={activeId}
           onSelect={setActiveId}
-          footer={
-            <div className="p-3 flex items-center gap-2">
+          footer={({ collapsed }) => (
+            <div className={collapsed ? 'p-3 flex items-center justify-center' : 'p-3 flex items-center gap-2'}>
               <Avatar name="Jane Doe" size="sm" status="online" />
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-text-primary truncate">Jane Doe</p>
-                <Badge variant="primary" size="sm">Admin</Badge>
-              </div>
+              {!collapsed && (
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-text-primary truncate">Jane Doe</p>
+                  <Badge variant="primary" size="sm">Admin</Badge>
+                </div>
+              )}
             </div>
-          }
+          )}
         />
       </div>
     </div>
@@ -330,6 +422,241 @@ function UserMenuCustomDemo() {
   );
 }
 
+function GlobalSearchStandaloneDemo() {
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [selected, setSelected] = useState('Nothing selected');
+
+  function handleSearch(query: string) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      setResults([]);
+      return;
+    }
+    setResults(
+      SEARCH_RESULTS.filter((item) => (
+        item.label.toLowerCase().includes(q)
+        || item.description?.toLowerCase().includes(q)
+        || item.category?.toLowerCase().includes(q)
+      ))
+    );
+  }
+
+  return (
+    <div className="w-full max-w-xl space-y-2">
+      <GlobalSearch
+        placeholder="Search pages and actions…"
+        results={results}
+        onSearch={handleSearch}
+        onSelect={(item) => setSelected(item.label)}
+      />
+      <p className="text-xs text-text-secondary">Selected: {selected}</p>
+    </div>
+  );
+}
+
+function GlobalSearchLoadingDemo() {
+  return (
+    <div className="w-full max-w-xl">
+      <GlobalSearch
+        placeholder="Type to search (loading demo)…"
+        loading
+        results={SEARCH_RESULTS}
+        onSearch={() => {}}
+        onSelect={() => {}}
+      />
+    </div>
+  );
+}
+
+function AppCommandBarDemo({ custom }: { custom?: boolean }) {
+  const customItems: CommandItem[] = [
+    { icon: '🛍️', label: 'View Orders',     shortcut: 'G O', category: 'Navigation' },
+    { icon: '📦', label: 'Inventory',       shortcut: 'G I', category: 'Navigation' },
+    { icon: '💰', label: 'New Sale',        shortcut: '⌘N',  category: 'Actions', onClick: () => {} },
+    { icon: '📊', label: 'Export Report',   shortcut: '⌘E',  category: 'Actions', onClick: () => {} },
+    { icon: '🕐', label: 'Order #1042',     category: 'Recent' },
+    { icon: '🕑', label: 'Customer: Acme',  category: 'Recent' },
+  ];
+
+  return (
+    <AppCommandBar
+      items={custom ? customItems : undefined}
+      onSelect={() => {}}
+    />
+  );
+}
+
+function ConfirmDialogDemo({
+  variant,
+  title,
+  message,
+}: {
+  variant: 'danger' | 'warning' | 'info';
+  title: string;
+  message: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  function handleConfirm() {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setOpen(false);
+    }, 700);
+  }
+
+  return (
+    <>
+      <Button variant={variant === 'danger' ? 'danger' : 'outline'} onClick={() => setOpen(true)}>
+        Open confirm dialog
+      </Button>
+      <ConfirmDialog
+        open={open}
+        variant={variant}
+        title={title}
+        message={message}
+        confirmLabel="Confirm"
+        cancelLabel="Cancel"
+        loading={loading}
+        onCancel={() => setOpen(false)}
+        onConfirm={handleConfirm}
+      />
+    </>
+  );
+}
+
+function FormDemo({ columns }: { columns: 1 | 2 }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [visibility, setVisibility] = useState('private');
+  const [stack, setStack] = useState<string[]>(['next', 'ts']);
+  const [description, setDescription] = useState('');
+  const [notify, setNotify] = useState(true);
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [formError, setFormError] = useState('');
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const nameErr = !name.trim() ? 'Project name is required.' : '';
+    const emailErr = !email.includes('@') ? 'Valid email is required.' : '';
+    setNameError(nameErr);
+    setEmailError(emailErr);
+    if (nameErr || emailErr) {
+      setFormError('Please fix the errors above before saving.');
+      return;
+    }
+    setFormError('');
+  }
+
+  function handleCancel() {
+    setName(''); setEmail(''); setVisibility('private');
+    setStack(['next', 'ts']); setDescription(''); setNotify(true);
+    setNameError(''); setEmailError(''); setFormError('');
+  }
+
+  return (
+    <Form
+      title="Create project"
+      description="Fill in the details to create a new project."
+      error={formError}
+      columns={columns}
+      onSubmit={handleSubmit}
+      actions={
+        <>
+          <Button variant="outline" type="button" onClick={handleCancel}>Cancel</Button>
+          <Button variant="primary" type="submit">Save project</Button>
+        </>
+      }
+    >
+      <Input id="name" label="Project name" placeholder="Acme Redesign" required value={name} onChange={(e) => setName(e.target.value)} error={nameError} />
+      <Input id="email" label="Owner email" type="email" placeholder="owner@acme.com" required value={email} onChange={(e) => setEmail(e.target.value)} error={emailError} />
+      <Select id="visibility" label="Visibility" value={visibility} onChange={(e) => setVisibility(e.target.value)} options={[{ value: 'private', label: 'Private' }, { value: 'internal', label: 'Internal' }, { value: 'public', label: 'Public' }]} />
+      <MultiSelect id="stack" label="Tech stack" value={stack} onChange={setStack} options={[{ value: 'next', label: 'Next.js' }, { value: 'react', label: 'React' }, { value: 'ts', label: 'TypeScript' }, { value: 'tailwind', label: 'Tailwind' }]} />
+      <div className={columns === 2 ? 'sm:col-span-2' : ''}>
+        <Textarea id="description" label="Description" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+      </div>
+      <div className={columns === 2 ? 'sm:col-span-2' : ''}>
+        <Toggle id="notify" label="Send team notifications" description="Notify members after creation." checked={notify} onChange={setNotify} />
+      </div>
+    </Form>
+  );
+}
+
+function DataListingPageDemo({ empty = false }: { empty?: boolean }) {
+  return (
+    <DataListingPage<TeamRow>
+      title="Team directory"
+      subtitle="Search and manage workspace members"
+      columns={TEAM_COLUMNS}
+      rows={empty ? [] : TEAM_ROWS}
+      searchable
+      selectable={!empty}
+      caption="Workspace team"
+      actions={[
+        { label: 'Export', variant: 'outline', onClick: () => {} },
+        { label: 'Invite', variant: 'primary', onClick: () => {} },
+      ]}
+      emptyTitle="No members found"
+      emptyDescription="Adjust your filters or invite your first teammate."
+      emptyAction={<Button variant="primary" size="sm">Invite member</Button>}
+    />
+  );
+}
+
+function DetailHeaderDemo({ withTabs }: { withTabs: boolean }) {
+  const [activeTab, setActiveTab] = useState('overview');
+
+  return (
+    <div className="w-full rounded-xl overflow-hidden border border-border bg-surface-base">
+      <DetailHeader
+        title="Project Phoenix"
+        subtitle="Design system modernization"
+        status="Active"
+        statusVariant="success"
+        tabs={withTabs ? [
+          { value: 'overview', label: 'Overview' },
+          { value: 'activity', label: 'Activity' },
+          { value: 'settings', label: 'Settings' },
+        ] : undefined}
+        defaultTab="overview"
+        onTabChange={setActiveTab}
+      >
+        <Button variant="outline" size="sm">Archive</Button>
+        <Button variant="primary" size="sm">Publish</Button>
+      </DetailHeader>
+      <div className="px-6 py-4 text-sm text-text-secondary">
+        {withTabs ? `Active tab: ${activeTab}` : 'Simple detail header without tabs.'}
+      </div>
+    </div>
+  );
+}
+
+function FilterBarDemo({ compact = false }: { compact?: boolean }) {
+  const [values, setValues] = useState<FilterValues>(INITIAL_FILTER_VALUES);
+  const fields = compact ? FILTER_FIELDS.slice(0, 2) : FILTER_FIELDS;
+
+  function handleReset() {
+    setValues({
+      status: '',
+      role: [],
+      period: { start: null, end: null },
+      tags: [],
+    });
+  }
+
+  return (
+    <FilterBar
+      fields={fields}
+      values={values}
+      onChange={(id, value) => setValues((prev) => ({ ...prev, [id]: value }))}
+      onApply={() => {}}
+      onReset={handleReset}
+    />
+  );
+}
+
 // ── Showcase data ────────────────────────────────────────────────────────────
 
 export function buildAppPatternsData(): ShowcaseComponent[] {
@@ -444,6 +771,7 @@ export function AppSidebar({ navGroups, navItems, activeId, onSelect, collapsed,
   const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
   const isCollapsed = collapsed ?? internalCollapsed;
   const groups = navGroups ?? (navItems ? [{ items: navItems }] : []);
+  const footerContent = typeof footer === 'function' ? footer({ collapsed: isCollapsed }) : footer;
 
   const setCollapsed = (next) => {
     if (collapsed === undefined) setInternalCollapsed(next);
@@ -484,8 +812,8 @@ export function AppSidebar({ navGroups, navItems, activeId, onSelect, collapsed,
           </div>
         ))}
       </nav>
-      {footer && (
-        <div className={cn('border-t border-border shrink-0', isCollapsed ? 'flex justify-center px-2 py-3' : '')}>{footer}</div>
+      {footerContent != null && (
+        <div className={cn('border-t border-border shrink-0', isCollapsed ? 'flex justify-center px-2 py-3' : '')}>{footerContent}</div>
       )}
     </div>
   );
@@ -502,12 +830,12 @@ export function AppSidebar({ navGroups, navItems, activeId, onSelect, collapsed,
   ]}
   activeId={activeId}
   onSelect={setActiveId}
-  footer={
-    <div className="p-3 flex items-center gap-2">
+  footer={({ collapsed }) => (
+    <div className={collapsed ? 'p-3 flex items-center justify-center' : 'p-3 flex items-center gap-2'}>
       <Avatar name="Jane Doe" size="sm" status="online" />
-      <p className="text-xs font-semibold">Jane Doe</p>
+      {!collapsed && <p className="text-xs font-semibold">Jane Doe</p>}
     </div>
-  }
+  )}
 />`,
         },
         {
@@ -778,6 +1106,350 @@ export function UserMenu({ user, items, align = 'right' }) {
     { label: 'Sign out',      icon: '↩️', danger: true, onClick: () => {} },
   ]}
 />`,
+        },
+      ],
+    },
+    {
+      id: 'global-search',
+      title: 'GlobalSearch',
+      category: 'App',
+      abbr: 'GS',
+      description: 'Komut paleti benzeri global arama alanı. Kategori bazlı sonuç listesi, klavye navigasyonu ve sonuç seçimi destekler.',
+      filePath: 'modules/app/GlobalSearch.tsx',
+      sourceCode: `'use client';
+import { GlobalSearch } from '@/modules/app/GlobalSearch';
+
+export function Demo() {
+  return (
+    <GlobalSearch
+      placeholder="Search…"
+      results={results}
+      onSearch={handleSearch}
+      onSelect={handleSelect}
+    />
+  );
+}`,
+      variants: [
+        {
+          title: 'Interactive results',
+          layout: 'stack' as const,
+          preview: <GlobalSearchStandaloneDemo />,
+          code: `<GlobalSearch
+  placeholder="Search pages and actions…"
+  results={results}
+  onSearch={handleSearch}
+  onSelect={(result) => setSelected(result.label)}
+/>`,
+        },
+        {
+          title: 'Loading state',
+          layout: 'stack' as const,
+          preview: <GlobalSearchLoadingDemo />,
+          code: `<GlobalSearch loading results={results} onSearch={handleSearch} onSelect={handleSelect} />`,
+        },
+      ],
+    },
+    {
+      id: 'app-command-bar',
+      title: 'AppCommandBar',
+      category: 'App',
+      abbr: 'CB',
+      description: 'Keyboard-first komut paleti. ⌘K trigger\'ı ile açılır; items prop\'u ile özel komutlar geçilebilir, varsayılan navigation/actions/recent seti dahilidir.',
+      filePath: 'modules/app/AppCommandBar.tsx',
+      sourceCode: `'use client';
+import { AppCommandBar } from '@/modules/app/AppCommandBar';
+
+// Varsayılan komutlarla:
+<AppCommandBar onSelect={(item) => router.push(item.href)} />
+
+// Özel komutlarla:
+<AppCommandBar
+  items={[
+    { icon: '🏠', label: 'Dashboard', shortcut: 'G D', category: 'Navigation' },
+    { icon: '➕', label: 'New Project', shortcut: '⌘N', category: 'Actions', onClick: handleNew },
+    { icon: '🕐', label: 'Recent Item', category: 'Recent' },
+  ]}
+  trigger={<Button variant="outline" size="sm">⌘K</Button>}
+  onSelect={handleSelect}
+/>`,
+      variants: [
+        {
+          title: 'Varsayılan komutlar',
+          preview: <AppCommandBarDemo />,
+          code: `<AppCommandBar onSelect={(item) => console.log(item.label)} />`,
+        },
+        {
+          title: 'Özel items + trigger',
+          preview: <AppCommandBarDemo custom />,
+          code: `<AppCommandBar
+  items={customItems}
+  trigger={<Button variant="ghost" size="sm" iconRight={<Badge variant="neutral" size="sm">⌘K</Badge>}>Search…</Button>}
+  onSelect={handleSelect}
+/>`,
+        },
+      ],
+    },
+    {
+      id: 'confirm-dialog',
+      title: 'ConfirmDialog',
+      category: 'App',
+      abbr: 'CD',
+      description: 'Silme ve benzeri kritik aksiyonları doğrulamak için Modal tabanlı onay diyaloğu.',
+      filePath: 'modules/app/ConfirmDialog.tsx',
+      sourceCode: `'use client';
+import { ConfirmDialog } from '@/modules/app/ConfirmDialog';
+
+export function Demo() {
+  return (
+    <ConfirmDialog
+      open={open}
+      title="Delete item"
+      message="This action cannot be undone."
+      variant="danger"
+      onConfirm={handleConfirm}
+      onCancel={handleCancel}
+    />
+  );
+}`,
+      variants: [
+        {
+          title: 'Danger confirmation',
+          preview: (
+            <ConfirmDialogDemo
+              variant="danger"
+              title="Delete project"
+              message="This action cannot be undone and all related data will be removed."
+            />
+          ),
+          code: `<ConfirmDialog open={open} variant="danger" title="Delete project" message="This action cannot be undone." onConfirm={handleConfirm} onCancel={handleCancel} />`,
+        },
+        {
+          title: 'Info confirmation',
+          preview: (
+            <ConfirmDialogDemo
+              variant="info"
+              title="Publish changes"
+              message="Your changes will become visible to all users immediately."
+            />
+          ),
+          code: `<ConfirmDialog open={open} variant="info" title="Publish changes" message="Your changes will go live immediately." onConfirm={handleConfirm} onCancel={handleCancel} />`,
+        },
+      ],
+    },
+    {
+      id: 'form',
+      title: 'Form',
+      category: 'App',
+      abbr: 'Fm',
+      description: 'Form layout wrapper\'ı. title, description, error ve actions named slot\'ları alır; children ui/ field bileşenleri için grid\'de sıralanır.',
+      filePath: 'modules/app/Form.tsx',
+      sourceCode: `'use client';
+import { cn } from '@/libs/utils/cn';
+import { AlertBanner } from '@/modules/ui/AlertBanner';
+
+export function Form({ title, description, error, columns = 1, actions, children, onSubmit, className }) {
+  return (
+    <form onSubmit={onSubmit} noValidate className={cn('space-y-6', className)}>
+      {(title || description) && (
+        <div>
+          {title && <h2 className="text-lg font-semibold text-text-primary">{title}</h2>}
+          {description && <p className="text-sm text-text-secondary mt-0.5">{description}</p>}
+        </div>
+      )}
+      {error && <AlertBanner variant="error" message={error} />}
+      <div className={cn('grid gap-4', columns === 2 ? 'sm:grid-cols-2' : 'grid-cols-1')}>
+        {children}
+      </div>
+      {actions && (
+        <div className="flex items-center justify-end gap-3 pt-2 border-t border-border">
+          {actions}
+        </div>
+      )}
+    </form>
+  );
+}`,
+      variants: [
+        {
+          title: 'Single column',
+          layout: 'stack' as const,
+          preview: <FormDemo columns={1} />,
+          code: `<Form
+  title="Create project"
+  description="Fill in the details to create a new project."
+  onSubmit={handleSubmit}
+  actions={
+    <>
+      <Button variant="outline" type="button" onClick={handleCancel}>Cancel</Button>
+      <Button variant="primary" type="submit">Save project</Button>
+    </>
+  }
+>
+  <Input id="name" label="Project name" required value={name} onChange={...} error={nameError} />
+  <Input id="email" label="Owner email" type="email" required value={email} onChange={...} />
+  <Select id="visibility" label="Visibility" value={visibility} onChange={...} options={options} />
+  <Toggle id="notify" label="Send notifications" checked={notify} onChange={setNotify} />
+</Form>`,
+        },
+        {
+          title: 'Two column',
+          layout: 'stack' as const,
+          preview: <FormDemo columns={2} />,
+          code: `<Form title="Create project" columns={2} onSubmit={handleSubmit} actions={<Button type="submit">Save</Button>}>
+  <Input id="name" label="Project name" required value={name} onChange={...} />
+  <Input id="email" label="Owner email" type="email" value={email} onChange={...} />
+  <Select id="visibility" label="Visibility" value={visibility} onChange={...} options={options} />
+  <MultiSelect id="stack" label="Tech stack" value={stack} onChange={setStack} options={options} />
+  <div className="sm:col-span-2">
+    <Textarea id="description" label="Description" value={description} onChange={...} />
+  </div>
+</Form>`,
+        },
+      ],
+    },
+    {
+      id: 'data-listing-page',
+      title: 'DataListingPage',
+      category: 'App',
+      abbr: 'DL',
+      description: 'Sayfa başlığı, tablo, loading, empty ve error durumlarını tek bir listing pattern içinde toplar.',
+      filePath: 'modules/app/DataListingPage.tsx',
+      sourceCode: `'use client';
+import { DataListingPage } from '@/modules/app/DataListingPage';
+
+export function Demo() {
+  return (
+    <DataListingPage
+      title="Users"
+      subtitle="Manage workspace users"
+      columns={columns}
+      rows={rows}
+      searchable
+      selectable
+    />
+  );
+}`,
+      variants: [
+        {
+          title: 'With rows',
+          layout: 'stack' as const,
+          preview: <DataListingPageDemo />,
+          code: `<DataListingPage title="Team directory" columns={columns} rows={rows} searchable selectable />`,
+        },
+        {
+          title: 'Empty state',
+          layout: 'stack' as const,
+          preview: <DataListingPageDemo empty />,
+          code: `<DataListingPage title="Team directory" columns={columns} rows={[]} emptyTitle="No members found" />`,
+        },
+      ],
+    },
+    {
+      id: 'detail-header',
+      title: 'DetailHeader',
+      category: 'App',
+      abbr: 'DH',
+      description: 'Detay sayfalarında başlık, durum badge ve aksiyonları bir araya getiren üst bölüm deseni.',
+      filePath: 'modules/app/DetailHeader.tsx',
+      sourceCode: `'use client';
+import { useState } from 'react';
+import { DetailHeader } from '@/modules/app/DetailHeader';
+import { Button } from '@/modules/ui/Button';
+
+export function Demo() {
+  const [tab, setTab] = useState('overview');
+
+  return (
+    <DetailHeader
+      title="Project Phoenix"
+      subtitle="Design system modernization"
+      status="Active"
+      statusVariant="success"
+      tabs={[
+        { value: 'overview', label: 'Overview' },
+        { value: 'activity', label: 'Activity' },
+        { value: 'settings', label: 'Settings' },
+      ]}
+      defaultTab="overview"
+      onTabChange={setTab}
+    >
+      <Button variant="outline" size="sm">Archive</Button>
+      <Button variant="primary" size="sm">Publish</Button>
+    </DetailHeader>
+  );
+}`,
+      variants: [
+        {
+          title: 'With tabs',
+          layout: 'stack' as const,
+          preview: <DetailHeaderDemo withTabs />,
+          code: `const [tab, setTab] = useState('overview');
+
+<DetailHeader
+  title="Project Phoenix"
+  subtitle="Design system modernization"
+  status="Active"
+  statusVariant="success"
+  tabs={[
+    { value: 'overview', label: 'Overview' },
+    { value: 'activity', label: 'Activity' },
+    { value: 'settings', label: 'Settings' },
+  ]}
+  defaultTab="overview"
+  onTabChange={setTab}
+>
+  <Button variant="outline" size="sm">Archive</Button>
+  <Button variant="primary" size="sm">Publish</Button>
+</DetailHeader>`,
+        },
+        {
+          title: 'Without tabs',
+          layout: 'stack' as const,
+          preview: <DetailHeaderDemo withTabs={false} />,
+          code: `<DetailHeader
+  title="Project Phoenix"
+  subtitle="Design system modernization"
+  status="Active"
+  statusVariant="success"
+>
+  <Button variant="outline" size="sm">Archive</Button>
+  <Button variant="primary" size="sm">Publish</Button>
+</DetailHeader>`,
+        },
+      ],
+    },
+    {
+      id: 'filter-bar',
+      title: 'FilterBar',
+      category: 'App',
+      abbr: 'FB',
+      description: 'Liste ve dashboard ekranları için select, multiselect, daterange ve tag tabanlı filtre paneli.',
+      filePath: 'modules/app/FilterBar.tsx',
+      sourceCode: `'use client';
+import { FilterBar } from '@/modules/app/FilterBar';
+
+export function Demo() {
+  return (
+    <FilterBar
+      fields={fields}
+      values={values}
+      onChange={handleChange}
+      onApply={handleApply}
+      onReset={handleReset}
+    />
+  );
+}`,
+      variants: [
+        {
+          title: 'Full filter set',
+          layout: 'stack' as const,
+          preview: <FilterBarDemo />,
+          code: `<FilterBar fields={fields} values={values} onChange={handleChange} onApply={handleApply} onReset={handleReset} />`,
+        },
+        {
+          title: 'Compact filters',
+          layout: 'stack' as const,
+          preview: <FilterBarDemo compact />,
+          code: `<FilterBar fields={fields.slice(0, 2)} values={values} onChange={handleChange} />`,
         },
       ],
     },
