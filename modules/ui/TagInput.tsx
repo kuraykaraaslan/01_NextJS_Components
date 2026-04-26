@@ -140,7 +140,7 @@ export function TagInput({
         )}
       </div>
       {hint && !error && <p id={hintId} className="text-xs text-text-secondary">{hint}</p>}
-      {!hint && !error && <p className="text-xs text-text-disabled">Double-click a tag to edit it</p>}
+      {!hint && !error && value.length > 0 && <p className="text-xs text-text-disabled">Double-click a tag to edit it</p>}
       {error && <p id={errorId} className="text-xs text-error" role="alert">{error}</p>}
     </div>
   );

@@ -82,6 +82,7 @@ export function MultiSelect({
         {label}
       </label>
 
+      <div className="relative">
       <div
         role="combobox"
         tabIndex={disabled ? -1 : 0}
@@ -130,7 +131,7 @@ export function MultiSelect({
       </div>
 
       {open && (
-        <div className="z-20 w-full rounded-md border border-border bg-surface-raised shadow-lg overflow-hidden">
+        <div className="absolute z-20 w-full rounded-md border border-border bg-surface-raised shadow-lg overflow-hidden top-full left-0 mt-1">
           {searchable && (
             <div className="p-2 border-b border-border">
               <input
@@ -198,6 +199,8 @@ export function MultiSelect({
           </ul>
         </div>
       )}
+
+      </div>
 
       {hint && !error && <p id={hintId} className="text-xs text-text-secondary">{hint}</p>}
       {error && <p id={errorId} className="text-xs text-error" role="alert">{error}</p>}

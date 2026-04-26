@@ -1,3 +1,4 @@
+'use client';
 import { cn } from '@/libs/utils/cn';
 
 export function EmptyState({

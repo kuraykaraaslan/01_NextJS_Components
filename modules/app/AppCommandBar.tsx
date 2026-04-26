@@ -6,59 +6,78 @@ import { Badge } from '@/modules/ui/Badge';
 import { Button } from '@/modules/ui/Button';
 import { AlertBanner } from '@/modules/ui/AlertBanner';
 
-type CommandItem = {
-  icon: string;
+export type CommandItem = {
+  icon?: React.ReactNode;
   label: string;
   shortcut?: string;
   category: string;
+  onClick?: () => void;
 };
 
-const ALL_COMMANDS: CommandItem[] = [
-  // Navigation
+const DEFAULT_COMMANDS: CommandItem[] = [
   { icon: '🏠', label: 'Go to Dashboard',  shortcut: 'G D', category: 'Navigation' },
   { icon: '📁', label: 'Go to Projects',   shortcut: 'G P', category: 'Navigation' },
   { icon: '👥', label: 'Go to Team',       shortcut: 'G T', category: 'Navigation' },
   { icon: '⚙️', label: 'Go to Settings',   shortcut: 'G S', category: 'Navigation' },
   { icon: '📊', label: 'Go to Analytics',  shortcut: 'G A', category: 'Navigation' },
-  // Actions
   { icon: '➕', label: 'New Project',      shortcut: '⌘N',  category: 'Actions' },
   { icon: '📧', label: 'Send Invite',      shortcut: '⌘I',  category: 'Actions' },
   { icon: '📤', label: 'Export Data',      shortcut: '⌘E',  category: 'Actions' },
   { icon: '🔒', label: 'Lock Screen',      shortcut: '⌘L',  category: 'Actions' },
-  // Recent
   { icon: '🕐', label: 'Project Alpha',    category: 'Recent' },
   { icon: '🕑', label: 'Q3 Report',        category: 'Recent' },
   { icon: '🕒', label: 'Design Review',    category: 'Recent' },
 ];
 
-const CATEGORIES = ['Navigation', 'Actions', 'Recent'];
+type AppCommandBarProps = {
+  items?: CommandItem[];
+  onSelect?: (item: CommandItem) => void;
+  trigger?: React.ReactNode;
+  placeholder?: string;
+};
 
-export function AppCommandBar() {
+export function AppCommandBar({
+  items = DEFAULT_COMMANDS,
+  onSelect,
+  trigger,
+  placeholder = 'Type a command or search…',
+}: AppCommandBarProps) {
   const [open, setOpen]   = useState(false);
   const [query, setQuery] = useState('');
 
+  const categories = Array.from(new Set(items.map((c) => c.category)));
+
   const filtered = query.trim()
-    ? ALL_COMMANDS.filter((c) =>
+    ? items.filter((c) =>
         c.label.toLowerCase().includes(query.toLowerCase()) ||
         c.category.toLowerCase().includes(query.toLowerCase())
       )
-    : ALL_COMMANDS;
+    : items;
 
-  const grouped = CATEGORIES.map((cat) => ({
-    category: cat,
-    items: filtered.filter((c) => c.category === cat),
-  })).filter((g) => g.items.length > 0);
+  const grouped = categories
+    .map((cat) => ({ category: cat, items: filtered.filter((c) => c.category === cat) }))
+    .filter((g) => g.items.length > 0);
+
+  function handleSelect(item: CommandItem) {
+    item.onClick?.();
+    onSelect?.(item);
+    setOpen(false);
+    setQuery('');
+  }
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setOpen(true)}
-        iconRight={<Badge variant="neutral" size="sm">⌘K</Badge>}
-      >
-        Quick actions…
-      </Button>
+      <div role="none" onClick={() => setOpen(true)}>
+        {trigger ?? (
+          <Button
+            variant="outline"
+            size="sm"
+            iconRight={<Badge variant="neutral" size="sm">⌘K</Badge>}
+          >
+            Quick actions…
+          </Button>
+        )}
+      </div>
 
       <Modal
         open={open}
@@ -69,22 +88,19 @@ export function AppCommandBar() {
         scrollable
       >
         <div className="space-y-4">
-          {/* Search */}
           <SearchBar
             id="command-bar-search"
-            placeholder="Type a command or search…"
+            placeholder={placeholder}
             value={query}
             onChange={setQuery}
             onClear={() => setQuery('')}
           />
 
-          {/* Pro tip */}
           <AlertBanner
             variant="info"
             message="Pro tip: Press ⌘K from anywhere to open this palette."
           />
 
-          {/* Commands */}
           {grouped.length === 0 && (
             <p className="text-sm text-text-secondary text-center py-4">
               No commands found for &quot;{query}&quot;
@@ -101,15 +117,11 @@ export function AppCommandBar() {
                   <button
                     key={cmd.label}
                     type="button"
-                    onClick={() => setOpen(false)}
-                    className="
-                      w-full flex items-center justify-between gap-3 px-3 py-2 rounded-md text-sm
-                      text-text-primary hover:bg-surface-overlay transition-colors
-                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus
-                    "
+                    onClick={() => handleSelect(cmd)}
+                    className="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-md text-sm text-text-primary hover:bg-surface-overlay transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
                   >
                     <span className="flex items-center gap-2">
-                      <span aria-hidden="true">{cmd.icon}</span>
+                      {cmd.icon && <span aria-hidden="true">{cmd.icon}</span>}
                       {cmd.label}
                     </span>
                     {cmd.shortcut && (

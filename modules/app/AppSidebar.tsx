@@ -15,6 +15,12 @@ export type AppSidebarNavGroup = {
   items: AppSidebarNavItem[];
 };
 
+export type AppSidebarFooterRenderContext = {
+  collapsed: boolean;
+};
+
+type AppSidebarFooter = React.ReactNode | ((context: AppSidebarFooterRenderContext) => React.ReactNode);
+
 type AppSidebarProps = {
   navGroups?: AppSidebarNavGroup[];
   navItems?: AppSidebarNavItem[];
@@ -23,7 +29,7 @@ type AppSidebarProps = {
   collapsed?: boolean;
   defaultCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
-  footer?: React.ReactNode;
+  footer?: AppSidebarFooter;
   className?: string;
 };
 
@@ -41,6 +47,9 @@ export function AppSidebar({
   const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
   const isCollapsed = collapsed ?? internalCollapsed;
   const groups: AppSidebarNavGroup[] = navGroups ?? (navItems ? [{ items: navItems }] : []);
+  const footerContent = typeof footer === 'function'
+    ? (footer as (context: AppSidebarFooterRenderContext) => React.ReactNode)({ collapsed: isCollapsed })
+    : footer;
 
   const setCollapsed = (next: boolean) => {
     if (collapsed === undefined) {
@@ -106,9 +115,9 @@ export function AppSidebar({
         ))}
       </nav>
 
-      {footer && (
+      {footerContent != null && (
         <div className={cn('border-t border-border shrink-0', isCollapsed ? 'flex justify-center px-2 py-3' : '')}>
-          {footer}
+          {footerContent}
         </div>
       )}
     </div>

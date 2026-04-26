@@ -149,17 +149,17 @@ export function ShowcaseShell() {
           onSelect={setSelectedId}
           collapsed={sidebarCollapsed}
           onCollapsedChange={setSidebarCollapsed}
-          footer={
-            <div className={cn('p-3 flex items-center', sidebarCollapsed ? 'justify-center' : 'gap-2')}>
+          footer={({ collapsed }) => (
+            <div className={cn('p-3 flex items-center', collapsed ? 'justify-center' : 'gap-2')}>
               <span className="w-7 h-7 rounded-full bg-primary-subtle flex items-center justify-center text-xs font-bold text-primary shrink-0" aria-hidden="true">D</span>
-              {!sidebarCollapsed && (
+              {!collapsed && (
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-text-primary truncate">Developer</p>
                   <p className="text-[10px] text-text-secondary truncate">Component Library</p>
                 </div>
               )}
             </div>
-          }
+          )}
         />
       }
       topbar={
