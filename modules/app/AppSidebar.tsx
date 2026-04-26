@@ -69,7 +69,7 @@ export function AppSidebar({
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4" aria-label="Sidebar navigation">
+      <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4 sidebar-scrollbar-hover" aria-label="Sidebar navigation">
         {groups.map((group, gi) => (
           <div key={group.label ?? gi}>
             {group.label && !isCollapsed && (
@@ -94,7 +94,7 @@ export function AppSidebar({
                       : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
                   )}
                 >
-                  {item.icon && <span aria-hidden="true" className="shrink-0 w-4 text-center">{item.icon}</span>}
+                  {item.icon && <span aria-hidden="true" className="shrink-0 w-5 text-center text-[15px] leading-none">{item.icon}</span>}
                   {!isCollapsed && <span className="flex-1 truncate">{item.label}</span>}
                   {!isCollapsed && item.badge != null && item.badge > 0 && (
                     <Badge variant="primary" size="sm">{item.badge}</Badge>

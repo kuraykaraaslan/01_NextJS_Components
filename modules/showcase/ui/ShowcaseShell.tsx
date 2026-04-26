@@ -123,7 +123,7 @@ export function ShowcaseShell() {
         id: item.id,
         label: item.title,
         icon: (
-          <span className="flex items-center justify-center w-5 h-5 rounded text-[10px] font-bold bg-surface-sunken text-text-secondary">
+          <span className="flex items-center justify-center w-6 h-6 rounded text-[11px] font-bold bg-surface-sunken text-text-secondary">
             {item.abbr}
           </span>
         ),
