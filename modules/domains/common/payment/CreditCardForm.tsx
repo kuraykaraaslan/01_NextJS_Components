@@ -14,13 +14,24 @@ export function detectBrand(number: string): CardBrand {
 
   const len = n.length;
 
-  const prefix2 = len >= 2 ? parseInt(n.slice(0, 2), 10) : 0;
-  const prefix3 = len >= 3 ? parseInt(n.slice(0, 3), 10) : 0;
-  const prefix4 = len >= 4 ? parseInt(n.slice(0, 4), 10) : 0;
-  const prefix6 = len >= 6 ? parseInt(n.slice(0, 6), 10) : 0;
+  const prefix2 = len >= 2 ? Number(n.slice(0, 2)) : 0;
+  const prefix3 = len >= 3 ? Number(n.slice(0, 3)) : 0;
+  const prefix4 = len >= 4 ? Number(n.slice(0, 4)) : 0;
+  const prefix6 = len >= 6 ? Number(n.slice(0, 6)) : 0;
 
-  // 🇹🇷 TROY (önce check → yanlış VISA vs eşleşmesini engeller)
+  // 🇹🇷 TROY
   if (n.startsWith('9792')) return 'TROY';
+
+  // 🇷🇺 MIR
+  if (prefix4 >= 2200 && prefix4 <= 2204) return 'MIR';
+
+  // 🇨🇳 UnionPay
+  // Not: Discover 622126–622925 ile çakışabildiği için Discover'dan sonra da değerlendirilebilir.
+  // Burada geniş network tespiti için 62 prefix'i UnionPay kabul edildi.
+  if (n.startsWith('62')) return 'UNIONPAY';
+
+  // 🇯🇵 JCB
+  if (prefix4 >= 3528 && prefix4 <= 3589) return 'JCB';
 
   // VISA
   if (n.startsWith('4')) return 'VISA';

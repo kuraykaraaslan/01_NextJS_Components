@@ -3,12 +3,42 @@ import { cn } from '@/libs/utils/cn';
 import type { CardBrand } from '../PaymentTypes';
 
 const BRAND_STYLE: Record<CardBrand, { label: string; gradient: string }> = {
-  VISA:       { label: 'VISA',       gradient: 'from-blue-700 to-blue-950' },
-  MASTERCARD: { label: 'Mastercard', gradient: 'from-orange-500 to-red-700' },
-  AMEX:       { label: 'AMEX',       gradient: 'from-teal-600 to-teal-900' },
-  DISCOVER:   { label: 'Discover',   gradient: 'from-orange-400 to-yellow-600' },
-  TROY:       { label: 'TROY',       gradient: 'from-green-600 to-green-900' },
-  UNKNOWN:    { label: '',           gradient: 'from-gray-600 to-gray-900' },
+  VISA: {
+    label: 'VISA',
+    gradient: 'from-[#1A1F71] to-[#0A0F3D]',
+  },
+  MASTERCARD: {
+    label: 'Mastercard',
+    gradient: 'from-[#EB001B] via-[#F79E1B] to-[#FF5F00]',
+  },
+  AMEX: {
+    label: 'AMEX',
+    gradient: 'from-[#2E77BC] to-[#006FCF]',
+  },
+  DISCOVER: {
+    label: 'Discover',
+    gradient: 'from-[#F58220] to-[#111827]',
+  },
+  TROY: {
+    label: 'TROY',
+    gradient: 'from-[#00AEEF] via-[#003B71] to-[#111827]',
+  },
+  MIR: {
+    label: 'MIR',
+    gradient: 'from-[#00A551] via-[#0072BC] to-[#111827]',
+  },
+  UNIONPAY: {
+    label: 'UnionPay',
+    gradient: 'from-[#E21836] via-[#00447C] to-[#007A3D]',
+  },
+  JCB: {
+    label: 'JCB',
+    gradient: 'from-[#0B5CAD] via-[#D71920] to-[#009A44]',
+  },
+  UNKNOWN: {
+    label: '',
+    gradient: 'from-[#4B5563] to-[#111827]',
+  },
 };
 
 function maskNumber(raw: string, brand: CardBrand): string {

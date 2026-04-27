@@ -38,7 +38,15 @@ export const PaymentBaseSchema = z.object({
   currency: CurrencySchema,
 })
 
-export const CardBrandEnum = z.enum(['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER', 'TROY', 'UNKNOWN']);
+export const CardBrandEnum = z.enum(['VISA', 
+  'MASTERCARD', 
+  'AMEX', 
+  'DISCOVER', 
+  'TROY', 
+  'MIR',
+  'UNIONPAY',
+  'JCB',
+  'UNKNOWN']);
 
 export const CreditCardInputSchema = z.object({
   cardholderName: z.string().min(1),

@@ -9,12 +9,16 @@ const BRAND_COLOR: Record<CardBrand, string> = {
   MASTERCARD: 'bg-orange-500',
   AMEX:       'bg-teal-600',
   DISCOVER:   'bg-orange-400',
+  JCB:        'bg-blue-600',
+  TROY:       'bg-cyan-600',
+  MIR:        'bg-green-600',
+  UNIONPAY:   'bg-red-600',
   UNKNOWN:    'bg-gray-500',
 };
 
 function CardBrandBadge({ brand }: { brand: CardBrand }) {
   const labels: Record<CardBrand, string> = {
-    VISA: 'VISA', MASTERCARD: 'MC', AMEX: 'AMEX', DISCOVER: 'DISC', UNKNOWN: '••',
+    VISA: 'VISA', MASTERCARD: 'MC', AMEX: 'AMEX', DISCOVER: 'DISC', JCB: 'JCB', TROY: 'TROY', MIR: 'MIR', UNIONPAY: 'UNIONPAY', UNKNOWN: '••',
   };
   return (
     <span className={cn('inline-flex items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-bold text-white tracking-wide shrink-0', BRAND_COLOR[brand])}>
