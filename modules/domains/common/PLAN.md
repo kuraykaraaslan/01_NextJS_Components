@@ -62,16 +62,16 @@ modules/domains/common/
 
 | Bileşen | Dosya | Durum |
 |---|---|---|
-| `ForgotPasswordForm` | `auth/ForgotPasswordForm.tsx` |  |
-| `SessionExpiredBanner` | `auth/SessionExpiredBanner.tsx` |  |
-| `SeoForm` | `seo/SeoForm.tsx` |  |
-| `SeoPreview` | `seo/SeoPreview.tsx` |  |
-| `AddressSelector` | `address/AddressSelector.tsx` |  |
-| `LocationPicker` | `location/LocationPicker.tsx` |  |
-| `GeoPointDisplay` | `location/GeoPointDisplay.tsx` |  |
-| `ProcessingStatusIndicator` | `status/ProcessingStatusIndicator.tsx` |  |
-| `CurrencySelector` | `money/CurrencySelector.tsx` |  |
-| `DirectionProvider` | `i18n/DirectionProvider.tsx` |  |
+| `ForgotPasswordForm` | `auth/ForgotPasswordForm.tsx` | ✅ |
+| `SessionExpiredBanner` | `auth/SessionExpiredBanner.tsx` | ✅ |
+| `SeoForm` | `seo/SeoForm.tsx` | ✅ |
+| `SeoPreview` | `seo/SeoPreview.tsx` | ✅ |
+| `AddressSelector` | `address/AddressSelector.tsx` | ✅ |
+| `LocationPicker` | `location/LocationPicker.tsx` | ✅ |
+| `GeoPointDisplay` | `location/GeoPointDisplay.tsx` | ✅ |
+| `ProcessingStatusIndicator` | `status/ProcessingStatusIndicator.tsx` | ✅ |
+| `CurrencySelector` | `money/CurrencySelector.tsx` | ✅ |
+| `DirectionProvider` | `i18n/DirectionProvider.tsx` | ✅ |
 
 ---
 

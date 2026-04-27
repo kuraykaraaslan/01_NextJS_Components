@@ -16,6 +16,17 @@ import { PublishStatusBadge } from '@/modules/domains/common/status/PublishStatu
 import { VisibilityBadge } from '@/modules/domains/common/status/VisibilityBadge';
 import { LanguageSwitcher } from '@/modules/domains/common/i18n/LanguageSwitcher';
 import { ChangePasswordForm } from '@/modules/domains/common/auth/ChangePasswordForm';
+import { ForgotPasswordForm } from '@/modules/domains/common/auth/ForgotPasswordForm';
+import { SessionExpiredBanner } from '@/modules/domains/common/auth/SessionExpiredBanner';
+import { SeoForm } from '@/modules/domains/common/seo/SeoForm';
+import { SeoPreview } from '@/modules/domains/common/seo/SeoPreview';
+import { AddressSelector } from '@/modules/domains/common/address/AddressSelector';
+import { LocationPicker } from '@/modules/domains/common/location/LocationPicker';
+import { GeoPointDisplay } from '@/modules/domains/common/location/GeoPointDisplay';
+import { ProcessingStatusIndicator } from '@/modules/domains/common/status/ProcessingStatusIndicator';
+import { CurrencySelector } from '@/modules/domains/common/money/CurrencySelector';
+import { DirectionProvider } from '@/modules/domains/common/i18n/DirectionProvider';
+import type { ProcessingStatus } from '@/modules/domains/common/BaseTypes';
 import { UserProfileCard } from '@/modules/domains/common/user/UserProfileCard';
 import { UserProfileForm } from '@/modules/domains/common/user/UserProfileForm';
 import { UserPreferencesForm } from '@/modules/domains/common/user/UserPreferencesForm';
@@ -23,7 +34,10 @@ import { CouponInput } from '@/modules/domains/common/discount/CouponInput';
 import { DiscountBadge } from '@/modules/domains/common/discount/DiscountBadge';
 import { PaymentMethodSelector } from '@/modules/domains/common/payment/PaymentMethodSelector';
 import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSummaryCard';
-import type { PaymentMethod } from '@/modules/domains/common/PaymentTypes';
+import { CreditCardVisual } from '@/modules/domains/common/payment/CreditCardVisual';
+import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm';
+import { SavedCardSelector } from '@/modules/domains/common/payment/SavedCardSelector';
+import type { PaymentMethod, SavedCard } from '@/modules/domains/common/PaymentTypes';
 import type { AppLanguage } from '@/modules/domains/common/I18nTypes';
 import type { ShowcaseComponent } from '../showcase.types';
 
@@ -1013,5 +1027,481 @@ import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSumm
         { title: 'Pending bank transfer', preview: <PaymentSummaryCardPendingDemo />, code: `<PaymentSummaryCard payment={{ provider: 'Iyzico', method: 'BANK_TRANSFER', status: 'PENDING', amount: 2499, currency: 'TRY', ... }} />` },
       ],
     },
+    {
+      id: 'common-forgot-password-form',
+      title: 'ForgotPasswordForm',
+      category: 'Domain',
+      abbr: 'FP',
+      description: 'Email input that triggers a password reset link. Shows an inline success state after submission instead of a redirect.',
+      filePath: 'modules/domains/common/auth/ForgotPasswordForm.tsx',
+      sourceCode: `<ForgotPasswordForm onSubmit={async (email) => sendResetLink(email)} />`,
+      variants: [
+        { title: 'Default', layout: 'stack' as const, preview: <ForgotPasswordFormDefaultDemo />, code: `<ForgotPasswordForm onSubmit={async (email) => sendResetLink(email)} />` },
+        { title: 'Sent state', layout: 'stack' as const, preview: <ForgotPasswordFormSentDemo />, code: `// After successful onSubmit, form renders a success message automatically` },
+      ],
+    },
+    {
+      id: 'common-session-expired-banner',
+      title: 'SessionExpiredBanner',
+      category: 'Domain',
+      abbr: 'SE',
+      description: 'Warning banner shown when the user session has expired. Includes a "Sign in again" action button.',
+      filePath: 'modules/domains/common/auth/SessionExpiredBanner.tsx',
+      sourceCode: `<SessionExpiredBanner onSignIn={() => router.push('/login')} />`,
+      variants: [
+        { title: 'With action', layout: 'stack' as const, preview: <SessionExpiredBannerDefaultDemo />, code: `<SessionExpiredBanner onSignIn={() => router.push('/login')} />` },
+        { title: 'Custom message', layout: 'stack' as const, preview: <SessionExpiredBannerCustomDemo />, code: `<SessionExpiredBanner message="You've been signed out due to inactivity." onSignIn={handleSignIn} />` },
+      ],
+    },
+    {
+      id: 'common-seo-form',
+      title: 'SeoForm',
+      category: 'Domain',
+      abbr: 'SF',
+      description: 'SEO metadata form: title (60 char limit), meta description (160 char limit), and keyword tag input with character counters.',
+      filePath: 'modules/domains/common/seo/SeoForm.tsx',
+      sourceCode: `<SeoForm
+  initial={{ seoTitle: 'My Page', seoDescription: 'Description…', keywords: ['next', 'react'] }}
+  onSubmit={async (seo) => saveSeo(seo)}
+  onCancel={() => setEditing(false)}
+/>`,
+      variants: [
+        { title: 'Empty', layout: 'stack' as const, preview: <SeoFormEmptyDemo />, code: `<SeoForm onSubmit={handleSave} />` },
+        { title: 'Pre-filled', layout: 'stack' as const, preview: <SeoFormPrefilledDemo />, code: `<SeoForm initial={{ seoTitle: 'My Page', seoDescription: 'Short desc', keywords: ['next', 'react'] }} onSubmit={handleSave} onCancel={handleCancel} />` },
+      ],
+    },
+    {
+      id: 'common-seo-preview',
+      title: 'SeoPreview',
+      category: 'Domain',
+      abbr: 'SP',
+      description: 'Google search result preview card. Shows title, URL, and description with character count indicators. Empty fields render placeholder text.',
+      filePath: 'modules/domains/common/seo/SeoPreview.tsx',
+      sourceCode: `<SeoPreview
+  seo={{ seoTitle: 'My Page', seoDescription: 'Description…', keywords: ['next'] }}
+  url="https://example.com/my-page"
+  siteName="Example"
+/>`,
+      variants: [
+        { title: 'Filled', layout: 'stack' as const, preview: <SeoPreviewFilledDemo />, code: `<SeoPreview seo={{ seoTitle: 'My Page Title', seoDescription: 'A clear meta description.', keywords: ['next', 'react'] }} url="https://example.com/page" />` },
+        { title: 'Empty (placeholders)', layout: 'stack' as const, preview: <SeoPreviewEmptyDemo />, code: `<SeoPreview seo={{}} url="https://example.com/page" />` },
+      ],
+    },
+    {
+      id: 'common-address-selector',
+      title: 'AddressSelector',
+      category: 'Domain',
+      abbr: 'AS',
+      description: 'Selectable list of saved addresses built on AddressCard. Supports add, edit, and delete callbacks.',
+      filePath: 'modules/domains/common/address/AddressSelector.tsx',
+      sourceCode: `<AddressSelector
+  addresses={savedAddresses}
+  selectedIndex={selectedIdx}
+  onSelect={(i, addr) => setSelected(i)}
+  onAdd={() => setShowAddForm(true)}
+  onEdit={(i, addr) => openEditModal(addr)}
+  onDelete={(i) => deleteAddress(i)}
+/>`,
+      variants: [
+        { title: 'Multiple addresses', layout: 'stack' as const, preview: <AddressSelectorDemo />, code: `<AddressSelector addresses={addresses} onSelect={handleSelect} onAdd={handleAdd} />` },
+        { title: 'Empty state', layout: 'stack' as const, preview: <AddressSelectorEmptyDemo />, code: `<AddressSelector addresses={[]} onSelect={handleSelect} onAdd={() => setShowForm(true)} />` },
+      ],
+    },
+    {
+      id: 'common-location-picker',
+      title: 'LocationPicker',
+      category: 'Domain',
+      abbr: 'LP',
+      description: 'Location form with country selector (countries-list), city, state, postal code, and optional lat/lng. 2-column grid layout.',
+      filePath: 'modules/domains/common/location/LocationPicker.tsx',
+      sourceCode: `<LocationPicker
+  initial={{ city: 'Istanbul', countryCode: 'TR' }}
+  onSubmit={async (loc) => saveLocation(loc)}
+/>`,
+      variants: [
+        { title: 'Empty', layout: 'stack' as const, preview: <LocationPickerEmptyDemo />, code: `<LocationPicker onSubmit={handleSave} />` },
+        { title: 'Pre-filled', layout: 'stack' as const, preview: <LocationPickerPrefilledDemo />, code: `<LocationPicker initial={{ city: 'Istanbul', countryCode: 'TR', postalCode: '34000' }} onSubmit={handleSave} onCancel={handleCancel} />` },
+      ],
+    },
+    {
+      id: 'common-geo-point-display',
+      title: 'GeoPointDisplay',
+      category: 'Domain',
+      abbr: 'GP',
+      description: 'Displays latitude/longitude coordinates with a Google Maps link. Configurable precision and optional label.',
+      filePath: 'modules/domains/common/location/GeoPointDisplay.tsx',
+      sourceCode: `<GeoPointDisplay point={{ latitude: 41.0082, longitude: 28.9784 }} label="Istanbul" />`,
+      variants: [
+        { title: 'With label', preview: <GeoPointDisplayLabelDemo />, code: `<GeoPointDisplay point={{ latitude: 41.0082, longitude: 28.9784 }} label="Istanbul" />` },
+        { title: 'Coordinates only', preview: <GeoPointDisplayMinimalDemo />, code: `<GeoPointDisplay point={{ latitude: 48.8566, longitude: 2.3522 }} showMapLink={false} />` },
+      ],
+    },
+    {
+      id: 'common-processing-status-indicator',
+      title: 'ProcessingStatusIndicator',
+      category: 'Domain',
+      abbr: 'PI',
+      description: 'Animated status indicator for UPLOADING / PROCESSING / READY / FAILED states. Optional progress bar with percentage.',
+      filePath: 'modules/domains/common/status/ProcessingStatusIndicator.tsx',
+      sourceCode: `<ProcessingStatusIndicator status="PROCESSING" progress={45} label="Encoding video…" />`,
+      variants: [
+        { title: 'All states', preview: <ProcessingStatusAllDemo />, code: `<ProcessingStatusIndicator status="UPLOADING" progress={30} />\n<ProcessingStatusIndicator status="PROCESSING" progress={65} />\n<ProcessingStatusIndicator status="READY" progress={100} />\n<ProcessingStatusIndicator status="FAILED" />` },
+        { title: 'Custom label + sizes', preview: <ProcessingStatusSizesDemo />, code: `<ProcessingStatusIndicator status="PROCESSING" label="Encoding…" progress={45} size="sm" />\n<ProcessingStatusIndicator status="PROCESSING" label="Encoding…" progress={45} size="md" />\n<ProcessingStatusIndicator status="PROCESSING" label="Encoding…" progress={45} size="lg" />` },
+      ],
+    },
+    {
+      id: 'common-currency-selector',
+      title: 'CurrencySelector',
+      category: 'Domain',
+      abbr: 'CS',
+      description: 'Currency dropdown built from countries-list. Deduped, alphabetically sorted ISO 4217 currency codes.',
+      filePath: 'modules/domains/common/money/CurrencySelector.tsx',
+      sourceCode: `const [currency, setCurrency] = useState('TRY');\n\n<CurrencySelector value={currency} onChange={setCurrency} />`,
+      variants: [
+        { title: 'Default', preview: <CurrencySelectorDemo />, code: `<CurrencySelector value={currency} onChange={setCurrency} />` },
+        { title: 'No label', preview: <CurrencySelectorNoLabelDemo />, code: `<CurrencySelector value="USD" onChange={setCurrency} label="" />` },
+      ],
+    },
+    {
+      id: 'common-direction-provider',
+      title: 'DirectionProvider',
+      category: 'Domain',
+      abbr: 'DP',
+      description: 'Context provider that sets dir="rtl"/"ltr" on a wrapper div based on the active language. useDirection() hook exposes lang, dir, isRTL.',
+      filePath: 'modules/domains/common/i18n/DirectionProvider.tsx',
+      sourceCode: `<DirectionProvider lang={currentLang}>
+  {/* all children inherit correct text direction */}
+  <p>مرحبا بالعالم</p>
+</DirectionProvider>`,
+      variants: [
+        { title: 'RTL (Arabic)', layout: 'stack' as const, preview: <DirectionProviderRTLDemo />, code: `<DirectionProvider lang="ar">\n  <p className="text-right">مرحبا بالعالم — Hello World</p>\n</DirectionProvider>` },
+        { title: 'LTR (English)', layout: 'stack' as const, preview: <DirectionProviderLTRDemo />, code: `<DirectionProvider lang="en">\n  <p>Hello World — مرحبا بالعالم</p>\n</DirectionProvider>` },
+      ],
+    },
+    {
+      id: 'common-credit-card-visual',
+      title: 'CreditCardVisual',
+      category: 'Domain',
+      abbr: 'CV',
+      description: 'Animated 3-D flip credit card. Front shows number, name, expiry; back shows CVV strip. Supports VISA, Mastercard, AMEX, Discover.',
+      filePath: 'modules/domains/common/payment/CreditCardVisual.tsx',
+      sourceCode: `<CreditCardVisual
+  brand="VISA"
+  cardNumber="4111111111111111"
+  cardholderName="JANE DOE"
+  expiryMonth="08"
+  expiryYear="28"
+  flipped={cvvFocused}
+/>`,
+      variants: [
+        { title: 'Brands', preview: <CreditCardVisualBrandsDemo />, code: `<CreditCardVisual brand="VISA" cardNumber="4111111111111111" cardholderName="JANE DOE" expiryMonth="08" expiryYear="28" />\n<CreditCardVisual brand="MASTERCARD" cardNumber="5500005555555559" cardholderName="JOHN SMITH" expiryMonth="12" expiryYear="27" />` },
+        { title: 'Flipped (CVV)', preview: <CreditCardVisualFlippedDemo />, code: `<CreditCardVisual brand="AMEX" cardNumber="378282246310005" cardholderName="JANE DOE" expiryMonth="03" expiryYear="26" cvv="1234" flipped />` },
+      ],
+    },
+    {
+      id: 'common-credit-card-form',
+      title: 'CreditCardForm',
+      category: 'Domain',
+      abbr: 'CF',
+      description: 'Full credit card entry form with live card visual preview. Auto-detects brand, formats number, flips card on CVV focus, validates expiry.',
+      filePath: 'modules/domains/common/payment/CreditCardForm.tsx',
+      sourceCode: `<CreditCardForm
+  onSubmit={async (card) => saveCard(card)}
+  onCancel={() => setOpen(false)}
+/>`,
+      variants: [
+        { title: 'Default', layout: 'stack' as const, preview: <CreditCardFormDemo />, code: `<CreditCardForm onSubmit={async (card) => saveCard(card)} onCancel={handleCancel} />` },
+        { title: 'Server error', layout: 'stack' as const, preview: <CreditCardFormErrorDemo />, code: `<CreditCardForm onSubmit={handleSave} error="Card declined. Please try a different card." />` },
+      ],
+    },
+    {
+      id: 'common-saved-card-selector',
+      title: 'SavedCardSelector',
+      category: 'Domain',
+      abbr: 'SC',
+      description: 'Radio-group list of saved payment cards. Shows brand badge, masked number, expiry, and default indicator. Supports remove and add-new callbacks.',
+      filePath: 'modules/domains/common/payment/SavedCardSelector.tsx',
+      sourceCode: `<SavedCardSelector
+  cards={savedCards}
+  selectedCardId={selected}
+  onSelect={(id, card) => setSelected(id)}
+  onRemove={(id) => deleteCard(id)}
+  onAddNew={() => setShowForm(true)}
+/>`,
+      variants: [
+        { title: 'Multiple cards', layout: 'stack' as const, preview: <SavedCardSelectorDemo />, code: `<SavedCardSelector cards={cards} selectedCardId={selected} onSelect={handleSelect} onRemove={handleRemove} onAddNew={() => setShowForm(true)} />` },
+        { title: 'Empty state', layout: 'stack' as const, preview: <SavedCardSelectorEmptyDemo />, code: `<SavedCardSelector cards={[]} onSelect={handleSelect} onAddNew={() => setShowForm(true)} />` },
+      ],
+    },
   ];
+}
+
+/* ─── P3 demo components ─── */
+
+function ForgotPasswordFormDefaultDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Forgot Password</h2>
+      <ForgotPasswordForm onSubmit={async () => { await new Promise((r) => setTimeout(r, 800)); }} />
+    </div>
+  );
+}
+
+function ForgotPasswordFormSentDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Forgot Password</h2>
+      <ForgotPasswordForm onSubmit={async () => {}} />
+    </div>
+  );
+}
+
+function SessionExpiredBannerDefaultDemo() {
+  return <div className="w-full p-4"><SessionExpiredBanner onSignIn={() => {}} /></div>;
+}
+
+function SessionExpiredBannerCustomDemo() {
+  return (
+    <div className="w-full p-4">
+      <SessionExpiredBanner message="You've been signed out due to inactivity." onSignIn={() => {}} />
+    </div>
+  );
+}
+
+function SeoFormEmptyDemo() {
+  return (
+    <div className="w-full max-w-lg mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <SeoForm onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }} />
+    </div>
+  );
+}
+
+function SeoFormPrefilledDemo() {
+  return (
+    <div className="w-full max-w-lg mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <SeoForm
+        initial={{ seoTitle: 'Best Running Shoes 2025', seoDescription: 'Discover the top-rated running shoes for every terrain and budget.', keywords: ['running', 'shoes', 'sports'] }}
+        onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }}
+        onCancel={() => {}}
+      />
+    </div>
+  );
+}
+
+function SeoPreviewFilledDemo() {
+  return (
+    <div className="w-full max-w-lg mx-auto p-4">
+      <SeoPreview
+        seo={{ seoTitle: 'Best Running Shoes 2025', seoDescription: 'Discover the top-rated running shoes for every terrain and budget. Free shipping on orders over $50.', keywords: ['running', 'shoes'] }}
+        url="https://shop.example.com/running-shoes"
+        siteName="Shop Example"
+      />
+    </div>
+  );
+}
+
+function SeoPreviewEmptyDemo() {
+  return (
+    <div className="w-full max-w-lg mx-auto p-4">
+      <SeoPreview seo={{}} url="https://example.com/page" />
+    </div>
+  );
+}
+
+const DEMO_ADDRESSES = [
+  { addressLine1: '123 Main Street, Apt 4B', fullName: 'Jane Doe', phone: '+1 555 000 0000', city: 'New York', state: 'NY', postalCode: '10001', country: 'United States', countryCode: 'US' },
+  { addressLine1: '456 Oak Avenue', fullName: 'Jane Doe', city: 'Los Angeles', state: 'CA', postalCode: '90001', country: 'United States', countryCode: 'US' },
+];
+
+function AddressSelectorDemo() {
+  const [sel, setSel] = useState(0);
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <AddressSelector addresses={DEMO_ADDRESSES} selectedIndex={sel} onSelect={(i) => setSel(i)} onAdd={() => {}} />
+    </div>
+  );
+}
+
+function AddressSelectorEmptyDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <AddressSelector addresses={[]} onSelect={() => {}} onAdd={() => {}} />
+    </div>
+  );
+}
+
+function LocationPickerEmptyDemo() {
+  return (
+    <div className="w-full max-w-lg mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <LocationPicker onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }} />
+    </div>
+  );
+}
+
+function LocationPickerPrefilledDemo() {
+  return (
+    <div className="w-full max-w-lg mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <LocationPicker
+        initial={{ city: 'Istanbul', countryCode: 'TR', postalCode: '34000', latitude: 41.0082, longitude: 28.9784 }}
+        onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }}
+        onCancel={() => {}}
+      />
+    </div>
+  );
+}
+
+function GeoPointDisplayLabelDemo() {
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <GeoPointDisplay point={{ latitude: 41.0082, longitude: 28.9784 }} label="Istanbul" />
+      <GeoPointDisplay point={{ latitude: 48.8566, longitude: 2.3522  }} label="Paris" />
+      <GeoPointDisplay point={{ latitude: 40.7128, longitude: -74.006 }} label="New York" />
+    </div>
+  );
+}
+
+function GeoPointDisplayMinimalDemo() {
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <GeoPointDisplay point={{ latitude: 51.5074, longitude: -0.1278 }} showMapLink={false} precision={4} />
+    </div>
+  );
+}
+
+function ProcessingStatusAllDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4 space-y-4">
+      {(['UPLOADING', 'PROCESSING', 'READY', 'FAILED'] as ProcessingStatus[]).map((s) => (
+        <ProcessingStatusIndicator key={s} status={s} progress={s === 'READY' ? 100 : s === 'FAILED' ? undefined : 45} />
+      ))}
+    </div>
+  );
+}
+
+function ProcessingStatusSizesDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4 space-y-4">
+      {(['sm', 'md', 'lg'] as const).map((size) => (
+        <ProcessingStatusIndicator key={size} status="PROCESSING" label="Encoding video…" progress={65} size={size} />
+      ))}
+    </div>
+  );
+}
+
+function CurrencySelectorDemo() {
+  const [currency, setCurrency] = useState('TRY');
+  return (
+    <div className="w-full max-w-xs mx-auto p-4">
+      <CurrencySelector value={currency} onChange={setCurrency} />
+      <p className="text-xs text-text-secondary mt-2">Selected: <span className="font-mono">{currency}</span></p>
+    </div>
+  );
+}
+
+function CurrencySelectorNoLabelDemo() {
+  const [currency, setCurrency] = useState('USD');
+  return (
+    <div className="w-full max-w-xs mx-auto p-4">
+      <CurrencySelector value={currency} onChange={setCurrency} label="" />
+    </div>
+  );
+}
+
+function DirectionProviderRTLDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <DirectionProvider lang={'ar' as any}>
+        <div className="space-y-2 p-4 bg-surface-raised border border-border rounded-lg">
+          <p className="text-sm font-semibold text-text-primary">dir="rtl"</p>
+          <p className="text-sm text-text-secondary">مرحبا بالعالم — Hello World</p>
+          <p className="text-xs text-text-disabled">Text flows right to left</p>
+        </div>
+      </DirectionProvider>
+    </div>
+  );
+}
+
+function DirectionProviderLTRDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <DirectionProvider lang={'en' as any}>
+        <div className="space-y-2 p-4 bg-surface-raised border border-border rounded-lg">
+          <p className="text-sm font-semibold text-text-primary">dir="ltr"</p>
+          <p className="text-sm text-text-secondary">Hello World — مرحبا بالعالم</p>
+          <p className="text-xs text-text-disabled">Text flows left to right</p>
+        </div>
+      </DirectionProvider>
+    </div>
+  );
+}
+
+/* ─── CreditCardVisual demos ─── */
+
+function CreditCardVisualBrandsDemo() {
+  return (
+    <div className="flex flex-wrap gap-4 justify-center p-4">
+      <CreditCardVisual brand="VISA" cardNumber="4111111111111111" cardholderName="JANE DOE" expiryMonth="08" expiryYear="28" />
+      <CreditCardVisual brand="MASTERCARD" cardNumber="5500005555555559" cardholderName="JOHN SMITH" expiryMonth="12" expiryYear="27" />
+    </div>
+  );
+}
+
+function CreditCardVisualFlippedDemo() {
+  return (
+    <div className="flex flex-wrap gap-4 justify-center p-4">
+      <CreditCardVisual brand="AMEX" cardNumber="378282246310005" cardholderName="JANE DOE" expiryMonth="03" expiryYear="26" cvv="1234" flipped />
+      <CreditCardVisual brand="DISCOVER" cardNumber="6011111111111117" cardholderName="BOB LEE" expiryMonth="09" expiryYear="29" cvv="123" />
+    </div>
+  );
+}
+
+/* ─── CreditCardForm demos ─── */
+
+function CreditCardFormDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Add Payment Card</h2>
+      <CreditCardForm onSubmit={async () => { await new Promise((r) => setTimeout(r, 800)); }} onCancel={() => {}} />
+    </div>
+  );
+}
+
+function CreditCardFormErrorDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Add Payment Card</h2>
+      <CreditCardForm error="Card declined. Please try a different card." onSubmit={async () => {}} />
+    </div>
+  );
+}
+
+/* ─── SavedCardSelector demos ─── */
+
+const DEMO_CARDS: SavedCard[] = [
+  { cardId: 'c1', last4: '4242', brand: 'VISA', cardholderName: 'Jane Doe', expiryMonth: '08', expiryYear: '28', isDefault: true },
+  { cardId: 'c2', last4: '5559', brand: 'MASTERCARD', cardholderName: 'Jane Doe', expiryMonth: '12', expiryYear: '27' },
+  { cardId: 'c3', last4: '0005', brand: 'AMEX', cardholderName: 'Jane Doe', expiryMonth: '03', expiryYear: '26' },
+];
+
+function SavedCardSelectorDemo() {
+  const [selected, setSelected] = useState('c1');
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <SavedCardSelector
+        cards={DEMO_CARDS}
+        selectedCardId={selected}
+        onSelect={(id) => setSelected(id)}
+        onRemove={() => {}}
+        onAddNew={() => {}}
+      />
+    </div>
+  );
+}
+
+function SavedCardSelectorEmptyDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <SavedCardSelector cards={[]} onSelect={() => {}} onAddNew={() => {}} />
+    </div>
+  );
 }
