@@ -1,8 +1,22 @@
-import { NavGroup } from "../ui/Sidebar";
+export type NavItem = {
+  id: string;
+  title: string;
+  category: string;
+  abbr: string;
+  href?: string;
+};
+
+export type NavGroup = {
+  label: string;
+  items: NavItem[];
+  collapsible?: boolean;
+  sectionStart?: string;
+};
 
 const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Atoms',
+    collapsible: true,
     items: [
       { id: 'button',       title: 'Button',            category: 'Atom', abbr: 'Bt' },
       { id: 'button-group', title: 'ButtonGroup',       category: 'Molecule', abbr: 'BG' },
@@ -15,6 +29,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: 'Molecules',
+    collapsible: true,
     items: [
       { id: 'input',             title: 'Input',            category: 'Molecule', abbr: 'In' },
       { id: 'checkbox',          title: 'Checkbox',         category: 'Molecule', abbr: 'Cb' },
@@ -34,6 +49,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: 'Organisms',
+    collapsible: true,
     items: [
       { id: 'card',                title: 'Card',               category: 'Organism', abbr: 'Ca' },
       { id: 'alert-banner',        title: 'AlertBanner',        category: 'Organism', abbr: 'Ab' },
@@ -59,6 +75,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: 'Domain — Common',
+    collapsible: true,
     sectionStart: 'Domain — Common',
     items: [
       { id: 'common-login-form',          title: 'LoginForm',           category: 'Domain', abbr: 'LF' },
@@ -100,7 +117,23 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'Domain — Blog',
+    collapsible: true,
+    sectionStart: 'Domain — Blog',
+    items: [
+      { id: 'blog-post-status-badge', title: 'PostStatusBadge', category: 'Domain', abbr: 'PS' },
+      { id: 'blog-category-badge',    title: 'CategoryBadge',   category: 'Domain', abbr: 'CB' },
+      { id: 'blog-post-meta',         title: 'PostMeta',        category: 'Domain', abbr: 'PM' },
+      { id: 'blog-post-content',      title: 'PostContent',     category: 'Domain', abbr: 'PC' },
+      { id: 'blog-post-card',         title: 'PostCard',        category: 'Domain', abbr: 'Pc' },
+      { id: 'blog-comment-form',      title: 'CommentForm',     category: 'Domain', abbr: 'CF' },
+      { id: 'blog-comment-item',      title: 'CommentItem',     category: 'Domain', abbr: 'CI' },
+      { id: 'blog-comment-list',      title: 'CommentList',     category: 'Domain', abbr: 'CL' },
+    ],
+  },
+  {
     label: 'App Concepts',
+    collapsible: true,
     sectionStart: 'App Concepts',
     items: [
       { id: 'app-shell',    title: 'AppShell',    category: 'App', abbr: 'AS' },

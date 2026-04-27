@@ -122,6 +122,7 @@ export function ShowcaseShell() {
   const navGroups = useMemo(() =>
     SHOWCASE_NAV_GROUPS.map((group) => ({
       label: group.label,
+      collapsible: group.collapsible,
       items: group.items.map((item) => ({
         id: item.id,
         label: item.title,

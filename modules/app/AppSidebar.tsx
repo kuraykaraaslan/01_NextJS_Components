@@ -13,6 +13,8 @@ export type AppSidebarNavItem = {
 export type AppSidebarNavGroup = {
   label?: string;
   items: AppSidebarNavItem[];
+  collapsible?: boolean;
+  defaultExpanded?: boolean;
 };
 
 export type AppSidebarFooterRenderContext = {
@@ -45,6 +47,17 @@ export function AppSidebar({
   className,
 }: AppSidebarProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => {
+    const resolvedGroups: AppSidebarNavGroup[] = navGroups ?? (navItems ? [{ items: navItems }] : []);
+    const initial = new Set<string>();
+    for (const g of resolvedGroups) {
+      if (!g.collapsible) continue;
+      const key = g.label ?? '';
+      const containsActive = g.items.some((i) => i.id === activeId);
+      if (containsActive || g.defaultExpanded) initial.add(key);
+    }
+    return initial;
+  });
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window === 'undefined') {
       return true;
@@ -80,6 +93,20 @@ export function AppSidebar({
     onCollapsedChange?.(next);
   };
 
+  function toggleGroup(key: string) {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function isGroupExpanded(group: AppSidebarNavGroup): boolean {
+    if (!group.collapsible || effectiveCollapsed) return true;
+    return expandedGroups.has(group.label ?? '');
+  }
+
   return (
     <div
       data-collapsed={effectiveCollapsed ? 'true' : 'false'}
@@ -101,13 +128,37 @@ export function AppSidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4 sidebar-scrollbar-hover" aria-label="Sidebar navigation">
-        {groups.map((group, gi) => (
-          <div key={group.label ?? gi}>
+        {groups.map((group, gi) => {
+          const groupKey = group.label ?? String(gi);
+          const expanded = isGroupExpanded(group);
+          const hasActive = group.items.some((i) => i.id === activeId);
+          return (
+          <div key={groupKey}>
             {group.label && !effectiveCollapsed && (
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-text-disabled px-3 mb-1">
-                {group.label}
-              </p>
+              group.collapsible ? (
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(groupKey)}
+                  aria-expanded={expanded}
+                  className={cn(
+                    'w-full flex items-center justify-between px-3 py-1 rounded-md mb-1 transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+                    hasActive ? 'text-text-primary' : 'text-text-disabled hover:text-text-secondary'
+                  )}
+                >
+                  <span className="text-[10px] font-semibold uppercase tracking-widest">{group.label}</span>
+                  <span
+                    aria-hidden="true"
+                    className={cn('text-xs transition-transform duration-200', expanded ? 'rotate-0' : '-rotate-90')}
+                  >▾</span>
+                </button>
+              ) : (
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-text-disabled px-3 mb-1">
+                  {group.label}
+                </p>
+              )
             )}
+            {expanded && (
             <div className="space-y-0.5">
               {group.items.map((item) => (
                 <button
@@ -133,8 +184,10 @@ export function AppSidebar({
                 </button>
               ))}
             </div>
+            )}
           </div>
-        ))}
+          );
+        })}
       </nav>
 
       {footerContent != null && (
