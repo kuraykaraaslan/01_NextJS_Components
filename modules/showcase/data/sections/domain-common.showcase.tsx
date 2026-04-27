@@ -556,18 +556,6 @@ function PaymentMethodSelectorDefaultDemo() {
   );
 }
 
-function PaymentMethodSelectorCustomDemo() {
-  const [method, setMethod] = useState<PaymentMethod | undefined>(undefined);
-  return (
-    <div className="w-full max-w-sm mx-auto p-4">
-      <PaymentMethodSelector
-        value={method}
-        onChange={setMethod}
-        methods={['CREDIT_CARD', 'WALLET', 'BANK_TRANSFER']}
-      />
-    </div>
-  );
-}
 
 /* ─── PaymentSummaryCard ─── */
 function PaymentSummaryCardPaidDemo() {
@@ -1007,7 +995,6 @@ const [method, setMethod] = useState<PaymentMethod>('CREDIT_CARD');
 <PaymentMethodSelector value={method} onChange={setMethod} />`,
       variants: [
         { title: 'Default (4 methods)', layout: 'stack' as const, preview: <PaymentMethodSelectorDefaultDemo />, code: `<PaymentMethodSelector value={method} onChange={setMethod} />` },
-        { title: 'Custom subset', layout: 'stack' as const, preview: <PaymentMethodSelectorCustomDemo />, code: `<PaymentMethodSelector value={method} onChange={setMethod} methods={['CREDIT_CARD', 'WALLET', 'BANK_TRANSFER']} />` },
       ],
     },
     {
