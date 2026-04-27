@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGlobe, faChevronDown, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '@/modules/ui/Button';
 import { cn } from '@/libs/utils/cn';
 import {
   AVAILABLE_LANGUAGES,
@@ -52,23 +53,19 @@ export function LanguageSwitcher({
 
   return (
     <div ref={ref} className={cn('relative inline-block', className)}>
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        size="sm"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Language: ${label}`}
         onClick={() => setOpen((o) => !o)}
-        className={cn(
-          'flex items-center gap-1.5 rounded-md border border-border bg-surface-base px-3 py-1.5 text-sm text-text-primary',
-          'hover:bg-surface-overlay transition-colors',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
-        )}
       >
         <FontAwesomeIcon icon={faGlobe} className="w-3 h-3 text-text-disabled" />
         <span>{flag}</span>
         <span className="hidden sm:inline">{label}</span>
         <FontAwesomeIcon icon={faChevronDown} className={cn('w-2.5 h-2.5 text-text-disabled transition-transform', open && 'rotate-180')} />
-      </button>
+      </Button>
 
       {open && (
         <ul

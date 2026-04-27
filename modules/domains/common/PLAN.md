@@ -38,25 +38,25 @@ modules/domains/common/
 
 | Bileşen | Dosya | Durum |
 |---|---|---|
-| `AddressForm` | `address/AddressForm.tsx` |  |
-| `AddressCard` | `address/AddressCard.tsx` |  |
-| `OrderTotalsCard` | `money/OrderTotalsCard.tsx` |  |
-| `PublishStatusBadge` | `status/PublishStatusBadge.tsx` |  |
-| `VisibilityBadge` | `status/VisibilityBadge.tsx` |  |
-| `LanguageSwitcher` | `i18n/LanguageSwitcher.tsx` |  |
+| `AddressForm` | `address/AddressForm.tsx` | ✅ |
+| `AddressCard` | `address/AddressCard.tsx` | ✅ |
+| `OrderTotalsCard` | `money/OrderTotalsCard.tsx` | ✅ |
+| `PublishStatusBadge` | `status/PublishStatusBadge.tsx` | ✅ |
+| `VisibilityBadge` | `status/VisibilityBadge.tsx` | ✅ |
+| `LanguageSwitcher` | `i18n/LanguageSwitcher.tsx` | ✅ |
 
 ### P2 — Destekleyici
 
 | Bileşen | Dosya | Durum |
 |---|---|---|
-| `ChangePasswordForm` | `auth/ChangePasswordForm.tsx` |  |
-| `UserProfileCard` | `user/UserProfileCard.tsx` |  |
-| `UserProfileForm` | `user/UserProfileForm.tsx` |  |
-| `UserPreferencesForm` | `user/UserPreferencesForm.tsx` |  |
-| `CouponInput` | `discount/CouponInput.tsx` |  |
-| `DiscountBadge` | `discount/DiscountBadge.tsx` |  |
-| `PaymentMethodSelector` | `payment/PaymentMethodSelector.tsx` |  |
-| `PaymentSummaryCard` | `payment/PaymentSummaryCard.tsx` |  |
+| `ChangePasswordForm` | `auth/ChangePasswordForm.tsx` | ✅ |
+| `UserProfileCard` | `user/UserProfileCard.tsx` | ✅ |
+| `UserProfileForm` | `user/UserProfileForm.tsx` | ✅ |
+| `UserPreferencesForm` | `user/UserPreferencesForm.tsx` | ✅ |
+| `CouponInput` | `discount/CouponInput.tsx` | ✅ |
+| `DiscountBadge` | `discount/DiscountBadge.tsx` | ✅ |
+| `PaymentMethodSelector` | `payment/PaymentMethodSelector.tsx` | ✅ |
+| `PaymentSummaryCard` | `payment/PaymentSummaryCard.tsx` | ✅ |
 
 ### P3 — Tamamlayıcı
 

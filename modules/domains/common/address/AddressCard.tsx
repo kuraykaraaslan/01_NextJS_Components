@@ -1,6 +1,7 @@
 'use client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot, faPhone, faUser } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '@/modules/ui/Button';
 import { cn } from '@/libs/utils/cn';
 import type { Address } from '../AddressTypes';
 
@@ -13,7 +14,7 @@ type AddressCardProps = {
 };
 
 export function AddressCard({ address, onEdit, onDelete, selected = false, className }: AddressCardProps) {
-  const cityLine = [address.city, address.state, address.postalCode].filter(Boolean).join(', ');
+  const cityLine    = [address.city, address.state, address.postalCode].filter(Boolean).join(', ');
   const countryLine = [address.country, address.countryCode ? `(${address.countryCode})` : ''].filter(Boolean).join(' ');
 
   return (
@@ -49,24 +50,16 @@ export function AddressCard({ address, onEdit, onDelete, selected = false, class
       )}
 
       {(onEdit || onDelete) && (
-        <div className="flex gap-3 pt-2 border-t border-border">
+        <div className="flex gap-2 pt-2 border-t border-border">
           {onEdit && (
-            <button
-              type="button"
-              onClick={onEdit}
-              className="text-xs text-primary hover:text-primary-hover font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
-            >
+            <Button variant="ghost" size="xs" onClick={onEdit} className="text-primary hover:text-primary-hover">
               Edit
-            </button>
+            </Button>
           )}
           {onDelete && (
-            <button
-              type="button"
-              onClick={onDelete}
-              className="text-xs text-error hover:opacity-80 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
-            >
+            <Button variant="ghost" size="xs" onClick={onDelete} className="text-error hover:opacity-80">
               Delete
-            </button>
+            </Button>
           )}
         </div>
       )}

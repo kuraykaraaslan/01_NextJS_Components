@@ -1,8 +1,8 @@
 'use client';
 import { Avatar } from '@/modules/ui/Avatar';
+import { Button } from '@/modules/ui/Button';
 import { DropdownMenu, type DropdownItem } from '@/modules/ui/DropdownMenu';
 import { SafeUser } from '../types';
-
 
 export function UserMenu({
   user,
@@ -24,10 +24,11 @@ export function UserMenu({
   ];
 
   const trigger = (
-    <button
-      type="button"
-      className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-surface-overlay transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+    <Button
+      variant="ghost"
+      size="sm"
       aria-label={`User menu for ${displayName}`}
+      className="gap-2 px-2"
     >
       <Avatar src={avatar} name={displayName} size="sm" />
       <div className="hidden sm:block text-left min-w-0">
@@ -35,7 +36,7 @@ export function UserMenu({
         <p className="text-xs text-text-secondary truncate">{user.userRole}</p>
       </div>
       <span aria-hidden="true" className="text-text-disabled text-xs hidden sm:block">▾</span>
-    </button>
+    </Button>
   );
 
   const header = (

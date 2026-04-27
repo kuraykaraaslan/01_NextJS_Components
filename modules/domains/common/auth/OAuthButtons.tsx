@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle, faGithub, faDiscord, faMicrosoft } from '@fortawesome/free-brands-svg-icons';
+import { Button } from '@/modules/ui/Button';
 import { cn } from '@/libs/utils/cn';
 import type { OAuthCallback } from '../types';
 
@@ -38,26 +39,18 @@ export function OAuthButtons({
         const meta = providerMeta[provider];
         const isLoading = loadingProvider === provider;
         return (
-          <button
+          <Button
             key={provider}
-            type="button"
+            variant="outline"
+            fullWidth
+            loading={isLoading}
             disabled={loadingProvider !== null}
-            onClick={() => handleClick(provider)}
             aria-label={meta.label}
-            className={cn(
-              'flex items-center justify-center gap-3 w-full rounded-md border border-border px-4 py-2 text-sm font-medium',
-              'text-text-primary bg-surface-base transition-colors hover:bg-surface-overlay',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
-              'disabled:opacity-50 disabled:cursor-not-allowed'
-            )}
+            onClick={() => handleClick(provider)}
+            iconLeft={<span className={meta.iconClass}>{meta.icon}</span>}
           >
-            <span className={cn('w-4 h-4 flex items-center justify-center shrink-0', !isLoading && meta.iconClass)}>
-              {isLoading
-                ? <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" aria-hidden="true" />
-                : meta.icon}
-            </span>
             {meta.label}
-          </button>
+          </Button>
         );
       })}
     </div>

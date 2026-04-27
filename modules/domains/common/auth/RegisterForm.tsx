@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { Form } from '@/modules/app/Form';
 import { Input } from '@/modules/ui/Input';
 import { Button } from '@/modules/ui/Button';
-import { cn } from '@/libs/utils/cn';
 import type { RegisterRequest } from '../types';
 
 type FormValues = RegisterRequest;
@@ -41,13 +41,7 @@ export function RegisterForm({ onSubmit, error, className }: RegisterFormProps) 
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className={cn('space-y-4', className)}>
-      {error && (
-        <div role="alert" className="rounded-md bg-error-subtle border border-error px-4 py-3 text-sm text-error">
-          {error}
-        </div>
-      )}
-
+    <Form onSubmit={handleSubmit} error={error} className={className}>
       <Input
         id="register-email"
         label="Email"
@@ -88,6 +82,6 @@ export function RegisterForm({ onSubmit, error, className }: RegisterFormProps) 
       <Button type="submit" fullWidth loading={loading}>
         Create Account
       </Button>
-    </form>
+    </Form>
   );
 }

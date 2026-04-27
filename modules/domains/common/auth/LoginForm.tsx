@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { Form } from '@/modules/app/Form';
 import { Input } from '@/modules/ui/Input';
 import { Button } from '@/modules/ui/Button';
-import { cn } from '@/libs/utils/cn';
 import type { LoginRequest } from '../types';
 
 type LoginFormValues = LoginRequest & { rememberMe: boolean };
@@ -39,13 +39,7 @@ export function LoginForm({ onSubmit, error, className }: LoginFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className={cn('space-y-4', className)}>
-      {error && (
-        <div role="alert" className="rounded-md bg-error-subtle border border-error px-4 py-3 text-sm text-error">
-          {error}
-        </div>
-      )}
-
+    <Form onSubmit={handleSubmit} error={error} className={className}>
       <Input
         id="login-email"
         label="Email"
@@ -83,6 +77,6 @@ export function LoginForm({ onSubmit, error, className }: LoginFormProps) {
       <Button type="submit" fullWidth loading={loading}>
         Sign In
       </Button>
-    </form>
+    </Form>
   );
 }
