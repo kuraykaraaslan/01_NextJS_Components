@@ -3,15 +3,18 @@ import { Avatar } from '@/modules/ui/Avatar';
 import { Button } from '@/modules/ui/Button';
 import { DropdownMenu, type DropdownItem } from '@/modules/ui/DropdownMenu';
 import { SafeUser } from '../types';
+import { cn } from '@/libs/utils/cn';
 
 export function UserMenu({
   user,
   items,
   align = 'right',
+  onlyAvatar = false,
 }: {
   user: SafeUser;
   items?: DropdownItem[];
   align?: 'left' | 'right';
+  onlyAvatar?: boolean;
 }) {
   const displayName = user.userProfile?.name ?? user.email;
   const avatar      = user.userProfile?.profilePicture ?? null;
@@ -28,13 +31,15 @@ export function UserMenu({
       variant="ghost"
       size="sm"
       aria-label={`User menu for ${displayName}`}
-      className="gap-2 px-2"
+      className={cn("gap-2 px-2")}
     >
       <Avatar src={avatar} name={displayName} size="sm" />
-      <div className="hidden sm:block text-left min-w-0">
-        <p className="text-sm font-medium text-text-primary truncate max-w-[8rem]">{displayName}</p>
-        <p className="text-xs text-text-secondary truncate">{user.userRole}</p>
-      </div>
+      {!onlyAvatar && (
+        <div className="hidden sm:block text-left min-w-0">
+          <p className="text-sm font-medium text-text-primary truncate max-w-[8rem]">{displayName}</p>
+          <p className="text-xs text-text-secondary truncate">{user.userRole}</p>
+        </div>
+      )}
       <span aria-hidden="true" className="text-text-disabled text-xs hidden sm:block">▾</span>
     </Button>
   );

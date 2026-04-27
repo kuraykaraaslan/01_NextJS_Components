@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { use, useMemo, useState } from 'react';
 import { AppShell } from '@/modules/app/AppShell';
 import { AppSidebar } from '@/modules/app/AppSidebar';
 import { AppTopBar } from '@/modules/app/AppTopBar';
@@ -10,6 +10,7 @@ import { buildShowcaseData, type ShowcaseVariant } from '@/modules/showcase/data
 import SHOWCASE_NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
 import { LanguageSwitcher } from '@/modules/domains/common/i18n/LanguageSwitcher';
 import { ThemeSwitcher } from '@/modules/app/ThemeSwitcher';
+import { UserMenu } from '@/modules/domains/common/user/UserMenu';
 
 const categoryStyles: Record<string, string> = {
   Atom:     'bg-info-subtle text-info-fg',
@@ -168,6 +169,8 @@ export function ShowcaseShell() {
           <div className="ml-auto flex items-center gap-1">
             <LanguageSwitcher />
             <ThemeSwitcher />
+            <UserMenu onlyAvatar
+            user={{ userId: 'admin-1', email: 'admin@acme.com', userRole: 'ADMIN', userStatus: 'ACTIVE', userProfile: { name: 'Jane Doe', profilePicture: null } }} />
           </div>
         </AppTopBar>
       }
