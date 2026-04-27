@@ -1,0 +1,276 @@
+'use client';
+import { UserMenu } from '@/modules/app/UserMenu';
+import { GlobalSearch, type SearchResult } from '@/modules/app/GlobalSearch';
+import { AppCommandBar, type CommandItem } from '@/modules/app/AppCommandBar';
+import { Badge } from '@/modules/ui/Badge';
+import { Button } from '@/modules/ui/Button';
+import { useState } from 'react';
+import type { ShowcaseComponent } from '../showcase.types';
+
+const DEMO_USER = {
+  userId: 'demo-1',
+  email: 'jane@acme.com',
+  userRole: 'Admin',
+  userStatus: 'ACTIVE',
+  userPreferences: null,
+  userProfile: { name: 'Jane Doe', profilePicture: null },
+};
+
+const SEARCH_RESULTS: SearchResult[] = [
+  { id: 'dash',        label: 'Dashboard',     description: 'Overview page',               icon: '🏠', category: 'Pages'    },
+  { id: 'users',       label: 'Users',          description: 'Manage team members',         icon: '👥', category: 'Pages'    },
+  { id: 'billing',     label: 'Billing',        description: 'Invoices and plans',          icon: '💳', category: 'Settings' },
+  { id: 'audit',       label: 'Audit Logs',     description: 'Security and activity logs',  icon: '🧾', category: 'Settings' },
+  { id: 'new-project', label: 'Create Project', description: 'Quick action',                icon: '➕', category: 'Actions'  },
+];
+
+function UserMenuDefaultDemo() {
+  return (
+    <div className="flex items-center justify-center p-8">
+      <UserMenu user={DEMO_USER} />
+    </div>
+  );
+}
+
+function UserMenuCustomDemo() {
+  return (
+    <div className="flex items-center justify-center p-8">
+      <UserMenu
+        user={{
+          userId: 'demo-2',
+          email: 'john@acme.com',
+          userRole: 'Editor',
+          userStatus: 'ACTIVE',
+          userPreferences: null,
+          userProfile: { name: 'John Smith', profilePicture: null },
+        }}
+        items={[
+          { label: 'View Profile',  icon: '👤', onClick: () => {} },
+          { label: 'Billing',       icon: '💳', onClick: () => {} },
+          { label: 'Team Settings', icon: '👥', onClick: () => {} },
+          { type: 'separator' },
+          { label: 'Sign out',      icon: '↩️', danger: true, onClick: () => {} },
+        ]}
+      />
+    </div>
+  );
+}
+
+function GlobalSearchStandaloneDemo() {
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [selected, setSelected] = useState('Nothing selected');
+
+  function handleSearch(query: string) {
+    const q = query.trim().toLowerCase();
+    if (!q) { setResults([]); return; }
+    setResults(
+      SEARCH_RESULTS.filter((item) => (
+        item.label.toLowerCase().includes(q)
+        || item.description?.toLowerCase().includes(q)
+        || item.category?.toLowerCase().includes(q)
+      ))
+    );
+  }
+
+  return (
+    <div className="w-full max-w-xl space-y-2">
+      <GlobalSearch
+        placeholder="Search pages and actions…"
+        results={results}
+        onSearch={handleSearch}
+        onSelect={(item) => setSelected(item.label)}
+      />
+      <p className="text-xs text-text-secondary">Selected: {selected}</p>
+    </div>
+  );
+}
+
+function GlobalSearchLoadingDemo() {
+  return (
+    <div className="w-full max-w-xl">
+      <GlobalSearch
+        placeholder="Type to search (loading demo)…"
+        loading
+        results={SEARCH_RESULTS}
+        onSearch={() => {}}
+        onSelect={() => {}}
+      />
+    </div>
+  );
+}
+
+function AppCommandBarDemo({ custom }: { custom?: boolean }) {
+  const customItems: CommandItem[] = [
+    { icon: '🛍️', label: 'View Orders',    shortcut: 'G O', category: 'Navigation' },
+    { icon: '📦', label: 'Inventory',      shortcut: 'G I', category: 'Navigation' },
+    { icon: '💰', label: 'New Sale',       shortcut: '⌘N',  category: 'Actions', onClick: () => {} },
+    { icon: '📊', label: 'Export Report',  shortcut: '⌘E',  category: 'Actions', onClick: () => {} },
+    { icon: '🕐', label: 'Order #1042',    category: 'Recent' },
+    { icon: '🕑', label: 'Customer: Acme', category: 'Recent' },
+  ];
+
+  return (
+    <AppCommandBar
+      items={custom ? customItems : undefined}
+      onSelect={() => {}}
+    />
+  );
+}
+
+export function buildAppUserData(): ShowcaseComponent[] {
+  return [
+    {
+      id: 'user-menu',
+      title: 'UserMenu',
+      category: 'App',
+      abbr: 'UM',
+      description: 'Avatar + isim + rol gösteren trigger\'a tıklayınca açılan kullanıcı dropdown\'ı. SafeUser prop\'u alır; dropdown başlığında isim ve e-posta görünür.',
+      filePath: 'modules/app/UserMenu.tsx',
+      sourceCode: `'use client';
+import { Avatar } from '@/modules/ui/Avatar';
+import { DropdownMenu } from '@/modules/ui/DropdownMenu';
+
+export function UserMenu({ user, items, align = 'right' }) {
+  const displayName = user.userProfile?.name ?? user.name ?? user.email;
+  const avatar      = user.userProfile?.profilePicture ?? null;
+
+  const defaultItems = items ?? [
+    { type: 'item', label: 'Profile',  icon: '👤' },
+    { type: 'item', label: 'Settings', icon: '⚙️' },
+    { type: 'separator' },
+    { type: 'item', label: 'Sign out', icon: '↩️', danger: true },
+  ];
+
+  const header = (
+    <div className="px-3 py-2.5">
+      <p className="text-sm font-semibold text-text-primary truncate">{displayName}</p>
+      <p className="text-xs text-text-secondary truncate">{user.email}</p>
+    </div>
+  );
+
+  const trigger = (
+    <button type="button"
+      className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-surface-overlay transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus">
+      <Avatar src={avatar} name={displayName} size="sm" />
+      <div className="hidden sm:block text-left min-w-0">
+        <p className="text-sm font-medium text-text-primary truncate max-w-[8rem]">{displayName}</p>
+        <p className="text-xs text-text-secondary truncate">{user.userRole}</p>
+      </div>
+      <span aria-hidden="true" className="text-text-disabled text-xs hidden sm:block">▾</span>
+    </button>
+  );
+
+  return <DropdownMenu trigger={trigger} items={defaultItems} header={header} align={align} />;
+}`,
+      variants: [
+        {
+          title: 'Varsayılan (isim + e-posta + rol)',
+          preview: <UserMenuDefaultDemo />,
+          code: `<UserMenu
+  user={{
+    userId: 'u1',
+    email: 'jane@acme.com',
+    userRole: 'Admin',
+    userStatus: 'ACTIVE',
+    userPreferences: null,
+    userProfile: { name: 'Jane Doe', profilePicture: null },
+  }}
+/>`,
+        },
+        {
+          title: 'Özel items',
+          preview: <UserMenuCustomDemo />,
+          code: `<UserMenu
+  user={currentUser}
+  items={[
+    { label: 'View Profile',  icon: '👤', onClick: () => {} },
+    { label: 'Billing',       icon: '💳', onClick: () => {} },
+    { type: 'separator' },
+    { label: 'Sign out',      icon: '↩️', danger: true, onClick: () => {} },
+  ]}
+/>`,
+        },
+      ],
+    },
+    {
+      id: 'global-search',
+      title: 'GlobalSearch',
+      category: 'App',
+      abbr: 'GS',
+      description: 'Komut paleti benzeri global arama alanı. Kategori bazlı sonuç listesi, klavye navigasyonu ve sonuç seçimi destekler.',
+      filePath: 'modules/app/GlobalSearch.tsx',
+      sourceCode: `'use client';
+import { GlobalSearch } from '@/modules/app/GlobalSearch';
+
+export function Demo() {
+  return (
+    <GlobalSearch
+      placeholder="Search…"
+      results={results}
+      onSearch={handleSearch}
+      onSelect={handleSelect}
+    />
+  );
+}`,
+      variants: [
+        {
+          title: 'Interactive results',
+          layout: 'stack' as const,
+          preview: <GlobalSearchStandaloneDemo />,
+          code: `<GlobalSearch
+  placeholder="Search pages and actions…"
+  results={results}
+  onSearch={handleSearch}
+  onSelect={(result) => setSelected(result.label)}
+/>`,
+        },
+        {
+          title: 'Loading state',
+          layout: 'stack' as const,
+          preview: <GlobalSearchLoadingDemo />,
+          code: `<GlobalSearch loading results={results} onSearch={handleSearch} onSelect={handleSelect} />`,
+        },
+      ],
+    },
+    {
+      id: 'app-command-bar',
+      title: 'AppCommandBar',
+      category: 'App',
+      abbr: 'CB',
+      description: 'Keyboard-first komut paleti. ⌘K trigger\'ı ile açılır; items prop\'u ile özel komutlar geçilebilir, varsayılan navigation/actions/recent seti dahilidir.',
+      filePath: 'modules/app/AppCommandBar.tsx',
+      sourceCode: `'use client';
+import { AppCommandBar } from '@/modules/app/AppCommandBar';
+
+// Varsayılan komutlarla:
+<AppCommandBar onSelect={(item) => router.push(item.href)} />
+
+// Özel komutlarla:
+<AppCommandBar
+  items={[
+    { icon: '🏠', label: 'Dashboard', shortcut: 'G D', category: 'Navigation' },
+    { icon: '➕', label: 'New Project', shortcut: '⌘N', category: 'Actions', onClick: handleNew },
+    { icon: '🕐', label: 'Recent Item', category: 'Recent' },
+  ]}
+  trigger={<Button variant="outline" size="sm">⌘K</Button>}
+  onSelect={handleSelect}
+/>`,
+      variants: [
+        {
+          title: 'Varsayılan komutlar',
+          preview: <AppCommandBarDemo />,
+          code: `<AppCommandBar onSelect={(item) => console.log(item.label)} />`,
+        },
+        {
+          title: 'Özel items + trigger',
+          preview: <AppCommandBarDemo custom />,
+          code: `<AppCommandBar
+  items={customItems}
+  trigger={<Button variant="ghost" size="sm" iconRight={<Badge variant="neutral" size="sm">⌘K</Badge>}>Search…</Button>}
+  onSelect={handleSelect}
+/>`,
+        },
+      ],
+    },
+  ];
+}

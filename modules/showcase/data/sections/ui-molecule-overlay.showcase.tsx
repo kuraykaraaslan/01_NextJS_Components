@@ -1,0 +1,391 @@
+'use client';
+import { Button } from '@/modules/ui/Button';
+import { Badge } from '@/modules/ui/Badge';
+import { Modal } from '@/modules/ui/Modal';
+import { Drawer } from '@/modules/ui/Drawer';
+import { Tooltip } from '@/modules/ui/Tooltip';
+import { DropdownMenu } from '@/modules/ui/DropdownMenu';
+import { Popover } from '@/modules/ui/Popover';
+import { useState } from 'react';
+import type { ShowcaseComponent } from '../showcase.types';
+
+function ModalDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <Button variant="primary" onClick={() => setOpen(true)}>Open Modal</Button>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Confirm action"
+        description="Are you sure you want to proceed? This action cannot be undone."
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="danger" onClick={() => setOpen(false)}>Delete</Button>
+          </>
+        }
+      >
+        <p className="text-sm text-text-secondary">
+          This will permanently delete all selected items and their associated data.
+        </p>
+      </Modal>
+    </div>
+  );
+}
+
+function DrawerDemo({ side }: { side?: 'left' | 'right' }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <Button variant="outline" onClick={() => setOpen(true)}>Open {side === 'left' ? 'Left' : 'Right'} Drawer</Button>
+      <Drawer
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Settings"
+        side={side}
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="primary" onClick={() => setOpen(false)}>Save</Button>
+          </>
+        }
+      >
+        <p className="text-sm text-text-secondary">Drawer content goes here.</p>
+      </Drawer>
+    </div>
+  );
+}
+
+function ModalScrollableDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <Button variant="outline" onClick={() => setOpen(true)}>Scrollable Modal</Button>
+      <Modal open={open} onClose={() => setOpen(false)} title="Long Content" scrollable
+        footer={<><Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button><Button onClick={() => setOpen(false)}>OK</Button></>}
+      >
+        <div className="space-y-3">
+          {Array.from({ length: 12 }, (_, i) => (
+            <p key={i} className="text-sm text-text-secondary">Paragraph {i + 1}: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          ))}
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+function ModalFullscreenDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <Button variant="ghost" onClick={() => setOpen(true)}>Fullscreen Modal</Button>
+      <Modal open={open} onClose={() => setOpen(false)} title="Fullscreen Dialog" fullscreen
+        footer={<Button onClick={() => setOpen(false)}>Close</Button>}
+      >
+        <p className="text-sm text-text-secondary">This modal takes the full viewport.</p>
+      </Modal>
+    </div>
+  );
+}
+
+function ModalSizesDemo() {
+  const [size, setSize] = useState<'sm' | 'md' | 'lg' | null>(null);
+  return (
+    <div className="flex gap-2 flex-wrap">
+      {(['sm', 'md', 'lg'] as const).map((s) => (
+        <Button key={s} variant="outline" size="sm" onClick={() => setSize(s)}>Open {s.toUpperCase()}</Button>
+      ))}
+      {size && (
+        <Modal open onClose={() => setSize(null)} title={`Modal — ${size.toUpperCase()}`} size={size}
+          description="This demo shows the three available size variants."
+          footer={<Button variant="primary" onClick={() => setSize(null)}>Close</Button>}>
+          <p className="text-sm text-text-secondary">Max-width: {size === 'sm' ? '384px' : size === 'md' ? '448px' : '512px'}.</p>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function PopoverDemo() {
+  return (
+    <Popover
+      trigger={<Button variant="outline">Open Popover</Button>}
+      placement="bottom"
+    >
+      <div className="p-4 space-y-2">
+        <p className="text-sm font-semibold text-text-primary">Popover title</p>
+        <p className="text-xs text-text-secondary">Contextual content appears here.</p>
+        <Button size="sm" variant="ghost" className="w-full">Action</Button>
+      </div>
+    </Popover>
+  );
+}
+
+export function buildOverlayData(): ShowcaseComponent[] {
+  return [
+    {
+      id: 'modal',
+      title: 'Modal',
+      category: 'Organism',
+      abbr: 'Md',
+      description: 'Odak yönetimi, Escape kapatma, backdrop tıklama ile kapatma. role="dialog" + aria-modal + aria-labelledby zorunludur.',
+      filePath: 'modules/ui/Modal.tsx',
+      sourceCode: `'use client';
+import { cn } from '@/libs/utils/cn';
+import { useEffect, useRef } from 'react';
+
+export function Modal({ open, onClose, title, description, children, footer, size = 'md', className }) {
+  const panelRef = useRef(null);
+  useEffect(() => { if (!open) return; const prev = document.activeElement; panelRef.current?.focus(); return () => prev?.focus(); }, [open]);
+  useEffect(() => { if (!open) return; const onKey = (e) => { if (e.key === 'Escape') onClose(); }; document.addEventListener('keydown', onKey); return () => document.removeEventListener('keydown', onKey); }, [open, onClose]);
+  if (!open) return null;
+  const sizeClass = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg' }[size];
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" aria-labelledby="modal-title">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
+      <div ref={panelRef} tabIndex={-1} className={cn('relative z-10 w-full rounded-xl border border-border bg-surface-raised shadow-xl flex flex-col focus-visible:outline-none', sizeClass, className)}>
+        <div className="flex items-start justify-between gap-3 px-6 py-4 border-b border-border">
+          <h2 id="modal-title" className="text-base font-semibold text-text-primary">{title}</h2>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded">✕</button>
+        </div>
+        {children && <div className="px-6 py-4 flex-1">{children}</div>}
+        {footer && <div className="px-6 py-4 border-t border-border flex justify-end gap-2">{footer}</div>}
+      </div>
+    </div>
+  );
+}`,
+      variants: [
+        {
+          title: 'Confirmation dialog',
+          preview: <ModalDemo />,
+          code: `const [open, setOpen] = useState(false);\n<Button variant="primary" onClick={() => setOpen(true)}>Open Modal</Button>\n<Modal open={open} onClose={() => setOpen(false)} title="Confirm action"\n  description="Are you sure you want to proceed?"\n  footer={<><Button variant="outline">Cancel</Button><Button variant="danger">Delete</Button></>}>\n  <p>This will permanently delete all selected items.</p>\n</Modal>`,
+        },
+        {
+          title: 'Sizes (sm / md / lg)',
+          preview: <ModalSizesDemo />,
+          code: `<Modal open={open} onClose={onClose} title="Small" size="sm">...</Modal>\n<Modal open={open} onClose={onClose} title="Medium" size="md">...</Modal>\n<Modal open={open} onClose={onClose} title="Large" size="lg">...</Modal>`,
+        },
+        {
+          title: 'Scrollable body',
+          preview: <ModalScrollableDemo />,
+          code: `<Modal open={open} onClose={onClose} title="Long Content" scrollable\n  footer={<Button>OK</Button>}>\n  {/* long content scrolls inside */}\n</Modal>`,
+        },
+        {
+          title: 'Fullscreen',
+          preview: <ModalFullscreenDemo />,
+          code: `<Modal open={open} onClose={onClose} title="Fullscreen Dialog" fullscreen>...</Modal>`,
+        },
+      ],
+    },
+    {
+      id: 'drawer',
+      title: 'Drawer',
+      category: 'Organism',
+      abbr: 'Dr',
+      description: 'Ekranın kenarından süzülen panel. Sol / sağ taraf seçeneği, odak yönetimi ve Escape kapatma dahildir.',
+      filePath: 'modules/ui/Drawer.tsx',
+      sourceCode: `'use client';
+import { cn } from '@/libs/utils/cn';
+import { useEffect, useRef } from 'react';
+
+export function Drawer({ open, onClose, title, side = 'right', children, footer, className }) {
+  // focus trap + Escape key handler
+  return (
+    <div className={cn('fixed inset-0 z-50 flex', !open && 'pointer-events-none')} aria-modal="true" role="dialog" aria-label={title}>
+      <div className={cn('absolute inset-0 bg-black/50 transition-opacity duration-200', open ? 'opacity-100' : 'opacity-0')} onClick={onClose} aria-hidden="true" />
+      <div className={cn('relative flex flex-col w-80 max-w-full h-full bg-surface-raised shadow-xl transition-transform duration-200 focus-visible:outline-none', side === 'right' ? 'ml-auto border-l border-border' : 'mr-auto border-r border-border', open ? 'translate-x-0' : side === 'right' ? 'translate-x-full' : '-translate-x-full', className)}>
+        <div className="flex items-center justify-between gap-3 px-4 py-4 border-b border-border shrink-0">
+          <h2 className="text-base font-semibold text-text-primary">{title}</h2>
+          <button type="button" onClick={onClose} aria-label="Close drawer" className="text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded">✕</button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-4 py-4">{children}</div>
+        {footer && <div className="px-4 py-4 border-t border-border shrink-0 flex justify-end gap-2">{footer}</div>}
+      </div>
+    </div>
+  );
+}`,
+      variants: [
+        {
+          title: 'Right drawer',
+          preview: <DrawerDemo side="right" />,
+          code: `const [open, setOpen] = useState(false);\n<Button variant="outline" onClick={() => setOpen(true)}>Open Drawer</Button>\n<Drawer open={open} onClose={() => setOpen(false)} title="Settings" side="right"\n  footer={<><Button variant="outline">Cancel</Button><Button variant="primary">Save</Button></>}>\n  <p>Drawer content goes here.</p>\n</Drawer>`,
+        },
+        {
+          title: 'Left drawer',
+          preview: <DrawerDemo side="left" />,
+          code: `<Drawer open={open} onClose={() => setOpen(false)} title="Navigation" side="left">...</Drawer>`,
+        },
+      ],
+    },
+    {
+      id: 'tooltip',
+      title: 'Tooltip',
+      category: 'Organism',
+      abbr: 'Tt',
+      description: 'Hover ve focus ile görünür yardım metni. role="tooltip" + aria-describedby bağlantısı ile erişilebilir. 4 yön desteklenir.',
+      filePath: 'modules/ui/Tooltip.tsx',
+      sourceCode: `'use client';
+import { cn } from '@/libs/utils/cn';
+import { useRef, useState } from 'react';
+
+export function Tooltip({ content, placement = 'top', children, className }) {
+  const [visible, setVisible] = useState(false);
+  const id = useRef(\`tooltip-\${Math.random().toString(36).slice(2)}\`).current;
+  const placementClass = { top: 'bottom-full left-1/2 -translate-x-1/2 mb-1.5', bottom: 'top-full left-1/2 -translate-x-1/2 mt-1.5', left: 'right-full top-1/2 -translate-y-1/2 mr-1.5', right: 'left-full top-1/2 -translate-y-1/2 ml-1.5' }[placement];
+  return (
+    <span className={cn('relative inline-flex items-center', className)} onMouseEnter={() => setVisible(true)} onMouseLeave={() => setVisible(false)} onFocus={() => setVisible(true)} onBlur={() => setVisible(false)}>
+      <span aria-describedby={id}>{children}</span>
+      <span id={id} role="tooltip" className={cn('absolute z-50 whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium shadow-md bg-surface-overlay text-text-primary border border-border transition-opacity duration-150 pointer-events-none', placementClass, visible ? 'opacity-100' : 'opacity-0')}>{content}</span>
+    </span>
+  );
+}`,
+      variants: [
+        {
+          title: 'Placements',
+          preview: (
+            <div className="flex flex-wrap items-center justify-center gap-6 py-4">
+              {(['top','bottom','left','right'] as const).map((p) => (
+                <Tooltip key={p} content={`Tooltip ${p}`} placement={p}>
+                  <Button variant="outline" size="sm">{p.charAt(0).toUpperCase() + p.slice(1)}</Button>
+                </Tooltip>
+              ))}
+            </div>
+          ),
+          code: `<Tooltip content="Help text" placement="top">\n  <Button variant="outline" size="sm">Hover me</Button>\n</Tooltip>`,
+        },
+        {
+          title: 'Themes',
+          preview: (
+            <div className="flex flex-wrap items-center justify-center gap-4 py-4">
+              <Tooltip content="Default theme" theme="default">
+                <Button variant="outline" size="sm">Default</Button>
+              </Tooltip>
+              <Tooltip content="Dark theme" theme="dark">
+                <Button variant="outline" size="sm">Dark</Button>
+              </Tooltip>
+              <Tooltip content="Light theme" theme="light">
+                <Button variant="outline" size="sm">Light</Button>
+              </Tooltip>
+            </div>
+          ),
+          code: `<Tooltip content="Dark theme" theme="dark"><Button>Dark</Button></Tooltip>`,
+        },
+        {
+          title: 'Arrow + Delay',
+          preview: (
+            <div className="flex flex-wrap items-center justify-center gap-4 py-4">
+              <Tooltip content="With arrow" arrow placement="top">
+                <Button variant="outline" size="sm">Arrow</Button>
+              </Tooltip>
+              <Tooltip content="500ms delay" delay={500} placement="bottom">
+                <Button variant="outline" size="sm">Delayed</Button>
+              </Tooltip>
+              <Tooltip content="Arrow + dark + delay" arrow theme="dark" delay={300} placement="right">
+                <Button variant="outline" size="sm">Combined</Button>
+              </Tooltip>
+            </div>
+          ),
+          code: `<Tooltip content="With arrow" arrow placement="top">\n  <Button>Arrow</Button>\n</Tooltip>\n<Tooltip content="500ms delay" delay={500}>\n  <Button>Delayed</Button>\n</Tooltip>`,
+        },
+      ],
+    },
+    {
+      id: 'dropdown-menu',
+      title: 'DropdownMenu',
+      category: 'Organism',
+      abbr: 'Dm',
+      description: 'role="menu" + role="menuitem" ile erişilebilir dropdown. Escape ile kapanır, dışarı tıklamada kapanır. Danger ve disabled item desteği var.',
+      filePath: 'modules/ui/DropdownMenu.tsx',
+      sourceCode: `'use client';
+import { cn } from '@/libs/utils/cn';
+import { useEffect, useRef, useState } from 'react';
+
+export function DropdownMenu({ trigger, items, align = 'left', className }) {
+  const [open, setOpen] = useState(false);
+  // outside click + Escape handlers
+  return (
+    <div ref={containerRef} className={cn('relative inline-block', className)}>
+      <div onClick={() => setOpen((p) => !p)} aria-haspopup="menu" aria-expanded={open}>{trigger}</div>
+      {open && (
+        <div role="menu" className={cn('absolute z-50 mt-1 min-w-[10rem] rounded-lg border border-border bg-surface-raised shadow-lg py-1', align === 'right' ? 'right-0' : 'left-0')}>
+          {items.map((item, i) => item.type === 'separator' ? <div key={i} role="separator" className="my-1 border-t border-border" /> : (
+            <button key={i} role="menuitem" type="button" disabled={item.disabled} onClick={() => { item.onClick?.(); setOpen(false); }}
+              className={cn('flex w-full items-center gap-2 px-3 py-2 text-sm text-left transition-colors focus-visible:outline-none focus-visible:bg-surface-overlay', item.danger ? 'text-error hover:bg-error-subtle' : 'text-text-primary hover:bg-surface-overlay', item.disabled && 'opacity-50 cursor-not-allowed')}>
+              {item.icon && <span aria-hidden="true">{item.icon}</span>}{item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}`,
+      variants: [
+        {
+          title: 'Default',
+          preview: (
+            <DropdownMenu
+              trigger={<Button variant="outline" size="sm">Actions ▾</Button>}
+              items={[
+                { label: 'Edit', icon: '✏' },
+                { label: 'Duplicate', icon: '⧉' },
+                { type: 'separator' },
+                { label: 'Delete', icon: '🗑', danger: true },
+              ]}
+            />
+          ),
+          code: `<DropdownMenu\n  trigger={<Button variant="outline" size="sm">Actions ▾</Button>}\n  items={[\n    { label: 'Edit', icon: '✏' },\n    { label: 'Duplicate', icon: '⧉' },\n    { type: 'separator' },\n    { label: 'Delete', icon: '🗑', danger: true },\n  ]}\n/>`,
+        },
+        {
+          title: 'Right-aligned',
+          preview: (
+            <div className="flex justify-end w-full max-w-xs">
+              <DropdownMenu
+                align="right"
+                trigger={<Button variant="ghost" size="sm">⋮</Button>}
+                items={[
+                  { label: 'View details' },
+                  { label: 'Export', icon: '↗' },
+                  { label: 'Archive', disabled: true },
+                  { type: 'separator' },
+                  { label: 'Remove', danger: true },
+                ]}
+              />
+            </div>
+          ),
+          code: `<DropdownMenu align="right"\n  trigger={<Button variant="ghost" size="sm">⋮</Button>}\n  items={[{ label: 'View details' }, { label: 'Remove', danger: true }]}\n/>`,
+        },
+      ],
+    },
+    {
+      id: 'popover',
+      title: 'Popover',
+      category: 'Organism',
+      abbr: 'Po',
+      description: 'Anchor-based contextual panel. Closes on outside click and Escape key. Supports top/bottom/left/right placement.',
+      filePath: 'modules/ui/Popover.tsx',
+      sourceCode: `'use client';\nimport { cn } from '@/libs/utils/cn';\nimport { useEffect, useRef, useState } from 'react';\n\nexport function Popover({ trigger, children, placement = 'bottom' }) {\n  // manages open state, outside-click + Escape close, focus management\n}`,
+      variants: [
+        {
+          title: 'Bottom (default)',
+          preview: <PopoverDemo />,
+          code: `<Popover trigger={<Button variant="outline">Open</Button>} placement="bottom">\n  <div className="p-4">\n    <p className="text-sm font-semibold">Title</p>\n    <p className="text-xs text-text-secondary">Content goes here.</p>\n  </div>\n</Popover>`,
+        },
+        {
+          title: 'Placements',
+          layout: 'stack' as const,
+          preview: (
+            <div className="flex flex-wrap gap-3 items-center justify-center py-8">
+              {(['top', 'bottom', 'left', 'right'] as const).map((p) => (
+                <Popover key={p} placement={p} trigger={<Button variant="outline" size="sm">{p}</Button>}>
+                  <div className="p-3 text-xs text-text-secondary">Popover on {p}</div>
+                </Popover>
+              ))}
+            </div>
+          ),
+          code: `<Popover placement="top" trigger={<Button>Top</Button>}><div>...</div></Popover>\n<Popover placement="right" trigger={<Button>Right</Button>}><div>...</div></Popover>`,
+        },
+      ],
+    },
+  ];
+}

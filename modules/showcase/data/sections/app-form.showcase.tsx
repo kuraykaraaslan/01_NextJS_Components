@@ -1,0 +1,232 @@
+'use client';
+import { Form } from '@/modules/app/Form';
+import { Input } from '@/modules/ui/Input';
+import { Select } from '@/modules/ui/Select';
+import { MultiSelect } from '@/modules/ui/MultiSelect';
+import { Toggle } from '@/modules/ui/Toggle';
+import { Textarea } from '@/modules/ui/Textarea';
+import { FilterBar, type FilterField, type FilterValues } from '@/modules/app/FilterBar';
+import { Button } from '@/modules/ui/Button';
+import { useState } from 'react';
+import type { ShowcaseComponent } from '../showcase.types';
+
+const FILTER_FIELDS: FilterField[] = [
+  {
+    type: 'select',
+    id: 'status',
+    label: 'Status',
+    options: [
+      { value: 'active',    label: 'Active'    },
+      { value: 'invited',   label: 'Invited'   },
+      { value: 'suspended', label: 'Suspended' },
+    ],
+    placeholder: 'All statuses',
+  },
+  {
+    type: 'multiselect',
+    id: 'role',
+    label: 'Role',
+    options: [
+      { value: 'admin',  label: 'Admin'  },
+      { value: 'editor', label: 'Editor' },
+      { value: 'viewer', label: 'Viewer' },
+    ],
+    placeholder: 'Any role',
+  },
+  { type: 'daterange', id: 'period', label: 'Created at' },
+  { type: 'tags',      id: 'tags',   label: 'Tags', placeholder: 'Add filter tag…' },
+];
+
+const INITIAL_FILTER_VALUES: FilterValues = {
+  status: '',
+  role: [],
+  period: { start: null, end: null },
+  tags: [],
+};
+
+function FormDemo({ columns }: { columns: 1 | 2 }) {
+  const [name,        setName]        = useState('');
+  const [email,       setEmail]       = useState('');
+  const [visibility,  setVisibility]  = useState('private');
+  const [stack,       setStack]       = useState<string[]>(['next', 'ts']);
+  const [description, setDescription] = useState('');
+  const [notify,      setNotify]      = useState(true);
+  const [nameError,   setNameError]   = useState('');
+  const [emailError,  setEmailError]  = useState('');
+  const [formError,   setFormError]   = useState('');
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const nameErr  = !name.trim()          ? 'Project name is required.' : '';
+    const emailErr = !email.includes('@')  ? 'Valid email is required.'  : '';
+    setNameError(nameErr);
+    setEmailError(emailErr);
+    if (nameErr || emailErr) { setFormError('Please fix the errors above before saving.'); return; }
+    setFormError('');
+  }
+
+  function handleCancel() {
+    setName(''); setEmail(''); setVisibility('private');
+    setStack(['next', 'ts']); setDescription(''); setNotify(true);
+    setNameError(''); setEmailError(''); setFormError('');
+  }
+
+  return (
+    <Form
+      title="Create project"
+      description="Fill in the details to create a new project."
+      error={formError}
+      columns={columns}
+      onSubmit={handleSubmit}
+      actions={
+        <>
+          <Button variant="outline" type="button" onClick={handleCancel}>Cancel</Button>
+          <Button variant="primary" type="submit">Save project</Button>
+        </>
+      }
+    >
+      <Input id="name"  label="Project name" placeholder="Acme Redesign" required value={name}  onChange={(e) => setName(e.target.value)}  error={nameError}  />
+      <Input id="email" label="Owner email"  type="email" placeholder="owner@acme.com" required value={email} onChange={(e) => setEmail(e.target.value)} error={emailError} />
+      <Select id="visibility" label="Visibility" value={visibility} onChange={(e) => setVisibility(e.target.value)}
+        options={[{ value: 'private', label: 'Private' }, { value: 'internal', label: 'Internal' }, { value: 'public', label: 'Public' }]} />
+      <MultiSelect id="stack" label="Tech stack" value={stack} onChange={setStack}
+        options={[{ value: 'next', label: 'Next.js' }, { value: 'react', label: 'React' }, { value: 'ts', label: 'TypeScript' }, { value: 'tailwind', label: 'Tailwind' }]} />
+      <div className={columns === 2 ? 'sm:col-span-2' : ''}>
+        <Textarea id="description" label="Description" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+      </div>
+      <div className={columns === 2 ? 'sm:col-span-2' : ''}>
+        <Toggle id="notify" label="Send team notifications" description="Notify members after creation." checked={notify} onChange={setNotify} />
+      </div>
+    </Form>
+  );
+}
+
+function FilterBarDemo({ compact = false }: { compact?: boolean }) {
+  const [values, setValues] = useState<FilterValues>(INITIAL_FILTER_VALUES);
+  const fields = compact ? FILTER_FIELDS.slice(0, 2) : FILTER_FIELDS;
+
+  function handleReset() {
+    setValues({ status: '', role: [], period: { start: null, end: null }, tags: [] });
+  }
+
+  return (
+    <FilterBar
+      fields={fields}
+      values={values}
+      onChange={(id, value) => setValues((prev) => ({ ...prev, [id]: value }))}
+      onApply={() => {}}
+      onReset={handleReset}
+    />
+  );
+}
+
+export function buildAppFormData(): ShowcaseComponent[] {
+  return [
+    {
+      id: 'form',
+      title: 'Form',
+      category: 'App',
+      abbr: 'Fm',
+      description: 'Form layout wrapper\'ı. title, description, error ve actions named slot\'ları alır; children ui/ field bileşenleri için grid\'de sıralanır.',
+      filePath: 'modules/app/Form.tsx',
+      sourceCode: `'use client';
+import { cn } from '@/libs/utils/cn';
+import { AlertBanner } from '@/modules/ui/AlertBanner';
+
+export function Form({ title, description, error, columns = 1, actions, children, onSubmit, className }) {
+  return (
+    <form onSubmit={onSubmit} noValidate className={cn('space-y-6', className)}>
+      {(title || description) && (
+        <div>
+          {title && <h2 className="text-lg font-semibold text-text-primary">{title}</h2>}
+          {description && <p className="text-sm text-text-secondary mt-0.5">{description}</p>}
+        </div>
+      )}
+      {error && <AlertBanner variant="error" message={error} />}
+      <div className={cn('grid gap-4', columns === 2 ? 'sm:grid-cols-2' : 'grid-cols-1')}>
+        {children}
+      </div>
+      {actions && (
+        <div className="flex items-center justify-end gap-3 pt-2 border-t border-border">
+          {actions}
+        </div>
+      )}
+    </form>
+  );
+}`,
+      variants: [
+        {
+          title: 'Single column',
+          layout: 'stack' as const,
+          preview: <FormDemo columns={1} />,
+          code: `<Form
+  title="Create project"
+  description="Fill in the details to create a new project."
+  onSubmit={handleSubmit}
+  actions={
+    <>
+      <Button variant="outline" type="button" onClick={handleCancel}>Cancel</Button>
+      <Button variant="primary" type="submit">Save project</Button>
+    </>
+  }
+>
+  <Input id="name" label="Project name" required value={name} onChange={...} error={nameError} />
+  <Input id="email" label="Owner email" type="email" required value={email} onChange={...} />
+  <Select id="visibility" label="Visibility" value={visibility} onChange={...} options={options} />
+  <Toggle id="notify" label="Send notifications" checked={notify} onChange={setNotify} />
+</Form>`,
+        },
+        {
+          title: 'Two column',
+          layout: 'stack' as const,
+          preview: <FormDemo columns={2} />,
+          code: `<Form title="Create project" columns={2} onSubmit={handleSubmit} actions={<Button type="submit">Save</Button>}>
+  <Input id="name" label="Project name" required value={name} onChange={...} />
+  <Input id="email" label="Owner email" type="email" value={email} onChange={...} />
+  <Select id="visibility" label="Visibility" value={visibility} onChange={...} options={options} />
+  <MultiSelect id="stack" label="Tech stack" value={stack} onChange={setStack} options={options} />
+  <div className="sm:col-span-2">
+    <Textarea id="description" label="Description" value={description} onChange={...} />
+  </div>
+</Form>`,
+        },
+      ],
+    },
+    {
+      id: 'filter-bar',
+      title: 'FilterBar',
+      category: 'App',
+      abbr: 'FB',
+      description: 'Liste ve dashboard ekranları için select, multiselect, daterange ve tag tabanlı filtre paneli.',
+      filePath: 'modules/app/FilterBar.tsx',
+      sourceCode: `'use client';
+import { FilterBar } from '@/modules/app/FilterBar';
+
+export function Demo() {
+  return (
+    <FilterBar
+      fields={fields}
+      values={values}
+      onChange={handleChange}
+      onApply={handleApply}
+      onReset={handleReset}
+    />
+  );
+}`,
+      variants: [
+        {
+          title: 'Full filter set',
+          layout: 'stack' as const,
+          preview: <FilterBarDemo />,
+          code: `<FilterBar fields={fields} values={values} onChange={handleChange} onApply={handleApply} onReset={handleReset} />`,
+        },
+        {
+          title: 'Compact filters',
+          layout: 'stack' as const,
+          preview: <FilterBarDemo compact />,
+          code: `<FilterBar fields={fields.slice(0, 2)} values={values} onChange={handleChange} />`,
+        },
+      ],
+    },
+  ];
+}

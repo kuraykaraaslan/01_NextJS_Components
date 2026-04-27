@@ -1,0 +1,48 @@
+'use client';
+import { Spinner } from '@/modules/ui/Spinner';
+import { Button } from '@/modules/ui/Button';
+import type { ShowcaseComponent } from '../showcase.types';
+
+export function buildSpinnerData(): ShowcaseComponent[] {
+  return [
+    {
+      id: 'spinner',
+      title: 'Spinner',
+      category: 'Atom',
+      abbr: 'Sp',
+      description: 'CSS border tabanlı yükleme göstergesi. FontAwesome gerektirmez. 5 boyut, border-border / border-t-primary renk sistemi.',
+      filePath: 'modules/ui/Spinner.tsx',
+      sourceCode: `import { cn } from '@/libs/utils/cn';
+
+const sizeMap = {
+  xs: 'h-3 w-3 border', sm: 'h-4 w-4 border-2',
+  md: 'h-6 w-6 border-2', lg: 'h-8 w-8 border-[3px]', xl: 'h-12 w-12 border-4',
+};
+
+export function Spinner({ size = 'md', className }) {
+  return (
+    <>
+      <span aria-hidden="true" className={cn('inline-block rounded-full border-border border-t-primary animate-spin', sizeMap[size], className)} />
+      <span className="sr-only">Loading…</span>
+    </>
+  );
+}`,
+      variants: [
+        {
+          title: 'Sizes',
+          preview: (
+            <div className="flex items-center gap-4">
+              {(['xs','sm','md','lg','xl'] as const).map((s) => <Spinner key={s} size={s} />)}
+            </div>
+          ),
+          code: `<Spinner size="xs" />\n<Spinner size="sm" />\n<Spinner size="md" />\n<Spinner size="lg" />\n<Spinner size="xl" />`,
+        },
+        {
+          title: 'In a Button',
+          preview: <Button variant="primary" loading>Loading…</Button>,
+          code: `<Button variant="primary" loading>Loading…</Button>`,
+        },
+      ],
+    },
+  ];
+}
