@@ -1,9 +1,9 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export type DropdownItem =
-  | { type?: 'item'; label: string; icon?: string; onClick?: () => void; danger?: boolean; disabled?: boolean }
+  | { type?: 'item'; label: string; icon?: React.ReactNode; onClick?: () => void; danger?: boolean; disabled?: boolean }
   | { type: 'separator' };
 
 export function DropdownMenu({

@@ -1,17 +1,17 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGlobe, faChevronDown, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import * as Flags from 'country-flag-icons/react/3x2';
 import { Button } from '@/modules/ui/Button';
-import { cn } from '@/libs/utils/cn';
 import {
   AVAILABLE_LANGUAGES,
   DEFAULT_LANGUAGE,
   LANG_NAMES,
   LANG_FLAGS,
-  getDirection,
   type AppLanguage,
 } from '../I18nTypes';
+import { DropdownMenu, type DropdownItem } from '@/modules/ui/DropdownMenu';
 
 type LanguageSwitcherProps = {
   value?: AppLanguage;
@@ -20,85 +20,58 @@ type LanguageSwitcherProps = {
   className?: string;
 };
 
+const langToCountry: Record<string, keyof typeof Flags> = {
+  en: 'US', // veya 'GB' kullanılabilir
+  tr: 'TR',
+  de: 'DE',
+  fr: 'FR',
+  ar: 'SA',
+};
+
+function getFlag(lang: string) {
+  const countryCode = langToCountry[lang];
+  if (countryCode) {
+    const FlagComp = Flags[countryCode] as React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    if (FlagComp) {
+      return <FlagComp className="w-4 h-auto rounded-[2px] shadow-sm" />;
+    }
+  }
+  // Eşleşme bulunamazsa I18nTypes'tan gelen emoji formatındaki bayrağa geri dön.
+  return LANG_FLAGS[lang as AppLanguage];
+}
+
 export function LanguageSwitcher({
   value,
   onChange,
   languages = AVAILABLE_LANGUAGES as AppLanguage[],
   className,
 }: LanguageSwitcherProps) {
-  const [current, setCurrent] = useState<AppLanguage>(value ?? DEFAULT_LANGUAGE);
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [internal, setInternal] = useState<AppLanguage>(DEFAULT_LANGUAGE);
+  const current = value !== undefined ? value : internal;
 
-  useEffect(() => {
-    if (value !== undefined) setCurrent(value);
-  }, [value]);
-
-  useEffect(() => {
-    function onOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    if (open) document.addEventListener('mousedown', onOutside);
-    return () => document.removeEventListener('mousedown', onOutside);
-  }, [open]);
-
-  function select(lang: AppLanguage) {
-    setCurrent(lang);
-    onChange?.(lang);
-    setOpen(false);
-  }
-
-  const label = LANG_NAMES[current] ?? current.toUpperCase();
-  const flag  = LANG_FLAGS[current] ?? '🌐';
+  const items: DropdownItem[] = languages.map((lang) => ({
+    type: 'item',
+    label: LANG_NAMES[lang],
+    icon: getFlag(lang) as any, // DropdownMenu string beklediği için cast ediyoruz
+    onClick: () => {
+      setInternal(lang);
+      onChange?.(lang);
+    },
+  }));
 
   return (
-    <div ref={ref} className={cn('relative inline-block', className)}>
-      <Button
-        variant="outline"
-        size="sm"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-label={`Language: ${label}`}
-        onClick={() => setOpen((o) => !o)}
-      >
-        <FontAwesomeIcon icon={faGlobe} className="w-3 h-3 text-text-disabled" />
-        <span>{flag}</span>
-        <span className="hidden sm:inline">{label}</span>
-        <FontAwesomeIcon icon={faChevronDown} className={cn('w-2.5 h-2.5 text-text-disabled transition-transform', open && 'rotate-180')} />
-      </Button>
-
-      {open && (
-        <ul
-          role="listbox"
-          aria-label="Select language"
-          className="absolute z-30 mt-1 min-w-[9rem] rounded-md border border-border bg-surface-raised shadow-lg py-1 right-0"
-        >
-          {languages.map((lang) => {
-            const active = lang === current;
-            const dir = getDirection(lang);
-            return (
-              <li
-                key={lang}
-                role="option"
-                aria-selected={active}
-                dir={dir}
-                onClick={() => select(lang)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(lang); } }}
-                tabIndex={0}
-                className={cn(
-                  'flex items-center gap-2 px-3 py-2 text-sm cursor-pointer select-none transition-colors',
-                  'hover:bg-surface-overlay focus-visible:outline-none focus-visible:bg-surface-overlay',
-                  active ? 'text-primary font-medium' : 'text-text-primary'
-                )}
-              >
-                <span>{LANG_FLAGS[lang] ?? '🌐'}</span>
-                <span className="flex-1">{LANG_NAMES[lang] ?? lang.toUpperCase()}</span>
-                {active && <FontAwesomeIcon icon={faCheck} className="w-3 h-3 text-primary ml-auto" />}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
+    <DropdownMenu
+      className={className}
+      trigger={
+        <Button variant="outline" size="sm" className="gap-2">
+          <span className="w-4 flex items-center justify-center shrink-0" aria-hidden="true">
+            {getFlag(current)}
+          </span>
+          <span>{LANG_NAMES[current]}</span>
+          <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 text-text-disabled" />
+        </Button>
+      }
+      items={items}
+    />
   );
-}
+} 

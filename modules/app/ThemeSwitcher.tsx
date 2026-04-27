@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSun, faMoon, faDisplay } from '@fortawesome/free-solid-svg-icons';
+import { faSun, faMoon, faDisplay, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@/modules/ui/Button';
+import { DropdownMenu } from '../ui/DropdownMenu';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -37,9 +38,21 @@ export function ThemeSwitcher() {
   const icon = theme === 'light' ? faSun : theme === 'dark' ? faMoon : faDisplay;
 
   return (
-    <Button variant="ghost" size="sm" onClick={toggleTheme} iconOnly aria-label="Toggle Theme" title={`Theme: ${theme}`}>
-      <FontAwesomeIcon icon={icon} className="text-text-secondary hover:text-text-primary transition-colors" />
-      <span className="sr-only">{`Current theme: ${theme}`}</span>
-    </Button>
+    <DropdownMenu
+      trigger={
+        <Button variant="outline" size="sm" className="gap-2">
+          <span className="w-4 flex items-center justify-center shrink-0" aria-hidden="true">
+            <FontAwesomeIcon icon={icon} className="w-4 h-4" />
+          </span>
+          <span>{theme.charAt(0).toUpperCase() + theme.slice(1)}</span>
+          <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 text-text-disabled" />
+        </Button>
+      }      
+      items={[
+        { type: 'item', label: 'Light', icon: <FontAwesomeIcon icon={faSun} />, onClick: () => setTheme('light') },
+        { type: 'item', label: 'Dark', icon: <FontAwesomeIcon icon={faMoon} />, onClick: () => setTheme('dark') },
+        { type: 'item', label: 'System', icon: <FontAwesomeIcon icon={faDisplay} />, onClick: () => setTheme('system') },
+      ]}
+    />
   );
 }
