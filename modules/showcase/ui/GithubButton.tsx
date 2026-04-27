@@ -9,7 +9,6 @@ export function GithubButton() {
 
     return (
         <Button variant="outline" onClick={onClick} iconLeft={<FontAwesomeIcon icon={faGithub} />} fullWidth>
-            View on GitHub
         </Button>
     );
 }
