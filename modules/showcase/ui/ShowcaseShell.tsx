@@ -11,6 +11,7 @@ import SHOWCASE_NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
 import { LanguageSwitcher } from '@/modules/domains/common/i18n/LanguageSwitcher';
 import { ThemeSwitcher } from '@/modules/app/ThemeSwitcher';
 import { UserMenu } from '@/modules/domains/common/user/UserMenu';
+import { GithubButton } from './GithubButton';
 
 const categoryStyles: Record<string, string> = {
   Atom:     'bg-info-subtle text-info-fg',
@@ -167,6 +168,7 @@ export function ShowcaseShell() {
       topbar={
         <AppTopBar>
           <div className="ml-auto flex items-center gap-1">
+            <GithubButton />
             <LanguageSwitcher />
             <ThemeSwitcher />
             <UserMenu onlyAvatar
