@@ -115,7 +115,6 @@ export const PostSeriesRefSchema = z.object({
 export const PostWithDataSchema = PostSchema.extend({
   author: SafeUserSchema.pick({
     userId: true,
-    name: true,
     userProfile: true,
   }),
   category: CategorySchema.pick({

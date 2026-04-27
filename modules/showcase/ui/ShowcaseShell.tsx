@@ -5,10 +5,11 @@ import { AppSidebar } from '@/modules/app/AppSidebar';
 import { AppTopBar } from '@/modules/app/AppTopBar';
 import { Widget } from './Widget';
 import { CopyButton } from './CopyButton';
-import { DarkModeToggle } from './DarkModeToggle';
 import { cn } from '@/libs/utils/cn';
 import { buildShowcaseData, type ShowcaseVariant } from '@/modules/showcase/data/showcase.data';
 import SHOWCASE_NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
+import { LanguageSwitcher } from '@/modules/app/LanguageSwitcher';
+import { ThemeSwitcher } from '@/modules/app/ThemeSwitcher';
 
 const categoryStyles: Record<string, string> = {
   Atom:     'bg-info-subtle text-info-fg',
@@ -165,7 +166,8 @@ export function ShowcaseShell() {
       topbar={
         <AppTopBar>
           <div className="ml-auto">
-            <DarkModeToggle />
+            <LanguageSwitcher />
+            <ThemeSwitcher />
           </div>
         </AppTopBar>
       }
@@ -188,7 +190,7 @@ export function ShowcaseShell() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        {selected.variants.map((variant) => (
+        {selected.variants.map((variant: any) => (
           <div key={variant.title} className={variant.layout === 'stack' ? 'xl:col-span-2' : ''}>
             <VariantBlock variant={variant} />
           </div>
