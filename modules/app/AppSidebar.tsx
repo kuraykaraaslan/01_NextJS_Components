@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/modules/ui/Badge';
 
 export type AppSidebarNavItem = {
@@ -45,10 +45,32 @@ export function AppSidebar({
   className,
 }: AppSidebarProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === 'undefined') {
+      return true;
+    }
+    return window.matchMedia('(min-width: 1024px)').matches;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsDesktop(event.matches);
+    };
+
+    setIsDesktop(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
   const isCollapsed = collapsed ?? internalCollapsed;
+  const effectiveCollapsed = isDesktop ? isCollapsed : false;
   const groups: AppSidebarNavGroup[] = navGroups ?? (navItems ? [{ items: navItems }] : []);
   const footerContent = typeof footer === 'function'
-    ? (footer as (context: AppSidebarFooterRenderContext) => React.ReactNode)({ collapsed: isCollapsed })
+    ? (footer as (context: AppSidebarFooterRenderContext) => React.ReactNode)({ collapsed: effectiveCollapsed })
     : footer;
 
   const setCollapsed = (next: boolean) => {
@@ -60,14 +82,14 @@ export function AppSidebar({
 
   return (
     <div
-      data-collapsed={isCollapsed ? 'true' : 'false'}
+      data-collapsed={effectiveCollapsed ? 'true' : 'false'}
       className={cn(
         'flex flex-col flex-1 min-h-0 transition-all duration-200',
-        isCollapsed ? 'w-14' : 'w-56',
+        effectiveCollapsed ? 'w-full lg:w-14' : 'w-full lg:w-56',
         className
       )}
     >
-      <div className={cn('flex items-center px-2 py-2 border-b border-border', isCollapsed ? 'justify-center' : 'justify-end')}>
+      <div className={cn('hidden lg:flex items-center px-2 py-2 border-b border-border', effectiveCollapsed ? 'justify-center' : 'justify-end')}>
         <button
           type="button"
           onClick={() => setCollapsed(!isCollapsed)}
@@ -81,7 +103,7 @@ export function AppSidebar({
       <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4 sidebar-scrollbar-hover" aria-label="Sidebar navigation">
         {groups.map((group, gi) => (
           <div key={group.label ?? gi}>
-            {group.label && !isCollapsed && (
+            {group.label && !effectiveCollapsed && (
               <p className="text-[10px] font-semibold uppercase tracking-widest text-text-disabled px-3 mb-1">
                 {group.label}
               </p>
@@ -92,20 +114,20 @@ export function AppSidebar({
                   key={item.id}
                   type="button"
                   aria-current={item.id === activeId ? 'page' : undefined}
-                  title={isCollapsed ? item.label : undefined}
+                  title={effectiveCollapsed ? item.label : undefined}
                   onClick={() => onSelect?.(item.id)}
                   className={cn(
                     'w-full flex items-center gap-2.5 rounded-lg text-sm transition-colors',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
-                    isCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2 text-left',
+                    effectiveCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2 text-left',
                     item.id === activeId
                       ? 'bg-primary-subtle text-primary font-medium'
                       : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
                   )}
                 >
                   {item.icon && <span aria-hidden="true" className="shrink-0 w-5 text-center text-[15px] leading-none">{item.icon}</span>}
-                  {!isCollapsed && <span className="flex-1 truncate">{item.label}</span>}
-                  {!isCollapsed && item.badge != null && item.badge > 0 && (
+                  {!effectiveCollapsed && <span className="flex-1 truncate">{item.label}</span>}
+                  {!effectiveCollapsed && item.badge != null && item.badge > 0 && (
                     <Badge variant="primary" size="sm">{item.badge}</Badge>
                   )}
                 </button>
@@ -116,7 +138,7 @@ export function AppSidebar({
       </nav>
 
       {footerContent != null && (
-        <div className={cn('border-t border-border shrink-0', isCollapsed ? 'flex justify-center px-2 py-3' : '')}>
+        <div className={cn('border-t border-border shrink-0', effectiveCollapsed ? 'flex justify-center px-2 py-3' : '')}>
           {footerContent}
         </div>
       )}

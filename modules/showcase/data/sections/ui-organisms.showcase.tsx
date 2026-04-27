@@ -256,6 +256,48 @@ function TreeViewDemo() {
   );
 }
 
+function TreeViewNavDemo() {
+  const [sel, setSel] = useState<string | undefined>();
+  return (
+    <TreeView
+      label="Settings navigation"
+      selectedId={sel}
+      onSelect={setSel}
+      nodes={[
+        { id: 'account', label: 'Account', children: [
+          { id: 'profile', label: 'Profile' },
+          { id: 'password', label: 'Password' },
+          { id: 'notifications', label: 'Notifications' },
+        ]},
+        { id: 'workspace', label: 'Workspace', children: [
+          { id: 'general', label: 'General' },
+          { id: 'members', label: 'Members' },
+          { id: 'billing', label: 'Billing' },
+        ]},
+        { id: 'integrations', label: 'Integrations' },
+      ]}
+    />
+  );
+}
+
+function TreeViewFlatDemo() {
+  const [sel, setSel] = useState<string>('ts');
+  return (
+    <TreeView
+      label="Language selector"
+      selectedId={sel}
+      onSelect={setSel}
+      nodes={[
+        { id: 'ts', label: 'TypeScript' },
+        { id: 'js', label: 'JavaScript' },
+        { id: 'py', label: 'Python' },
+        { id: 'go', label: 'Go' },
+        { id: 'rs', label: 'Rust' },
+      ]}
+    />
+  );
+}
+
 function PopoverDemo() {
   return (
     <Popover
@@ -1292,6 +1334,55 @@ export function ContentScoreBar({ value, rules, label, className }) {
           })(),
           code: `const rules = [\n  { label: 'Min 20 chars', check: (v) => v.length >= 20, points: 20 },\n  { label: 'Has keyword',  check: (v) => /react/i.test(v), points: 20, hint: 'Include "React"' },\n  // ...\n];\n<ContentScoreBar value={content} rules={rules} label="Quality score" />`,
         },
+        {
+          title: 'All tiers',
+          layout: 'stack' as const,
+          preview: (() => {
+            const makeRules = (pass: number, total: number): ScoreRule[] =>
+              Array.from({ length: total }, (_, i) => ({
+                label: `Rule ${i + 1}`,
+                check: () => i < pass,
+                points: 1,
+              }));
+            return (
+              <div className="w-full max-w-sm space-y-3">
+                <ContentScoreBar value="" rules={makeRules(5, 5)} label="Good (100%)" />
+                <ContentScoreBar value="" rules={makeRules(3, 5)} label="Fair (60%)" />
+                <ContentScoreBar value="" rules={makeRules(1, 5)} label="Poor (20%)" />
+              </div>
+            );
+          })(),
+          code: `// Good tier  (score ≥ 70)\n<ContentScoreBar value="" rules={allPassRules} label="Good (100%)" />\n\n// Fair tier  (40 ≤ score < 70)\n<ContentScoreBar value="" rules={halfPassRules} label="Fair (60%)" />\n\n// Poor tier  (score < 40)\n<ContentScoreBar value="" rules={onePassRules}  label="Poor (20%)" />`,
+        },
+        {
+          title: 'Password strength',
+          layout: 'stack' as const,
+          preview: (() => {
+            const PWD_RULES: ScoreRule[] = [
+              { label: 'Min 8 chars',   check: (v) => v.length >= 8,           points: 25 },
+              { label: 'Uppercase',     check: (v) => /[A-Z]/.test(v),         points: 25 },
+              { label: 'Number',        check: (v) => /\d/.test(v),             points: 25 },
+              { label: 'Special char',  check: (v) => /[^A-Za-z0-9]/.test(v),  points: 25 },
+            ];
+            function PwdDemo() {
+              const [pwd, setPwd] = useState('Hello1');
+              return (
+                <div className="w-full max-w-sm space-y-2">
+                  <input
+                    type="password"
+                    value={pwd}
+                    onChange={(e) => setPwd(e.target.value)}
+                    placeholder="Enter password…"
+                    className="w-full rounded-md border border-border bg-surface-base px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+                  />
+                  <ContentScoreBar value={pwd} rules={PWD_RULES} label="Password strength" />
+                </div>
+              );
+            }
+            return <PwdDemo />;
+          })(),
+          code: `const rules = [\n  { label: 'Min 8 chars',  check: (v) => v.length >= 8,          points: 25 },\n  { label: 'Uppercase',    check: (v) => /[A-Z]/.test(v),        points: 25 },\n  { label: 'Number',       check: (v) => /\\d/.test(v),            points: 25 },\n  { label: 'Special char', check: (v) => /[^A-Za-z0-9]/.test(v), points: 25 },\n];\n<ContentScoreBar value={password} rules={rules} label="Password strength" />`,
+        },
       ],
     },
     {
@@ -1543,6 +1634,16 @@ export function PageHeader({ title, subtitle, badge, actions, className }) {
           title: 'File tree',
           preview: <TreeViewDemo />,
           code: `function Demo() {\n  const [sel, setSel] = useState();\n  return (\n    <TreeView selectedId={sel} onSelect={setSel} label="Files"\n      nodes={[\n        { id: 'src', label: 'src', children: [\n          { id: 'Button', label: 'Button.tsx' },\n        ]},\n      ]}\n    />\n  );\n}`,
+        },
+        {
+          title: 'Navigation menu',
+          preview: <TreeViewNavDemo />,
+          code: `function Demo() {\n  const [sel, setSel] = useState();\n  return (\n    <TreeView label="Settings navigation" selectedId={sel} onSelect={setSel}\n      nodes={[\n        { id: 'account', label: 'Account', children: [\n          { id: 'profile', label: 'Profile' },\n          { id: 'password', label: 'Password' },\n        ]},\n        { id: 'workspace', label: 'Workspace', children: [\n          { id: 'general', label: 'General' },\n          { id: 'billing', label: 'Billing' },\n        ]},\n        { id: 'integrations', label: 'Integrations' },\n      ]}\n    />\n  );\n}`,
+        },
+        {
+          title: 'Flat list',
+          preview: <TreeViewFlatDemo />,
+          code: `function Demo() {\n  const [sel, setSel] = useState('ts');\n  return (\n    <TreeView label="Language selector" selectedId={sel} onSelect={setSel}\n      nodes={[\n        { id: 'ts', label: 'TypeScript' },\n        { id: 'js', label: 'JavaScript' },\n        { id: 'py', label: 'Python' },\n        { id: 'go', label: 'Go' },\n      ]}\n    />\n  );\n}`,
         },
       ],
     },

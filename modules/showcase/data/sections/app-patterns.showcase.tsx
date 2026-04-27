@@ -7,22 +7,18 @@ import { NavDrawer } from '@/modules/app/NavDrawer';
 import { UserMenu } from '@/modules/app/UserMenu';
 import { GlobalSearch, type SearchResult } from '@/modules/app/GlobalSearch';
 import { AppCommandBar, type CommandItem } from '@/modules/app/AppCommandBar';
-import { ConfirmDialog } from '@/modules/app/ConfirmDialog';
 import { Form } from '@/modules/app/Form';
 import { Input } from '@/modules/ui/Input';
 import { Select } from '@/modules/ui/Select';
 import { MultiSelect } from '@/modules/ui/MultiSelect';
 import { Toggle } from '@/modules/ui/Toggle';
 import { Textarea } from '@/modules/ui/Textarea';
-import { DataListingPage } from '@/modules/app/DataListingPage';
-import { DetailHeader } from '@/modules/app/DetailHeader';
 import { FilterBar, type FilterField, type FilterValues } from '@/modules/app/FilterBar';
 import { Avatar } from '@/modules/ui/Avatar';
 import { Badge } from '@/modules/ui/Badge';
 import { Button } from '@/modules/ui/Button';
 import { Card } from '@/modules/ui/Card';
 import { useState } from 'react';
-import type { TableColumn } from '@/modules/ui/Table';
 import type { ShowcaseComponent } from '../showcase.types';
 
 // ── Shared demo data ────────────────────────────────────────────────────────
@@ -70,42 +66,6 @@ const SEARCH_RESULTS: SearchResult[] = [
   { id: 'audit', label: 'Audit Logs', description: 'Security and activity logs', icon: '🧾', category: 'Settings' },
   { id: 'new-project', label: 'Create Project', description: 'Quick action', icon: '➕', category: 'Actions' },
 ];
-
-type TeamRow = {
-  name: string;
-  role: string;
-  status: 'Active' | 'Invited' | 'Suspended';
-};
-
-const TEAM_COLUMNS: TableColumn<TeamRow>[] = [
-  { key: 'name', header: 'Name', sortable: true },
-  { key: 'role', header: 'Role', sortable: true },
-  {
-    key: 'status',
-    header: 'Status',
-    render: (row) => (
-      <Badge
-        variant={
-          row.status === 'Active'
-            ? 'success'
-            : row.status === 'Invited'
-              ? 'info'
-              : 'warning'
-        }
-      >
-        {row.status}
-      </Badge>
-    ),
-  },
-];
-
-const TEAM_ROWS: TeamRow[] = [
-  { name: 'Jane Doe', role: 'Admin', status: 'Active' },
-  { name: 'John Smith', role: 'Editor', status: 'Invited' },
-  { name: 'Mina Park', role: 'Viewer', status: 'Active' },
-  { name: 'Ali Kaya', role: 'Editor', status: 'Suspended' },
-];
-
 
 const FILTER_FIELDS: FilterField[] = [
   {
@@ -486,46 +446,6 @@ function AppCommandBarDemo({ custom }: { custom?: boolean }) {
   );
 }
 
-function ConfirmDialogDemo({
-  variant,
-  title,
-  message,
-}: {
-  variant: 'danger' | 'warning' | 'info';
-  title: string;
-  message: string;
-}) {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  function handleConfirm() {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setOpen(false);
-    }, 700);
-  }
-
-  return (
-    <>
-      <Button variant={variant === 'danger' ? 'danger' : 'outline'} onClick={() => setOpen(true)}>
-        Open confirm dialog
-      </Button>
-      <ConfirmDialog
-        open={open}
-        variant={variant}
-        title={title}
-        message={message}
-        confirmLabel="Confirm"
-        cancelLabel="Cancel"
-        loading={loading}
-        onCancel={() => setOpen(false)}
-        onConfirm={handleConfirm}
-      />
-    </>
-  );
-}
-
 function FormDemo({ columns }: { columns: 1 | 2 }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -581,55 +501,6 @@ function FormDemo({ columns }: { columns: 1 | 2 }) {
         <Toggle id="notify" label="Send team notifications" description="Notify members after creation." checked={notify} onChange={setNotify} />
       </div>
     </Form>
-  );
-}
-
-function DataListingPageDemo({ empty = false }: { empty?: boolean }) {
-  return (
-    <DataListingPage<TeamRow>
-      title="Team directory"
-      subtitle="Search and manage workspace members"
-      columns={TEAM_COLUMNS}
-      rows={empty ? [] : TEAM_ROWS}
-      searchable
-      selectable={!empty}
-      caption="Workspace team"
-      actions={[
-        { label: 'Export', variant: 'outline', onClick: () => {} },
-        { label: 'Invite', variant: 'primary', onClick: () => {} },
-      ]}
-      emptyTitle="No members found"
-      emptyDescription="Adjust your filters or invite your first teammate."
-      emptyAction={<Button variant="primary" size="sm">Invite member</Button>}
-    />
-  );
-}
-
-function DetailHeaderDemo({ withTabs }: { withTabs: boolean }) {
-  const [activeTab, setActiveTab] = useState('overview');
-
-  return (
-    <div className="w-full rounded-xl overflow-hidden border border-border bg-surface-base">
-      <DetailHeader
-        title="Project Phoenix"
-        subtitle="Design system modernization"
-        status="Active"
-        statusVariant="success"
-        tabs={withTabs ? [
-          { value: 'overview', label: 'Overview' },
-          { value: 'activity', label: 'Activity' },
-          { value: 'settings', label: 'Settings' },
-        ] : undefined}
-        defaultTab="overview"
-        onTabChange={setActiveTab}
-      >
-        <Button variant="outline" size="sm">Archive</Button>
-        <Button variant="primary" size="sm">Publish</Button>
-      </DetailHeader>
-      <div className="px-6 py-4 text-sm text-text-secondary">
-        {withTabs ? `Active tab: ${activeTab}` : 'Simple detail header without tabs.'}
-      </div>
-    </div>
   );
 }
 
@@ -1190,53 +1061,6 @@ import { AppCommandBar } from '@/modules/app/AppCommandBar';
       ],
     },
     {
-      id: 'confirm-dialog',
-      title: 'ConfirmDialog',
-      category: 'App',
-      abbr: 'CD',
-      description: 'Silme ve benzeri kritik aksiyonları doğrulamak için Modal tabanlı onay diyaloğu.',
-      filePath: 'modules/app/ConfirmDialog.tsx',
-      sourceCode: `'use client';
-import { ConfirmDialog } from '@/modules/app/ConfirmDialog';
-
-export function Demo() {
-  return (
-    <ConfirmDialog
-      open={open}
-      title="Delete item"
-      message="This action cannot be undone."
-      variant="danger"
-      onConfirm={handleConfirm}
-      onCancel={handleCancel}
-    />
-  );
-}`,
-      variants: [
-        {
-          title: 'Danger confirmation',
-          preview: (
-            <ConfirmDialogDemo
-              variant="danger"
-              title="Delete project"
-              message="This action cannot be undone and all related data will be removed."
-            />
-          ),
-          code: `<ConfirmDialog open={open} variant="danger" title="Delete project" message="This action cannot be undone." onConfirm={handleConfirm} onCancel={handleCancel} />`,
-        },
-        {
-          title: 'Info confirmation',
-          preview: (
-            <ConfirmDialogDemo
-              variant="info"
-              title="Publish changes"
-              message="Your changes will become visible to all users immediately."
-            />
-          ),
-          code: `<ConfirmDialog open={open} variant="info" title="Publish changes" message="Your changes will go live immediately." onConfirm={handleConfirm} onCancel={handleCancel} />`,
-        },
-      ],
-    },
-    {
       id: 'form',
       title: 'Form',
       category: 'App',
@@ -1303,117 +1127,6 @@ export function Form({ title, description, error, columns = 1, actions, children
     <Textarea id="description" label="Description" value={description} onChange={...} />
   </div>
 </Form>`,
-        },
-      ],
-    },
-    {
-      id: 'data-listing-page',
-      title: 'DataListingPage',
-      category: 'App',
-      abbr: 'DL',
-      description: 'Sayfa başlığı, tablo, loading, empty ve error durumlarını tek bir listing pattern içinde toplar.',
-      filePath: 'modules/app/DataListingPage.tsx',
-      sourceCode: `'use client';
-import { DataListingPage } from '@/modules/app/DataListingPage';
-
-export function Demo() {
-  return (
-    <DataListingPage
-      title="Users"
-      subtitle="Manage workspace users"
-      columns={columns}
-      rows={rows}
-      searchable
-      selectable
-    />
-  );
-}`,
-      variants: [
-        {
-          title: 'With rows',
-          layout: 'stack' as const,
-          preview: <DataListingPageDemo />,
-          code: `<DataListingPage title="Team directory" columns={columns} rows={rows} searchable selectable />`,
-        },
-        {
-          title: 'Empty state',
-          layout: 'stack' as const,
-          preview: <DataListingPageDemo empty />,
-          code: `<DataListingPage title="Team directory" columns={columns} rows={[]} emptyTitle="No members found" />`,
-        },
-      ],
-    },
-    {
-      id: 'detail-header',
-      title: 'DetailHeader',
-      category: 'App',
-      abbr: 'DH',
-      description: 'Detay sayfalarında başlık, durum badge ve aksiyonları bir araya getiren üst bölüm deseni.',
-      filePath: 'modules/app/DetailHeader.tsx',
-      sourceCode: `'use client';
-import { useState } from 'react';
-import { DetailHeader } from '@/modules/app/DetailHeader';
-import { Button } from '@/modules/ui/Button';
-
-export function Demo() {
-  const [tab, setTab] = useState('overview');
-
-  return (
-    <DetailHeader
-      title="Project Phoenix"
-      subtitle="Design system modernization"
-      status="Active"
-      statusVariant="success"
-      tabs={[
-        { value: 'overview', label: 'Overview' },
-        { value: 'activity', label: 'Activity' },
-        { value: 'settings', label: 'Settings' },
-      ]}
-      defaultTab="overview"
-      onTabChange={setTab}
-    >
-      <Button variant="outline" size="sm">Archive</Button>
-      <Button variant="primary" size="sm">Publish</Button>
-    </DetailHeader>
-  );
-}`,
-      variants: [
-        {
-          title: 'With tabs',
-          layout: 'stack' as const,
-          preview: <DetailHeaderDemo withTabs />,
-          code: `const [tab, setTab] = useState('overview');
-
-<DetailHeader
-  title="Project Phoenix"
-  subtitle="Design system modernization"
-  status="Active"
-  statusVariant="success"
-  tabs={[
-    { value: 'overview', label: 'Overview' },
-    { value: 'activity', label: 'Activity' },
-    { value: 'settings', label: 'Settings' },
-  ]}
-  defaultTab="overview"
-  onTabChange={setTab}
->
-  <Button variant="outline" size="sm">Archive</Button>
-  <Button variant="primary" size="sm">Publish</Button>
-</DetailHeader>`,
-        },
-        {
-          title: 'Without tabs',
-          layout: 'stack' as const,
-          preview: <DetailHeaderDemo withTabs={false} />,
-          code: `<DetailHeader
-  title="Project Phoenix"
-  subtitle="Design system modernization"
-  status="Active"
-  statusVariant="success"
->
-  <Button variant="outline" size="sm">Archive</Button>
-  <Button variant="primary" size="sm">Publish</Button>
-</DetailHeader>`,
         },
       ],
     },

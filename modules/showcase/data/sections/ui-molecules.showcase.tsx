@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import { Button } from '@/modules/ui/Button';
 import { Input } from '@/modules/ui/Input';
 import { Checkbox } from '@/modules/ui/Checkbox';
@@ -7,6 +8,7 @@ import { Select } from '@/modules/ui/Select';
 import { Textarea } from '@/modules/ui/Textarea';
 import { SearchBar } from '@/modules/ui/SearchBar';
 import { Toggle } from '@/modules/ui/Toggle';
+import { Spinner } from '@/modules/ui/Spinner';
 import { DatePicker } from '@/modules/ui/DatePicker';
 import { CheckboxGroup } from '@/modules/ui/CheckboxGroup';
 import { TagInput } from '@/modules/ui/TagInput';
@@ -303,6 +305,37 @@ export function Input({ id, label, hint, error, required, className, ...props })
           code: `<Input id="qty" label="Quantity" type="number" value={v} onChange={setV} min={0} max={99} />`,
           layout: 'stack' as const,
         },
+        {
+          title: 'Prefix / suffix text',
+          layout: 'stack' as const,
+          preview: (
+            <div className="w-full max-w-xs space-y-3">
+              <Input id="sc-in-url" label="Website" prefixIcon={<span className="text-text-secondary text-xs font-mono select-none">https://</span>} placeholder="yoursite.com" />
+              <Input id="sc-in-handle" label="Twitter handle" prefixIcon={<span className="text-text-secondary text-sm select-none">@</span>} placeholder="username" />
+              <Input id="sc-in-usd" label="Price" suffixIcon={<span className="text-text-secondary text-sm select-none">USD</span>} type="number" placeholder="0.00" />
+            </div>
+          ),
+          code: `<Input id="website" label="Website"\n  prefixIcon={<span className="text-text-secondary text-xs font-mono">https://</span>}\n  placeholder="yoursite.com" />\n\n<Input id="handle" label="Twitter handle"\n  prefixIcon={<span className="text-text-secondary">@</span>}\n  placeholder="username" />\n\n<Input id="price" label="Price"\n  suffixIcon={<span className="text-text-secondary">USD</span>}\n  type="number" />`,
+        },
+        {
+          title: 'Loading state',
+          layout: 'stack' as const,
+          preview: (() => {
+            function LoadingInputDemo() {
+              const [v, setV] = useState('johndoe');
+              return (
+                <div className="w-full max-w-xs">
+                  <Input id="sc-in-loading" label="Username" value={v}
+                    onChange={(e) => setV(e.target.value)}
+                    suffixIcon={<Spinner size="xs" />}
+                    hint="Checking availability…" />
+                </div>
+              );
+            }
+            return <LoadingInputDemo />;
+          })(),
+          code: `<Input id="username" label="Username" value={v} onChange={setV}\n  suffixIcon={<Spinner size="xs" />}\n  hint="Checking availability…" />`,
+        },
       ],
     },
     {
@@ -402,6 +435,38 @@ export function RadioGroup({ name, legend, options, value, onChange, error, disa
             />
           ),
           code: `<RadioGroup name="notify" legend="Notification preference" options={[...]} value="email" disabled />`,
+        },
+        {
+          title: 'Card style',
+          layout: 'stack' as const,
+          preview: (() => {
+            function CardRadioDemo() {
+              const [v, setV] = useState('pro');
+              const plans = [
+                { value: 'free', label: 'Free',  hint: '$0/mo · 3 projects, 1 seat' },
+                { value: 'pro',  label: 'Pro',   hint: '$12/mo · Unlimited projects' },
+                { value: 'team', label: 'Team',  hint: '$49/mo · 10 seats included' },
+              ];
+              return (
+                <fieldset className="space-y-2 w-full max-w-xs">
+                  <legend className="text-sm font-medium text-text-primary mb-3">Choose plan</legend>
+                  {plans.map(plan => (
+                    <label key={plan.value} className={`flex items-start gap-3 rounded-lg border px-4 py-3 cursor-pointer transition-colors ${v === plan.value ? 'border-primary bg-primary-subtle' : 'border-border bg-surface-base hover:bg-surface-overlay'}`}>
+                      <input type="radio" name="sc-plan" value={plan.value} checked={v === plan.value}
+                        onChange={() => setV(plan.value)}
+                        className="mt-0.5 h-4 w-4 text-primary border-border focus-visible:ring-2 focus-visible:ring-border-focus" />
+                      <div>
+                        <span className={`text-sm font-medium ${v === plan.value ? 'text-primary' : 'text-text-primary'}`}>{plan.label}</span>
+                        <p className="text-xs text-text-secondary mt-0.5">{plan.hint}</p>
+                      </div>
+                    </label>
+                  ))}
+                </fieldset>
+              );
+            }
+            return <CardRadioDemo />;
+          })(),
+          code: `function Demo() {\n  const [v, setV] = useState('pro');\n  const plans = [\n    { value: 'free', label: 'Free',  hint: '$0/mo · 3 projects' },\n    { value: 'pro',  label: 'Pro',   hint: '$12/mo · Unlimited' },\n    { value: 'team', label: 'Team',  hint: '$49/mo · 10 seats'  },\n  ];\n  return (\n    <fieldset className="space-y-2">\n      <legend>Choose plan</legend>\n      {plans.map(plan => (\n        <label key={plan.value} className={cn(\n          'flex items-start gap-3 rounded-lg border px-4 py-3 cursor-pointer',\n          v === plan.value ? 'border-primary bg-primary-subtle' : 'border-border hover:bg-surface-overlay'\n        )}>\n          <input type="radio" name="plan" value={plan.value}\n            checked={v === plan.value} onChange={() => setV(plan.value)} />\n          <div>\n            <span className={v === plan.value ? 'text-primary font-medium' : ''}>{plan.label}</span>\n            <p className="text-xs text-text-secondary">{plan.hint}</p>\n          </div>\n        </label>\n      ))}\n    </fieldset>\n  );\n}`,
         },
       ],
     },
@@ -566,6 +631,29 @@ export function Textarea({ id, label, hint, error, disabled, required, rows = 4,
           preview: <div className="w-full max-w-xs"><Textarea id="sc-ta-disabled" label="Message" placeholder="Not editable" disabled rows={3} /></div>,
           code: `<Textarea id="message" label="Message" placeholder="Not editable" disabled />`,
         },
+        {
+          title: 'Character counter',
+          layout: 'stack' as const,
+          preview: (() => {
+            function TextareaCounterDemo() {
+              const MAX = 200;
+              const [v, setV] = useState('');
+              const remaining = MAX - v.length;
+              return (
+                <div className="w-full max-w-xs space-y-1">
+                  <Textarea id="sc-ta-counter" label="Bio" rows={3}
+                    value={v} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setV(e.target.value)}
+                    maxLength={MAX} placeholder="Tell us about yourself…" />
+                  <p className={`text-xs text-right ${remaining < 20 ? 'text-error' : 'text-text-secondary'}`}>
+                    {remaining} characters remaining
+                  </p>
+                </div>
+              );
+            }
+            return <TextareaCounterDemo />;
+          })(),
+          code: `function Demo() {\n  const MAX = 200;\n  const [v, setV] = useState('');\n  return (\n    <div className="space-y-1">\n      <Textarea id="bio" label="Bio" value={v} maxLength={MAX} rows={3}\n        onChange={(e) => setV(e.target.value)} />\n      <p className={\`text-xs text-right \${MAX - v.length < 20 ? 'text-error' : 'text-text-secondary'}\`}>\n        {MAX - v.length} characters remaining\n      </p>\n    </div>\n  );\n}`,
+        },
       ],
     },
     {
@@ -606,6 +694,60 @@ export function SearchBar({ id = 'search', placeholder = 'Search…', value, onC
           title: 'With value',
           preview: <div className="w-full max-w-xs"><SearchBar value="Button" onChange={() => {}} /></div>,
           code: `<SearchBar value="Button" onChange={(v) => console.log(v)} />`,
+        },
+        {
+          title: 'Loading state',
+          layout: 'stack' as const,
+          preview: (() => {
+            function SearchLoadingDemo() {
+              const [q, setQ] = useState('react');
+              const [loading, setLoading] = useState(false);
+              const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+              function handleChange(v: string) {
+                setQ(v);
+                setLoading(true);
+                if (timerRef.current) clearTimeout(timerRef.current);
+                timerRef.current = setTimeout(() => setLoading(false), 800);
+              }
+              return (
+                <div className="w-full max-w-xs space-y-2">
+                  <SearchBar value={q} onChange={handleChange} placeholder="Search…" />
+                  {loading ? (
+                    <p className="text-xs text-text-secondary flex items-center gap-1.5">
+                      <Spinner size="xs" /> Searching…
+                    </p>
+                  ) : q ? (
+                    <p className="text-xs text-text-secondary">Found 24 results for &ldquo;{q}&rdquo;</p>
+                  ) : null}
+                </div>
+              );
+            }
+            return <SearchLoadingDemo />;
+          })(),
+          code: `function Demo() {\n  const [q, setQ] = useState('');\n  const [loading, setLoading] = useState(false);\n  return (\n    <div className="space-y-2">\n      <SearchBar value={q} onChange={(v) => { setQ(v); setLoading(true); }} />\n      {loading\n        ? <p className="flex items-center gap-1.5"><Spinner size="xs" /> Searching…</p>\n        : q && <p>{q} — 24 results</p>}\n    </div>\n  );\n}`,
+        },
+        {
+          title: 'With results count',
+          layout: 'stack' as const,
+          preview: (() => {
+            const ITEMS = ['Button', 'Badge', 'Avatar', 'Card', 'Input', 'Select', 'Textarea', 'Tooltip', 'Modal', 'Drawer'];
+            function ResultsSearchDemo() {
+              const [q, setQ] = useState('');
+              const filtered = q ? ITEMS.filter(n => n.toLowerCase().includes(q.toLowerCase())) : ITEMS;
+              return (
+                <div className="w-full max-w-xs space-y-2">
+                  <SearchBar value={q} onChange={setQ} placeholder="Filter components…" />
+                  <p className="text-xs text-text-secondary">{filtered.length} of {ITEMS.length} components</p>
+                  <ul className="text-sm text-text-primary space-y-1">
+                    {filtered.slice(0, 4).map(name => <li key={name} className="px-2 py-1 rounded hover:bg-surface-overlay">{name}</li>)}
+                    {filtered.length > 4 && <li className="text-xs text-text-secondary px-2">+{filtered.length - 4} more…</li>}
+                  </ul>
+                </div>
+              );
+            }
+            return <ResultsSearchDemo />;
+          })(),
+          code: `function Demo() {\n  const items = ['Button', 'Badge', 'Card', ...];\n  const [q, setQ] = useState('');\n  const filtered = q ? items.filter(n => n.toLowerCase().includes(q.toLowerCase())) : items;\n  return (\n    <div className="space-y-2">\n      <SearchBar value={q} onChange={setQ} />\n      <p className="text-xs text-text-secondary">{filtered.length} of {items.length} results</p>\n      <ul>{filtered.map(name => <li key={name}>{name}</li>)}</ul>\n    </div>\n  );\n}`,
         },
       ],
     },
@@ -672,6 +814,36 @@ export function Toggle({ id, label, description, checked, onChange, disabled, si
             </div>
           ),
           code: `<Toggle id="toggle" label="Disabled" checked disabled onChange={() => {}} />`,
+        },
+        {
+          title: 'Settings list (controlled)',
+          layout: 'stack' as const,
+          preview: (() => {
+            function ToggleSettingsDemo() {
+              const [s, setS] = useState({ notifications: true, marketing: false, darkMode: false });
+              function toggle(k: keyof typeof s) { setS(p => ({ ...p, [k]: !p[k] })); }
+              const items = [
+                { key: 'notifications' as const, label: 'Push notifications', desc: 'Alerts for new activity' },
+                { key: 'marketing' as const,     label: 'Marketing emails',   desc: 'Weekly updates and offers' },
+                { key: 'darkMode' as const,       label: 'Dark mode',          desc: 'Switch to dark theme' },
+              ];
+              return (
+                <div className="w-full max-w-xs divide-y divide-border border border-border rounded-lg overflow-hidden">
+                  {items.map(({ key, label, desc }) => (
+                    <div key={key} className="flex items-center justify-between px-4 py-3 bg-surface-base">
+                      <div>
+                        <p className="text-sm font-medium text-text-primary">{label}</p>
+                        <p className="text-xs text-text-secondary">{desc}</p>
+                      </div>
+                      <Toggle id={`ctrl-${key}`} label="" checked={s[key]} onChange={() => toggle(key)} />
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+            return <ToggleSettingsDemo />;
+          })(),
+          code: `function Demo() {\n  const [s, setS] = useState({ notifications: true, marketing: false });\n  return (\n    <div className="divide-y border rounded-lg">\n      {[{ key: 'notifications', label: 'Push notifications', desc: 'Alerts for new activity' }, ...].map(({ key, label, desc }) => (\n        <div key={key} className="flex items-center justify-between px-4 py-3">\n          <div>\n            <p className="text-sm font-medium">{label}</p>\n            <p className="text-xs text-text-secondary">{desc}</p>\n          </div>\n          <Toggle id={key} label="" checked={s[key]} onChange={() => setS(p => ({ ...p, [key]: !p[key] }))} />\n        </div>\n      ))}\n    </div>\n  );\n}`,
         },
       ],
     },

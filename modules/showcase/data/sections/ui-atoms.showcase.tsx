@@ -469,6 +469,51 @@ export function SkeletonCard({ className }) {
           ),
           code: `<table className="w-full"><tbody><SkeletonTableRow cols={4} /></tbody></table>`,
         },
+        {
+          title: 'Dashboard layout',
+          layout: 'stack' as const,
+          preview: (
+            <div className="w-full space-y-4" aria-busy="true">
+              <div className="grid grid-cols-3 gap-3">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="rounded-lg border border-border p-4 space-y-2">
+                    <SkeletonLine width="w-1/2" />
+                    <div className="h-5 bg-surface-sunken animate-pulse rounded w-3/4" />
+                    <SkeletonLine width="w-1/3" />
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-lg border border-border overflow-hidden">
+                <table className="w-full">
+                  <tbody>
+                    {[0, 1, 2].map((i) => <SkeletonTableRow key={i} cols={4} />)}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ),
+          code: `// Stat cards + table skeleton\n<div className="space-y-4">\n  <div className="grid grid-cols-3 gap-3">\n    {[...Array(3)].map((_, i) => (\n      <div key={i} className="border rounded-lg p-4 space-y-2">\n        <SkeletonLine width="w-1/2" />\n        <SkeletonLine width="w-3/4" className="h-5" />\n        <SkeletonLine width="w-1/3" />\n      </div>\n    ))}\n  </div>\n  <table><tbody><SkeletonTableRow cols={4} /></tbody></table>\n</div>`,
+        },
+        {
+          title: 'Article layout',
+          layout: 'stack' as const,
+          preview: (
+            <div className="w-full max-w-md space-y-4" aria-busy="true">
+              <SkeletonLine width="w-1/4" />
+              <div className="space-y-2">
+                <div className="h-6 bg-surface-sunken animate-pulse rounded w-full" />
+                <div className="h-6 bg-surface-sunken animate-pulse rounded w-3/4" />
+              </div>
+              <div className="flex items-center gap-3">
+                <SkeletonAvatar size="sm" />
+                <SkeletonLine width="w-24" />
+              </div>
+              <div className="h-40 bg-surface-sunken animate-pulse rounded-xl w-full" />
+              <SkeletonText lines={4} />
+            </div>
+          ),
+          code: `// Blog post / article skeleton\n<div className="space-y-4">\n  <SkeletonLine width="w-1/4" />        {/* category */}\n  <SkeletonLine width="w-full" className="h-6" /> {/* title row 1 */}\n  <SkeletonLine width="w-3/4" className="h-6" />  {/* title row 2 */}\n  <div className="flex items-center gap-3">\n    <SkeletonAvatar size="sm" />\n    <SkeletonLine width="w-24" />\n  </div>\n  <div className="h-40 animate-pulse bg-surface-sunken rounded-xl" /> {/* hero */}\n  <SkeletonText lines={4} />\n</div>`,
+        },
       ],
     },
     // ── New components ─────────────────────────────────────────────────────
@@ -520,6 +565,48 @@ export function SkeletonCard({ className }) {
             </div>
           ),
           code: `<ButtonGroup variant="primary" value="week" onChange={setV} items={[...]} />\n<ButtonGroup variant="secondary" value="week" onChange={setV} items={[...]} />\n<ButtonGroup variant="ghost" value="week" onChange={setV} items={[...]} />`,
+        },
+        {
+          title: 'With disabled item',
+          preview: (
+            <ButtonGroup
+              value="week"
+              onChange={() => {}}
+              items={[
+                { value: 'day', label: 'Day' },
+                { value: 'week', label: 'Week' },
+                { value: 'month', label: 'Month', disabled: true },
+              ]}
+            />
+          ),
+          code: `<ButtonGroup value="week" onChange={setV}\n  items={[\n    { value: 'day',   label: 'Day' },\n    { value: 'week',  label: 'Week' },\n    { value: 'month', label: 'Month', disabled: true },\n  ]}\n/>`,
+        },
+        {
+          title: 'Icon-style labels',
+          preview: (
+            <div className="flex flex-wrap items-center gap-4">
+              <ButtonGroup
+                value="grid"
+                onChange={() => {}}
+                items={[
+                  { value: 'list', label: '☰' },
+                  { value: 'grid', label: '⊞' },
+                  { value: 'map', label: '◫' },
+                ]}
+              />
+              <ButtonGroup
+                value="center"
+                onChange={() => {}}
+                variant="secondary"
+                items={[
+                  { value: 'left', label: '⇤' },
+                  { value: 'center', label: '↔' },
+                  { value: 'right', label: '⇥' },
+                ]}
+              />
+            </div>
+          ),
+          code: `// Use single-char labels as icon proxies:\n<ButtonGroup value="grid" onChange={setV}\n  items={[\n    { value: 'list', label: '☰' },\n    { value: 'grid', label: '⊞' },\n    { value: 'map',  label: '◫' },\n  ]}\n/>`,
         },
       ],
     },
