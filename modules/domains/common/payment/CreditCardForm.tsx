@@ -6,12 +6,37 @@ import { Button } from '@/modules/ui/Button';
 import { CreditCardVisual } from './CreditCardVisual';
 import type { CreditCardInput, CardBrand } from '../PaymentTypes';
 
-function detectBrand(number: string): CardBrand {
+
+export function detectBrand(number: string): CardBrand {
   const n = number.replace(/\D/g, '');
-  if (/^4/.test(n)) return 'VISA';
-  if (/^5[1-5]|^2[2-7]/.test(n)) return 'MASTERCARD';
-  if (/^3[47]/.test(n)) return 'AMEX';
-  if (/^6/.test(n)) return 'DISCOVER';
+
+  if (!n) return 'UNKNOWN';
+
+  const len = n.length;
+
+  const prefix2 = len >= 2 ? parseInt(n.slice(0, 2), 10) : 0;
+  const prefix3 = len >= 3 ? parseInt(n.slice(0, 3), 10) : 0;
+  const prefix4 = len >= 4 ? parseInt(n.slice(0, 4), 10) : 0;
+  const prefix6 = len >= 6 ? parseInt(n.slice(0, 6), 10) : 0;
+
+  // 🇹🇷 TROY (önce check → yanlış VISA vs eşleşmesini engeller)
+  if (n.startsWith('9792')) return 'TROY';
+
+  // VISA
+  if (n.startsWith('4')) return 'VISA';
+
+  // MASTERCARD
+  if (prefix2 >= 51 && prefix2 <= 55) return 'MASTERCARD';
+  if (prefix4 >= 2221 && prefix4 <= 2720) return 'MASTERCARD';
+
+  // AMEX
+  if (prefix2 === 34 || prefix2 === 37) return 'AMEX';
+
+  // DISCOVER
+  if (n.startsWith('6011') || n.startsWith('65')) return 'DISCOVER';
+  if (prefix3 >= 644 && prefix3 <= 649) return 'DISCOVER';
+  if (prefix6 >= 622126 && prefix6 <= 622925) return 'DISCOVER';
+
   return 'UNKNOWN';
 }
 

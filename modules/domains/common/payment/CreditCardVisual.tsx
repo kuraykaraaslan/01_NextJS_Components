@@ -7,6 +7,7 @@ const BRAND_STYLE: Record<CardBrand, { label: string; gradient: string }> = {
   MASTERCARD: { label: 'Mastercard', gradient: 'from-orange-500 to-red-700' },
   AMEX:       { label: 'AMEX',       gradient: 'from-teal-600 to-teal-900' },
   DISCOVER:   { label: 'Discover',   gradient: 'from-orange-400 to-yellow-600' },
+  TROY:       { label: 'TROY',       gradient: 'from-green-600 to-green-900' },
   UNKNOWN:    { label: '',           gradient: 'from-gray-600 to-gray-900' },
 };
 
