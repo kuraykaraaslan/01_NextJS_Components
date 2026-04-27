@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { SafeUserSchema } from '../common/types'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema } from '../common/BaseTypes'
 
 export const CommentStatusEnum = z.enum([
   'NOT_PUBLISHED',
@@ -16,8 +17,8 @@ export const PostStatusEnum = z.enum([
 ])
 
 export const PostTranslationSchema = z.object({
-  id: z.string(),
-  postId: z.string(),
+  id: IdSchema,
+  postId: IdSchema,
   lang: AppLanguageEnum,
   title: z.string(),
   content: z.string(),
@@ -26,8 +27,8 @@ export const PostTranslationSchema = z.object({
 })
 
 export const CategoryTranslationSchema = z.object({
-  id: z.string(),
-  categoryId: z.string(),
+  id: IdSchema,
+  categoryId: IdSchema,
   lang: AppLanguageEnum,
   title: z.string(),
   description: z.string().nullable(),
@@ -35,26 +36,30 @@ export const CategoryTranslationSchema = z.object({
 })
 
 export const CategorySchema = z.object({
-  categoryId: z.string(),
+  categoryId: IdSchema,
   title: z.string(),
   description: z.string().nullable(),
   slug: z.string(),
   image: z.string().nullable(),
   keywords: z.array(z.string()).optional(),
+  seoTitle: z.string().nullable().optional(),
+  seoDescription: z.string().nullable().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   deletedAt: z.coerce.date().nullable().optional(),
 })
 
 export const PostSchema = z.object({
-  postId: z.string(),
+  postId: IdSchema,
   title: z.string(),
   content: z.string(),
-  authorId: z.string(),
+  authorId: IdSchema,
   description: z.string().nullable(),
   slug: z.string(),
   keywords: z.array(z.string()).default([]),
-  categoryId: z.string(),
+  seoTitle: z.string().nullable().optional(),
+  seoDescription: z.string().nullable().optional(),
+  categoryId: IdSchema,
   image: z.string().nullable(),
   status: PostStatusEnum.default('DRAFT'),
   views: z.number().int().nonnegative().default(0),
@@ -65,10 +70,10 @@ export const PostSchema = z.object({
 })
 
 export const CommentSchema = z.object({
-  commentId: z.string(),
+  commentId: IdSchema,
   content: z.string(),
-  postId: z.string(),
-  parentId: z.string().nullable(),
+  postId: IdSchema,
+  parentId: IdSchema.nullable(),
   email: z.string().email().nullable(),
   name: z.string().nullable(),
   status: CommentStatusEnum.default('NOT_PUBLISHED'),
@@ -77,7 +82,7 @@ export const CommentSchema = z.object({
 })
 
 export const SeriesPostStubSchema = z.object({
-  postId: z.string(),
+  postId: IdSchema,
   title: z.string(),
   slug: z.string(),
   status: PostStatusEnum.or(z.string()),
@@ -87,15 +92,15 @@ export const SeriesPostStubSchema = z.object({
 })
 
 export const SeriesEntrySchema = z.object({
-  id: z.string(),
+  id: IdSchema,
   order: z.number().int().nonnegative(),
-  postId: z.string(),
-  seriesId: z.string(),
+  postId: IdSchema,
+  seriesId: IdSchema,
   post: SeriesPostStubSchema,
 })
 
 export const PostSeriesSchema = z.object({
-  id: z.string(),
+  id: IdSchema,
   title: z.string(),
   slug: z.string(),
   description: z.string().nullable(),
@@ -108,7 +113,7 @@ export const PostSeriesSchema = z.object({
 
 export const PostSeriesRefSchema = z.object({
   order: z.number().int().nonnegative(),
-  seriesId: z.string(),
+  seriesId: IdSchema,
   series: PostSeriesSchema,
 })
 
@@ -140,9 +145,9 @@ export const CommentWithDataSchema = CommentSchema.extend({
 })
 
 export const PostLikeSchema = z.object({
-  postLikeId: z.string(),
-  postId: z.string(),
-  userId: z.string().nullable().optional(),
+  postLikeId: IdSchema,
+  postId: IdSchema,
+  userId: IdSchema.nullable().optional(),
   ipAddress: z.string().nullable().optional(),
   deviceFingerprint: z.string().nullable().optional(),
   createdAt: z.coerce.date(),

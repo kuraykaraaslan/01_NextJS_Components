@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { IdSchema } from '../common/BaseTypes'
 
 /* =========================================================
    ENUMS
@@ -60,9 +61,9 @@ export const FXStatusEnum = z.enum([
 ========================================================= */
 
 export const WalletSchema = z.object({
-  walletId: z.string(),
+  walletId: IdSchema,
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   type: WalletTypeEnum.default('USER'),
   status: WalletStatusEnum.default('ACTIVE'),
@@ -82,16 +83,16 @@ export const WalletSchema = z.object({
 ========================================================= */
 
 export const WalletAccountSchema = z.object({
-  walletAccountId: z.string(),
+  walletAccountId: IdSchema,
 
-  walletId: z.string(),
+  walletId: IdSchema,
 
   type: z.enum(['IBAN', 'CRYPTO', 'CARD']),
 
   iban: z.string().nullable().optional(),
   bankName: z.string().nullable().optional(),
 
-  address: z.string().nullable().optional(), // crypto address
+  address: z.string().nullable().optional(),
 
   label: z.string().nullable().optional(),
 
@@ -105,9 +106,9 @@ export const WalletAccountSchema = z.object({
 ========================================================= */
 
 export const TransactionSchema = z.object({
-  transactionId: z.string(),
+  transactionId: IdSchema,
 
-  walletId: z.string(),
+  walletId: IdSchema,
 
   type: TransactionTypeEnum,
   status: TransactionStatusEnum.default('PENDING'),
@@ -121,7 +122,7 @@ export const TransactionSchema = z.object({
 
   description: z.string().nullable().optional(),
 
-  metadata: z.record(z.unknown()).nullable().optional(),
+  metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   completedAt: z.coerce.date().nullable().optional(),
@@ -132,12 +133,12 @@ export const TransactionSchema = z.object({
 ========================================================= */
 
 export const LedgerEntrySchema = z.object({
-  entryId: z.string(),
+  entryId: IdSchema,
 
-  transactionId: z.string(),
+  transactionId: IdSchema,
 
-  debitWalletId: z.string(),
-  creditWalletId: z.string(),
+  debitWalletId: IdSchema,
+  creditWalletId: IdSchema,
 
   amount: z.number(),
   currency: CurrencyEnum,
@@ -150,7 +151,7 @@ export const LedgerEntrySchema = z.object({
 ========================================================= */
 
 export const FXRateSchema = z.object({
-  rateId: z.string(),
+  rateId: IdSchema,
 
   baseCurrency: CurrencyEnum,
   quoteCurrency: CurrencyEnum,
@@ -163,10 +164,10 @@ export const FXRateSchema = z.object({
 })
 
 export const FXTransactionSchema = z.object({
-  fxTransactionId: z.string(),
+  fxTransactionId: IdSchema,
 
-  fromWalletId: z.string(),
-  toWalletId: z.string(),
+  fromWalletId: IdSchema,
+  toWalletId: IdSchema,
 
   fromCurrency: CurrencyEnum,
   toCurrency: CurrencyEnum,
@@ -189,10 +190,10 @@ export const FXTransactionSchema = z.object({
 ========================================================= */
 
 export const PaymentSchema = z.object({
-  paymentId: z.string(),
+  paymentId: IdSchema,
 
-  userId: z.string().nullable().optional(),
-  walletId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
+  walletId: IdSchema.nullable().optional(),
 
   method: PaymentMethodEnum,
 
@@ -204,7 +205,7 @@ export const PaymentSchema = z.object({
   provider: z.string().nullable().optional(),
   providerPaymentId: z.string().nullable().optional(),
 
-  metadata: z.record(z.unknown()).nullable().optional(),
+  metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   completedAt: z.coerce.date().nullable().optional(),
@@ -215,9 +216,9 @@ export const PaymentSchema = z.object({
 ========================================================= */
 
 export const CardSchema = z.object({
-  cardId: z.string(),
+  cardId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
   last4: z.string(),
   brand: z.string(),
@@ -225,7 +226,7 @@ export const CardSchema = z.object({
   expiryMonth: z.number(),
   expiryYear: z.number(),
 
-  token: z.string(), // PSP token
+  token: z.string(),
 
   default: z.boolean().default(false),
 
@@ -237,9 +238,9 @@ export const CardSchema = z.object({
 ========================================================= */
 
 export const BankAccountSchema = z.object({
-  bankAccountId: z.string(),
+  bankAccountId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
   iban: z.string(),
   bankName: z.string(),
@@ -256,9 +257,9 @@ export const BankAccountSchema = z.object({
 ========================================================= */
 
 export const UserLimitSchema = z.object({
-  limitId: z.string(),
+  limitId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
   dailyLimit: z.number().nullable().optional(),
   monthlyLimit: z.number().nullable().optional(),
@@ -278,9 +279,9 @@ export const KYCStatusEnum = z.enum([
 ])
 
 export const KYCSchema = z.object({
-  kycId: z.string(),
+  kycId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
   status: KYCStatusEnum.default('PENDING'),
 

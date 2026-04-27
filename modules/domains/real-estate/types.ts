@@ -1,5 +1,9 @@
 import { z } from 'zod'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema } from '../common/BaseTypes'
+import { CurrencySchema } from '../common/MoneyTypes'
+import { PaymentBaseSchema } from '../common/PaymentTypes'
+import { LocationSchema } from '../common/LocationTypes'
 
 /* =========================================================
    ENUMS
@@ -63,8 +67,8 @@ export const PaymentStatusEnum = z.enum([
 ========================================================= */
 
 export const PropertyTranslationSchema = z.object({
-  id: z.string(),
-  propertyId: z.string(),
+  id: IdSchema,
+  propertyId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -79,20 +83,16 @@ export const PropertyTranslationSchema = z.object({
    LOCATION
 ========================================================= */
 
-export const PropertyLocationSchema = z.object({
-  locationId: z.string(),
+export const PropertyLocationSchema = LocationSchema.extend({
+  locationId: IdSchema,
 
   country: z.string(),
-  countryCode: z.string().nullable().optional(),
 
   city: z.string(),
   district: z.string().nullable().optional(),
   neighborhood: z.string().nullable().optional(),
 
   address: z.string().nullable().optional(),
-
-  latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
 })
@@ -102,7 +102,7 @@ export const PropertyLocationSchema = z.object({
 ========================================================= */
 
 export const RealEstateAgentSchema = z.object({
-  agentId: z.string(),
+  agentId: IdSchema,
 
   name: z.string(),
   email: z.string().email(),
@@ -118,9 +118,9 @@ export const RealEstateAgentSchema = z.object({
 })
 
 export const PropertyOwnerSchema = z.object({
-  ownerId: z.string(),
+  ownerId: IdSchema,
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   name: z.string(),
   email: z.string().email().nullable().optional(),
@@ -134,7 +134,7 @@ export const PropertyOwnerSchema = z.object({
 ========================================================= */
 
 export const PropertySchema = z.object({
-  propertyId: z.string(),
+  propertyId: IdSchema,
 
   title: z.string(),
   slug: z.string(),
@@ -144,10 +144,10 @@ export const PropertySchema = z.object({
   propertyType: PropertyTypeEnum,
   condition: PropertyConditionEnum.default('GOOD'),
 
-  locationId: z.string(),
+  locationId: IdSchema,
 
-  ownerId: z.string().nullable().optional(),
-  agentId: z.string().nullable().optional(),
+  ownerId: IdSchema.nullable().optional(),
+  agentId: IdSchema.nullable().optional(),
 
   bedrooms: z.number().int().nonnegative().nullable().optional(),
   bathrooms: z.number().int().nonnegative().nullable().optional(),
@@ -179,14 +179,14 @@ export const PropertySchema = z.object({
 ========================================================= */
 
 export const PropertyListingSchema = z.object({
-  listingId: z.string(),
+  listingId: IdSchema,
 
-  propertyId: z.string(),
+  propertyId: IdSchema,
 
   listingType: ListingTypeEnum,
 
   price: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   rentPeriod: z.enum(['MONTHLY', 'YEARLY']).nullable().optional(),
 
@@ -223,12 +223,12 @@ export const PropertyWithDataSchema = PropertySchema.extend({
 ========================================================= */
 
 export const PropertyBookingSchema = z.object({
-  bookingId: z.string(),
+  bookingId: IdSchema,
 
-  propertyId: z.string(),
-  listingId: z.string(),
+  propertyId: IdSchema,
+  listingId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
   guestCount: z.number().int().positive(),
 
@@ -242,7 +242,7 @@ export const PropertyBookingSchema = z.object({
   cleaningFee: z.number().nonnegative().default(0),
   total: z.number().nonnegative(),
 
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   status: BookingStatusEnum.default('PENDING'),
 
@@ -255,16 +255,9 @@ export const PropertyBookingSchema = z.object({
    PAYMENT
 ========================================================= */
 
-export const RealEstatePaymentSchema = z.object({
-  paymentId: z.string(),
-
-  bookingId: z.string().nullable().optional(),
-  listingId: z.string().nullable().optional(),
-
-  amount: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
-
-  provider: z.string(),
+export const RealEstatePaymentSchema = PaymentBaseSchema.omit({ status: true }).extend({
+  bookingId: IdSchema.nullable().optional(),
+  listingId: IdSchema.nullable().optional(),
 
   status: PaymentStatusEnum.default('PENDING'),
 
@@ -279,10 +272,10 @@ export const RealEstatePaymentSchema = z.object({
 ========================================================= */
 
 export const PropertyFavoriteSchema = z.object({
-  favoriteId: z.string(),
+  favoriteId: IdSchema,
 
-  userId: z.string(),
-  propertyId: z.string(),
+  userId: IdSchema,
+  propertyId: IdSchema,
 
   createdAt: z.coerce.date().optional(),
 })

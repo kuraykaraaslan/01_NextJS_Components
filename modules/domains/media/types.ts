@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema, BaseEntitySchema, VisibilityEnum, ProcessingStatusEnum } from '../common/BaseTypes'
 
 /* =========================================================
    ENUMS
@@ -13,19 +14,6 @@ export const VideoStatusEnum = z.enum([
   'UNLISTED',
   'BLOCKED',
   'DELETED',
-])
-
-export const VisibilityEnum = z.enum([
-  'PUBLIC',
-  'PRIVATE',
-  'UNLISTED',
-])
-
-export const ProcessingStatusEnum = z.enum([
-  'UPLOADING',
-  'PROCESSING',
-  'READY',
-  'FAILED',
 ])
 
 export const CommentStatusEnum = z.enum([
@@ -53,13 +41,19 @@ export const PlaylistVisibilityEnum = z.enum([
 ])
 
 /* =========================================================
+   RE-EXPORTS FROM COMMON
+========================================================= */
+
+export { VisibilityEnum, ProcessingStatusEnum }
+
+/* =========================================================
    CHANNEL (CREATOR)
 ========================================================= */
 
 export const ChannelSchema = z.object({
-  channelId: z.string(),
+  channelId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
   name: z.string(),
   handle: z.string(),
@@ -75,18 +69,15 @@ export const ChannelSchema = z.object({
   verified: z.boolean().default(false),
 
   country: z.string().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 /* =========================================================
    VIDEO
 ========================================================= */
 
 export const VideoTranslationSchema = z.object({
-  id: z.string(),
-  videoId: z.string(),
+  id: IdSchema,
+  videoId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -94,9 +85,9 @@ export const VideoTranslationSchema = z.object({
 })
 
 export const VideoSchema = z.object({
-  videoId: z.string(),
+  videoId: IdSchema,
 
-  channelId: z.string(),
+  channelId: IdSchema,
 
   title: z.string(),
   description: z.string().nullable().optional(),
@@ -124,11 +115,7 @@ export const VideoSchema = z.object({
   language: AppLanguageEnum.default('en'),
 
   publishedAt: z.coerce.date().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-  deletedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.shape)
 
 export const VideoWithDataSchema = VideoSchema.extend({
   channel: ChannelSchema.pick({
@@ -147,9 +134,9 @@ export const VideoWithDataSchema = VideoSchema.extend({
 ========================================================= */
 
 export const VideoFileSchema = z.object({
-  fileId: z.string(),
+  fileId: IdSchema,
 
-  videoId: z.string(),
+  videoId: IdSchema,
 
   quality: z.enum(['144p', '240p', '360p', '480p', '720p', '1080p', '4K']),
 
@@ -162,51 +149,45 @@ export const VideoFileSchema = z.object({
 })
 
 export const VideoProcessingJobSchema = z.object({
-  jobId: z.string(),
+  jobId: IdSchema,
 
-  videoId: z.string(),
+  videoId: IdSchema,
 
   status: ProcessingStatusEnum,
 
   progress: z.number().min(0).max(100),
 
   error: z.string().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 /* =========================================================
    COMMENTS
 ========================================================= */
 
 export const CommentSchema = z.object({
-  commentId: z.string(),
+  commentId: IdSchema,
 
-  videoId: z.string(),
-  userId: z.string(),
+  videoId: IdSchema,
+  userId: IdSchema,
 
-  parentId: z.string().nullable().optional(),
+  parentId: IdSchema.nullable().optional(),
 
   content: z.string(),
 
   likeCount: z.number().int().nonnegative().default(0),
 
   status: CommentStatusEnum.default('VISIBLE'),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 /* =========================================================
    REACTIONS
 ========================================================= */
 
 export const VideoReactionSchema = z.object({
-  reactionId: z.string(),
+  reactionId: IdSchema,
 
-  videoId: z.string(),
-  userId: z.string(),
+  videoId: IdSchema,
+  userId: IdSchema,
 
   type: ReactionTypeEnum,
 
@@ -218,10 +199,10 @@ export const VideoReactionSchema = z.object({
 ========================================================= */
 
 export const SubscriptionSchema = z.object({
-  subscriptionId: z.string(),
+  subscriptionId: IdSchema,
 
-  channelId: z.string(),
-  subscriberUserId: z.string(),
+  channelId: IdSchema,
+  subscriberUserId: IdSchema,
 
   status: SubscriptionStatusEnum.default('ACTIVE'),
 
@@ -233,9 +214,9 @@ export const SubscriptionSchema = z.object({
 ========================================================= */
 
 export const PlaylistSchema = z.object({
-  playlistId: z.string(),
+  playlistId: IdSchema,
 
-  channelId: z.string(),
+  channelId: IdSchema,
 
   title: z.string(),
   description: z.string().nullable().optional(),
@@ -243,16 +224,13 @@ export const PlaylistSchema = z.object({
   visibility: PlaylistVisibilityEnum.default('PUBLIC'),
 
   videoCount: z.number().int().nonnegative().default(0),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 export const PlaylistItemSchema = z.object({
-  playlistItemId: z.string(),
+  playlistItemId: IdSchema,
 
-  playlistId: z.string(),
-  videoId: z.string(),
+  playlistId: IdSchema,
+  videoId: IdSchema,
 
   order: z.number().int().nonnegative(),
 
@@ -264,10 +242,10 @@ export const PlaylistItemSchema = z.object({
 ========================================================= */
 
 export const WatchHistorySchema = z.object({
-  historyId: z.string(),
+  historyId: IdSchema,
 
-  userId: z.string(),
-  videoId: z.string(),
+  userId: IdSchema,
+  videoId: IdSchema,
 
   watchedSeconds: z.number().nonnegative(),
 
@@ -281,7 +259,7 @@ export const WatchHistorySchema = z.object({
 ========================================================= */
 
 export const VideoAnalyticsSchema = z.object({
-  videoId: z.string(),
+  videoId: IdSchema,
 
   totalViews: z.number().int().nonnegative(),
   totalWatchTimeSeconds: z.number().nonnegative(),

@@ -6,13 +6,13 @@ import { AppLanguageEnum } from './I18nTypes'
 ========================================================= */
 
 export const IdSchema = z.string().min(1)
-export const UuidSchema = z.string().uuid()
+export const UuidSchema = z.uuid()
 export const SlugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
 
 export const DateSchema = z.coerce.date()
 export const NullableDateSchema = z.coerce.date().nullable().optional()
 
-export const EmailSchema = z.string().email()
+export const EmailSchema = z.email()
 export const PasswordSchema = z.string().min(8)
 
 export const SortOrderEnum = z.enum(['asc', 'desc'])

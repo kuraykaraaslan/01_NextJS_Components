@@ -1,5 +1,10 @@
 import { z } from 'zod'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema } from '../common/BaseTypes'
+import { CurrencySchema } from '../common/MoneyTypes'
+import { PaymentStatusEnum, PaymentBaseSchema } from '../common/PaymentTypes'
+import { DiscountTypeEnum, CouponBaseSchema } from '../common/DiscountTypes'
+import { LocationSchema } from '../common/LocationTypes'
 
 /* =========================================================
    ENUMS
@@ -29,15 +34,6 @@ export const OrderStatusEnum = z.enum([
   'REFUNDED',
 ])
 
-export const PaymentStatusEnum = z.enum([
-  'PENDING',
-  'AUTHORIZED',
-  'PAID',
-  'FAILED',
-  'CANCELLED',
-  'REFUNDED',
-])
-
 export const DeliveryStatusEnum = z.enum([
   'PENDING',
   'ASSIGNED',
@@ -47,44 +43,27 @@ export const DeliveryStatusEnum = z.enum([
   'FAILED',
 ])
 
-export const DiscountTypeEnum = z.enum([
-  'PERCENTAGE',
-  'FIXED_AMOUNT',
-  'FREE_DELIVERY',
-])
-
 /* =========================================================
-   LOCATION
+   RE-EXPORTS FROM COMMON
 ========================================================= */
 
-export const LocationSchema = z.object({
-  locationId: z.string(),
-
-  city: z.string(),
-  country: z.string(),
-  countryCode: z.string().nullable().optional(),
-
-  latitude: z.number(),
-  longitude: z.number(),
-
-  createdAt: z.coerce.date().optional(),
-})
+export { PaymentStatusEnum, DiscountTypeEnum }
 
 /* =========================================================
    RESTAURANT
 ========================================================= */
 
 export const RestaurantTranslationSchema = z.object({
-  id: z.string(),
-  restaurantId: z.string(),
+  id: IdSchema,
+  restaurantId: IdSchema,
   lang: AppLanguageEnum,
 
   name: z.string(),
   description: z.string().nullable().optional(),
 })
 
-export const RestaurantSchema = z.object({
-  restaurantId: z.string(),
+export const RestaurantSchema = LocationSchema.extend({
+  restaurantId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
@@ -93,14 +72,11 @@ export const RestaurantSchema = z.object({
 
   cuisineTypes: z.array(z.string()).default([]),
 
-  locationId: z.string(),
+  locationId: IdSchema,
 
   address: z.string(),
   city: z.string(),
   country: z.string(),
-
-  latitude: z.number(),
-  longitude: z.number(),
 
   phone: z.string().nullable().optional(),
 
@@ -130,8 +106,8 @@ export const RestaurantSchema = z.object({
 ========================================================= */
 
 export const MenuCategorySchema = z.object({
-  categoryId: z.string(),
-  restaurantId: z.string(),
+  categoryId: IdSchema,
+  restaurantId: IdSchema,
 
   name: z.string(),
   description: z.string().nullable().optional(),
@@ -144,10 +120,10 @@ export const MenuCategorySchema = z.object({
 })
 
 export const MenuItemSchema = z.object({
-  menuItemId: z.string(),
+  menuItemId: IdSchema,
 
-  restaurantId: z.string(),
-  categoryId: z.string(),
+  restaurantId: IdSchema,
+  categoryId: IdSchema,
 
   name: z.string(),
   description: z.string().nullable().optional(),
@@ -155,7 +131,7 @@ export const MenuItemSchema = z.object({
   image: z.string().nullable().optional(),
 
   basePrice: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   status: MenuItemStatusEnum.default('AVAILABLE'),
 
@@ -173,14 +149,14 @@ export const MenuItemSchema = z.object({
 ========================================================= */
 
 export const MenuItemVariantSchema = z.object({
-  variantId: z.string(),
+  variantId: IdSchema,
 
-  menuItemId: z.string(),
+  menuItemId: IdSchema,
 
-  name: z.string(), // Small / Medium / Large
+  name: z.string(),
 
   price: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   active: z.boolean().default(true),
 
@@ -188,9 +164,9 @@ export const MenuItemVariantSchema = z.object({
 })
 
 export const MenuItemOptionGroupSchema = z.object({
-  optionGroupId: z.string(),
+  optionGroupId: IdSchema,
 
-  menuItemId: z.string(),
+  menuItemId: IdSchema,
 
   name: z.string(),
 
@@ -203,9 +179,9 @@ export const MenuItemOptionGroupSchema = z.object({
 })
 
 export const MenuItemOptionSchema = z.object({
-  optionId: z.string(),
+  optionId: IdSchema,
 
-  optionGroupId: z.string(),
+  optionGroupId: IdSchema,
 
   name: z.string(),
 
@@ -221,9 +197,9 @@ export const MenuItemOptionSchema = z.object({
 ========================================================= */
 
 export const CustomerSchema = z.object({
-  customerId: z.string(),
+  customerId: IdSchema,
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   firstName: z.string(),
   lastName: z.string(),
@@ -234,10 +210,10 @@ export const CustomerSchema = z.object({
   createdAt: z.coerce.date().optional(),
 })
 
-export const AddressSchema = z.object({
-  addressId: z.string(),
+export const AddressSchema = LocationSchema.extend({
+  addressId: IdSchema,
 
-  customerId: z.string(),
+  customerId: IdSchema,
 
   label: z.string().nullable().optional(),
 
@@ -245,9 +221,6 @@ export const AddressSchema = z.object({
 
   city: z.string(),
   country: z.string(),
-
-  latitude: z.number(),
-  longitude: z.number(),
 
   isDefault: z.boolean().default(false),
 
@@ -259,29 +232,29 @@ export const AddressSchema = z.object({
 ========================================================= */
 
 export const CartSchema = z.object({
-  cartId: z.string(),
+  cartId: IdSchema,
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
   sessionId: z.string().nullable().optional(),
 
-  restaurantId: z.string(),
+  restaurantId: IdSchema,
 
   subtotal: z.number().nonnegative().default(0),
   deliveryFee: z.number().nonnegative().default(0),
   total: z.number().nonnegative().default(0),
 
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
 })
 
 export const CartItemSchema = z.object({
-  cartItemId: z.string(),
-  cartId: z.string(),
+  cartItemId: IdSchema,
+  cartId: IdSchema,
 
-  menuItemId: z.string(),
-  variantId: z.string().nullable().optional(),
+  menuItemId: IdSchema,
+  variantId: IdSchema.nullable().optional(),
 
   name: z.string(),
 
@@ -291,7 +264,7 @@ export const CartItemSchema = z.object({
   totalPrice: z.number().nonnegative(),
 
   selectedOptions: z.array(z.object({
-    optionId: z.string(),
+    optionId: IdSchema,
     name: z.string(),
     price: z.number(),
   })).default([]),
@@ -304,13 +277,13 @@ export const CartItemSchema = z.object({
 ========================================================= */
 
 export const OrderSchema = z.object({
-  orderId: z.string(),
+  orderId: IdSchema,
   orderNumber: z.string(),
 
-  restaurantId: z.string(),
+  restaurantId: IdSchema,
 
-  customerId: z.string().nullable().optional(),
-  userId: z.string().nullable().optional(),
+  customerId: IdSchema.nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   status: OrderStatusEnum.default('PENDING'),
 
@@ -319,9 +292,9 @@ export const OrderSchema = z.object({
   discountTotal: z.number().nonnegative().default(0),
   total: z.number().nonnegative(),
 
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
-  addressId: z.string(),
+  addressId: IdSchema,
 
   note: z.string().nullable().optional(),
 
@@ -334,11 +307,11 @@ export const OrderSchema = z.object({
 })
 
 export const OrderItemSchema = z.object({
-  orderItemId: z.string(),
-  orderId: z.string(),
+  orderItemId: IdSchema,
+  orderId: IdSchema,
 
-  menuItemId: z.string(),
-  variantId: z.string().nullable().optional(),
+  menuItemId: IdSchema,
+  variantId: IdSchema.nullable().optional(),
 
   name: z.string(),
 
@@ -348,7 +321,7 @@ export const OrderItemSchema = z.object({
   totalPrice: z.number().nonnegative(),
 
   selectedOptions: z.array(z.object({
-    optionId: z.string(),
+    optionId: IdSchema,
     name: z.string(),
     price: z.number(),
   })).default([]),
@@ -360,16 +333,8 @@ export const OrderItemSchema = z.object({
    PAYMENT
 ========================================================= */
 
-export const PaymentSchema = z.object({
-  paymentId: z.string(),
-  orderId: z.string(),
-
-  provider: z.string(),
-
-  status: PaymentStatusEnum.default('PENDING'),
-
-  amount: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+export const PaymentSchema = PaymentBaseSchema.extend({
+  orderId: IdSchema,
 
   paidAt: z.coerce.date().nullable().optional(),
 
@@ -381,7 +346,7 @@ export const PaymentSchema = z.object({
 ========================================================= */
 
 export const CourierSchema = z.object({
-  courierId: z.string(),
+  courierId: IdSchema,
 
   name: z.string(),
   phone: z.string().nullable().optional(),
@@ -394,10 +359,10 @@ export const CourierSchema = z.object({
 })
 
 export const DeliverySchema = z.object({
-  deliveryId: z.string(),
+  deliveryId: IdSchema,
 
-  orderId: z.string(),
-  courierId: z.string().nullable().optional(),
+  orderId: IdSchema,
+  courierId: IdSchema.nullable().optional(),
 
   status: DeliveryStatusEnum.default('PENDING'),
 
@@ -411,22 +376,13 @@ export const DeliverySchema = z.object({
    COUPON
 ========================================================= */
 
-export const CouponSchema = z.object({
-  couponId: z.string(),
-
-  code: z.string(),
-
-  discountType: DiscountTypeEnum,
-  discountValue: z.number().positive(),
-
+export const CouponSchema = CouponBaseSchema.extend({
   minOrderAmount: z.number().nonnegative().nullable().optional(),
 
-  maxUses: z.number().int().positive().nullable().optional(),
-  usedCount: z.number().int().nonnegative().default(0),
-
-  active: z.boolean().default(true),
-
   createdAt: z.coerce.date().optional(),
+}).omit({ maxUsage: true, validFrom: true, validUntil: true, isActive: true }).extend({
+  maxUses: z.number().int().positive().nullable().optional(),
+  active: z.boolean().default(true),
 })
 
 /* =========================================================

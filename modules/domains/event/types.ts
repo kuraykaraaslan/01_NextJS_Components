@@ -1,5 +1,10 @@
 import { z } from 'zod'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema, EmailSchema } from '../common/BaseTypes'
+import { CurrencySchema } from '../common/MoneyTypes'
+import { PaymentStatusEnum, PaymentBaseSchema } from '../common/PaymentTypes'
+import { DiscountTypeEnum, CouponBaseSchema } from '../common/DiscountTypes'
+import { LocationSchema } from '../common/LocationTypes'
 
 /* =========================================================
    ENUMS
@@ -34,15 +39,6 @@ export const OrderStatusEnum = z.enum([
   'PARTIALLY_REFUNDED',
 ])
 
-export const PaymentStatusEnum = z.enum([
-  'PENDING',
-  'AUTHORIZED',
-  'PAID',
-  'FAILED',
-  'CANCELLED',
-  'REFUNDED',
-])
-
 export const TicketStatusEnum = z.enum([
   'VALID',
   'USED',
@@ -51,18 +47,19 @@ export const TicketStatusEnum = z.enum([
   'TRANSFERRED',
 ])
 
-export const DiscountTypeEnum = z.enum([
-  'PERCENTAGE',
-  'FIXED_AMOUNT',
-])
+/* =========================================================
+   RE-EXPORTS FROM COMMON
+========================================================= */
+
+export { PaymentStatusEnum, DiscountTypeEnum }
 
 /* =========================================================
    TRANSLATIONS
 ========================================================= */
 
 export const EventTranslationSchema = z.object({
-  id: z.string(),
-  eventId: z.string(),
+  id: IdSchema,
+  eventId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -75,8 +72,8 @@ export const EventTranslationSchema = z.object({
 })
 
 export const EventCategoryTranslationSchema = z.object({
-  id: z.string(),
-  categoryId: z.string(),
+  id: IdSchema,
+  categoryId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -89,14 +86,14 @@ export const EventCategoryTranslationSchema = z.object({
 ========================================================= */
 
 export const EventCategorySchema = z.object({
-  categoryId: z.string(),
+  categoryId: IdSchema,
 
   title: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),
   image: z.string().nullable().optional(),
 
-  parentId: z.string().nullable().optional(),
+  parentId: IdSchema.nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -108,15 +105,15 @@ export const EventCategorySchema = z.object({
 ========================================================= */
 
 export const OrganizerSchema = z.object({
-  organizerId: z.string(),
+  organizerId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),
 
   logo: z.string().nullable().optional(),
-  website: z.string().url().nullable().optional(),
-  email: z.string().email().nullable().optional(),
+  website: z.url().nullable().optional(),
+  email: EmailSchema.nullable().optional(),
   phone: z.string().nullable().optional(),
 
   verified: z.boolean().default(false),
@@ -130,8 +127,8 @@ export const OrganizerSchema = z.object({
    VENUE / HALL / SECTION / SEAT
 ========================================================= */
 
-export const VenueSchema = z.object({
-  venueId: z.string(),
+export const VenueSchema = LocationSchema.extend({
+  venueId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
@@ -139,13 +136,7 @@ export const VenueSchema = z.object({
 
   address: z.string(),
   city: z.string(),
-  state: z.string().nullable().optional(),
   country: z.string(),
-  countryCode: z.string().nullable().optional(),
-  postalCode: z.string().nullable().optional(),
-
-  latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional(),
 
   image: z.string().nullable().optional(),
 
@@ -155,8 +146,8 @@ export const VenueSchema = z.object({
 })
 
 export const VenueHallSchema = z.object({
-  hallId: z.string(),
-  venueId: z.string(),
+  hallId: IdSchema,
+  venueId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
@@ -174,10 +165,10 @@ export const VenueHallSchema = z.object({
 })
 
 export const VenueSectionSchema = z.object({
-  sectionId: z.string(),
-  hallId: z.string(),
+  sectionId: IdSchema,
+  hallId: IdSchema,
 
-  parentSectionId: z.string().nullable().optional(),
+  parentSectionId: IdSchema.nullable().optional(),
 
   name: z.string(),
   label: z.string().nullable().optional(),
@@ -192,8 +183,8 @@ export const VenueSectionSchema = z.object({
 })
 
 export const VenueSeatSchema = z.object({
-  seatId: z.string(),
-  sectionId: z.string(),
+  seatId: IdSchema,
+  sectionId: IdSchema,
 
   row: z.string(),
   number: z.string(),
@@ -216,7 +207,7 @@ export const VenueSeatSchema = z.object({
 ========================================================= */
 
 export const EventSchema = z.object({
-  eventId: z.string(),
+  eventId: IdSchema,
 
   title: z.string(),
   slug: z.string(),
@@ -224,8 +215,8 @@ export const EventSchema = z.object({
   description: z.string().nullable().optional(),
   shortDescription: z.string().nullable().optional(),
 
-  categoryId: z.string(),
-  organizerId: z.string(),
+  categoryId: IdSchema,
+  organizerId: IdSchema,
 
   format: EventFormatEnum.default('PHYSICAL'),
 
@@ -242,12 +233,12 @@ export const EventSchema = z.object({
 
   minPrice: z.number().nonnegative().nullable().optional(),
   maxPrice: z.number().nonnegative().nullable().optional(),
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   totalCapacity: z.number().int().nonnegative().nullable().optional(),
   remainingCapacity: z.number().int().nonnegative().nullable().optional(),
 
-  onlineUrl: z.string().url().nullable().optional(),
+  onlineUrl: z.url().nullable().optional(),
 
   tags: z.array(z.string()).default([]),
   keywords: z.array(z.string()).default([]),
@@ -259,9 +250,9 @@ export const EventSchema = z.object({
 })
 
 export const EventHallSchema = z.object({
-  eventHallId: z.string(),
-  eventId: z.string(),
-  hallId: z.string(),
+  eventHallId: IdSchema,
+  eventId: IdSchema,
+  hallId: IdSchema,
 
   capacityOverride: z.number().int().nonnegative().nullable().optional(),
 
@@ -270,17 +261,17 @@ export const EventHallSchema = z.object({
 })
 
 export const EventSectionPricingSchema = z.object({
-  eventSectionPricingId: z.string(),
+  eventSectionPricingId: IdSchema,
 
-  eventId: z.string(),
-  hallId: z.string(),
-  sectionId: z.string(),
+  eventId: IdSchema,
+  hallId: IdSchema,
+  sectionId: IdSchema,
 
   name: z.string(),
   description: z.string().nullable().optional(),
 
   price: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   capacity: z.number().int().nonnegative().nullable().optional(),
   soldCount: z.number().int().nonnegative().default(0),
@@ -296,23 +287,23 @@ export const EventSectionPricingSchema = z.object({
 })
 
 export const EventSeatSchema = z.object({
-  eventSeatId: z.string(),
+  eventSeatId: IdSchema,
 
-  eventId: z.string(),
-  hallId: z.string(),
-  sectionId: z.string(),
-  seatId: z.string(),
+  eventId: IdSchema,
+  hallId: IdSchema,
+  sectionId: IdSchema,
+  seatId: IdSchema,
 
-  pricingId: z.string().nullable().optional(),
+  pricingId: IdSchema.nullable().optional(),
 
   status: SeatStatusEnum.default('AVAILABLE'),
 
   holdExpiresAt: z.coerce.date().nullable().optional(),
   heldBySessionId: z.string().nullable().optional(),
-  heldByUserId: z.string().nullable().optional(),
+  heldByUserId: IdSchema.nullable().optional(),
 
-  orderId: z.string().nullable().optional(),
-  ticketId: z.string().nullable().optional(),
+  orderId: IdSchema.nullable().optional(),
+  ticketId: IdSchema.nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -352,18 +343,18 @@ export const EventWithDataSchema = EventSchema.extend({
 ========================================================= */
 
 export const TicketHoldSchema = z.object({
-  holdId: z.string(),
+  holdId: IdSchema,
 
-  eventId: z.string(),
-  hallId: z.string(),
-  sectionId: z.string(),
-  seatId: z.string(),
-  eventSeatId: z.string(),
+  eventId: IdSchema,
+  hallId: IdSchema,
+  sectionId: IdSchema,
+  seatId: IdSchema,
+  eventSeatId: IdSchema,
 
-  pricingId: z.string(),
+  pricingId: IdSchema,
 
   sessionId: z.string(),
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   expiresAt: z.coerce.date(),
 
@@ -375,13 +366,13 @@ export const TicketHoldSchema = z.object({
 ========================================================= */
 
 export const OrderSchema = z.object({
-  orderId: z.string(),
+  orderId: IdSchema,
 
-  userId: z.string().nullable().optional(),
-  eventId: z.string(),
+  userId: IdSchema.nullable().optional(),
+  eventId: IdSchema,
 
   buyerName: z.string(),
-  buyerEmail: z.string().email(),
+  buyerEmail: EmailSchema,
   buyerPhone: z.string().nullable().optional(),
 
   status: OrderStatusEnum.default('PENDING'),
@@ -392,7 +383,7 @@ export const OrderSchema = z.object({
   taxTotal: z.number().nonnegative().default(0),
   total: z.number().nonnegative(),
 
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -402,16 +393,16 @@ export const OrderSchema = z.object({
 })
 
 export const OrderItemSchema = z.object({
-  orderItemId: z.string(),
-  orderId: z.string(),
+  orderItemId: IdSchema,
+  orderId: IdSchema,
 
-  eventId: z.string(),
-  hallId: z.string(),
-  sectionId: z.string(),
-  seatId: z.string(),
-  eventSeatId: z.string(),
+  eventId: IdSchema,
+  hallId: IdSchema,
+  sectionId: IdSchema,
+  seatId: IdSchema,
+  eventSeatId: IdSchema,
 
-  pricingId: z.string(),
+  pricingId: IdSchema,
 
   seatLabel: z.string(),
   sectionName: z.string(),
@@ -428,23 +419,14 @@ export const OrderItemSchema = z.object({
    PAYMENT
 ========================================================= */
 
-export const PaymentSchema = z.object({
-  paymentId: z.string(),
-  orderId: z.string(),
-
-  provider: z.string(),
-  providerPaymentId: z.string().nullable().optional(),
-
-  status: PaymentStatusEnum.default('PENDING'),
-
-  amount: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+export const PaymentSchema = PaymentBaseSchema.extend({
+  orderId: IdSchema,
 
   paidAt: z.coerce.date().nullable().optional(),
   failedAt: z.coerce.date().nullable().optional(),
   refundedAt: z.coerce.date().nullable().optional(),
 
-  rawResponse: z.record(z.unknown()).nullable().optional(),
+  rawResponse: z.record(z.string(), z.unknown()).nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -455,21 +437,21 @@ export const PaymentSchema = z.object({
 ========================================================= */
 
 export const IssuedTicketSchema = z.object({
-  ticketId: z.string(),
+  ticketId: IdSchema,
 
-  orderId: z.string(),
-  orderItemId: z.string(),
+  orderId: IdSchema,
+  orderItemId: IdSchema,
 
-  eventId: z.string(),
-  hallId: z.string(),
-  sectionId: z.string(),
-  seatId: z.string(),
-  eventSeatId: z.string(),
+  eventId: IdSchema,
+  hallId: IdSchema,
+  sectionId: IdSchema,
+  seatId: IdSchema,
+  eventSeatId: IdSchema,
 
-  pricingId: z.string(),
+  pricingId: IdSchema,
 
   attendeeName: z.string().nullable().optional(),
-  attendeeEmail: z.string().email().nullable().optional(),
+  attendeeEmail: EmailSchema.nullable().optional(),
 
   qrCode: z.string(),
   barcode: z.string().nullable().optional(),
@@ -479,7 +461,7 @@ export const IssuedTicketSchema = z.object({
   checkedInAt: z.coerce.date().nullable().optional(),
   checkedInBy: z.string().nullable().optional(),
 
-  transferredToUserId: z.string().nullable().optional(),
+  transferredToUserId: IdSchema.nullable().optional(),
   transferredAt: z.coerce.date().nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
@@ -493,10 +475,10 @@ export const IssuedTicketSchema = z.object({
 ========================================================= */
 
 export const TicketCheckInSchema = z.object({
-  checkInId: z.string(),
+  checkInId: IdSchema,
 
-  ticketId: z.string(),
-  eventId: z.string(),
+  ticketId: IdSchema,
+  eventId: IdSchema,
 
   checkedInBy: z.string(),
   checkedInAt: z.coerce.date(),
@@ -512,26 +494,18 @@ export const TicketCheckInSchema = z.object({
    COUPON
 ========================================================= */
 
-export const CouponSchema = z.object({
-  couponId: z.string(),
-
-  code: z.string(),
-  eventId: z.string().nullable().optional(),
-
-  discountType: DiscountTypeEnum,
-  discountValue: z.number().positive(),
-
-  maxUses: z.number().int().positive().nullable().optional(),
-  usedCount: z.number().int().nonnegative().default(0),
+export const CouponSchema = CouponBaseSchema.extend({
+  eventId: IdSchema.nullable().optional(),
 
   startsAt: z.coerce.date().nullable().optional(),
   expiresAt: z.coerce.date().nullable().optional(),
 
-  active: z.boolean().default(true),
-
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
   deletedAt: z.coerce.date().nullable().optional(),
+}).omit({ maxUsage: true, validFrom: true, validUntil: true, isActive: true }).extend({
+  maxUses: z.number().int().positive().nullable().optional(),
+  active: z.boolean().default(true),
 })
 
 /* =========================================================

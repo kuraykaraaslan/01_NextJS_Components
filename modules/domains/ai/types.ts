@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { IdSchema } from '../common/BaseTypes'
 
 /* =========================================================
    ENUMS
@@ -57,7 +58,7 @@ export const AIMessageRoleEnum = z.enum([
 ========================================================= */
 
 export const AIModelSchema = z.object({
-  modelId: z.string(),
+  modelId: IdSchema,
 
   provider: AIProviderEnum,
   name: z.string(),
@@ -81,7 +82,7 @@ export const AIModelSchema = z.object({
 ========================================================= */
 
 export const AIPromptTemplateSchema = z.object({
-  templateId: z.string(),
+  templateId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
@@ -113,11 +114,11 @@ export const AIMessageSchema = z.object({
 })
 
 export const AIGenerationRequestSchema = z.object({
-  requestId: z.string(),
+  requestId: IdSchema,
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
-  modelId: z.string(),
+  modelId: IdSchema,
 
   messages: z.array(AIMessageSchema),
 
@@ -126,18 +127,18 @@ export const AIGenerationRequestSchema = z.object({
 
   contentType: AIContentTypeEnum,
 
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 
   createdAt: z.coerce.date().optional(),
 })
 
 export const AIGenerationResultSchema = z.object({
-  resultId: z.string(),
+  resultId: IdSchema,
 
-  requestId: z.string(),
+  requestId: IdSchema,
 
   outputText: z.string().nullable().optional(),
-  outputJson: z.record(z.unknown()).nullable().optional(),
+  outputJson: z.record(z.string(), z.unknown()).nullable().optional(),
 
   tokensPrompt: z.number().int().nonnegative(),
   tokensCompletion: z.number().int().nonnegative(),
@@ -157,14 +158,14 @@ export const AIGenerationResultSchema = z.object({
 ========================================================= */
 
 export const AIJobSchema = z.object({
-  jobId: z.string(),
+  jobId: IdSchema,
 
   type: AIModelTypeEnum,
 
   status: AIJobStatusEnum.default('PENDING'),
 
-  requestPayload: z.record(z.unknown()),
-  responsePayload: z.record(z.unknown()).nullable().optional(),
+  requestPayload: z.record(z.string(), z.unknown()),
+  responsePayload: z.record(z.string(), z.unknown()).nullable().optional(),
 
   errorMessage: z.string().nullable().optional(),
 
@@ -179,28 +180,28 @@ export const AIJobSchema = z.object({
 ========================================================= */
 
 export const AIEmbeddingSchema = z.object({
-  embeddingId: z.string(),
+  embeddingId: IdSchema,
 
   entityType: AIContentTypeEnum,
-  entityId: z.string(),
+  entityId: IdSchema,
 
   vector: z.array(z.number()),
 
-  modelId: z.string(),
+  modelId: IdSchema,
 
   createdAt: z.coerce.date().optional(),
 })
 
 export const AIRAGDocumentSchema = z.object({
-  docId: z.string(),
+  docId: IdSchema,
 
   title: z.string(),
   content: z.string(),
 
   entityType: AIContentTypeEnum,
-  entityId: z.string().nullable().optional(),
+  entityId: IdSchema.nullable().optional(),
 
-  embeddingId: z.string(),
+  embeddingId: IdSchema,
 
   createdAt: z.coerce.date().optional(),
 })
@@ -210,22 +211,22 @@ export const AIRAGDocumentSchema = z.object({
 ========================================================= */
 
 export const AIChatSessionSchema = z.object({
-  sessionId: z.string(),
+  sessionId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
   title: z.string().nullable().optional(),
 
-  modelId: z.string(),
+  modelId: IdSchema,
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
 })
 
 export const AIChatMessageSchema = z.object({
-  messageId: z.string(),
+  messageId: IdSchema,
 
-  sessionId: z.string(),
+  sessionId: IdSchema,
 
   role: AIMessageRoleEnum,
 
@@ -241,13 +242,13 @@ export const AIChatMessageSchema = z.object({
 ========================================================= */
 
 export const AIModerationSchema = z.object({
-  moderationId: z.string(),
+  moderationId: IdSchema,
 
   content: z.string(),
 
   status: AIModerationStatusEnum,
 
-  categories: z.record(z.boolean()).optional(),
+  categories: z.record(z.string(), z.boolean()).optional(),
 
   flaggedReason: z.string().nullable().optional(),
 
@@ -259,11 +260,11 @@ export const AIModerationSchema = z.object({
 ========================================================= */
 
 export const AIUsageSchema = z.object({
-  usageId: z.string(),
+  usageId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
-  modelId: z.string(),
+  modelId: IdSchema,
 
   tokensPrompt: z.number().int().nonnegative(),
   tokensCompletion: z.number().int().nonnegative(),

@@ -1,5 +1,10 @@
 import { z } from 'zod'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema, BaseEntitySchema, EmailSchema } from '../common/BaseTypes'
+import { CurrencySchema, PriceFieldsSchema, OrderTotalsSchema } from '../common/MoneyTypes'
+import { PaymentStatusEnum, PaymentBaseSchema } from '../common/PaymentTypes'
+import { LocationSchema } from '../common/LocationTypes'
+import { SeoFieldsSchema } from '../common/SeoTypes'
 
 /* =========================================================
    ENUMS
@@ -15,14 +20,8 @@ export const TravelBookingStatusEnum = z.enum([
   'COMPLETED',
 ])
 
-export const TravelPaymentStatusEnum = z.enum([
-  'PENDING',
-  'AUTHORIZED',
-  'PAID',
-  'FAILED',
-  'CANCELLED',
-  'REFUNDED',
-])
+// Fix 5: TravelPaymentStatusEnum is identical to PaymentStatusEnum — alias it
+export const TravelPaymentStatusEnum = PaymentStatusEnum  // backward compat alias
 
 export const FlightCabinClassEnum = z.enum([
   'ECONOMY',
@@ -56,68 +55,51 @@ export const GuestTypeEnum = z.enum([
    LOCATION
 ========================================================= */
 
-export const TravelLocationSchema = z.object({
-  locationId: z.string(),
+export const TravelLocationSchema = LocationSchema.extend({
+  locationId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
 
-  city: z.string(),
-  country: z.string(),
-  countryCode: z.string().nullable().optional(),
+  city: z.string(),    // required here (override of optional in LocationSchema)
+  country: z.string(), // required here
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
-  latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
-
-export const AirportSchema = z.object({
-  airportId: z.string(),
+export const AirportSchema = LocationSchema.extend({
+  airportId: IdSchema,
 
   name: z.string(),
-  code: z.string(), // IST, ADB, JFK
+  code: z.string(),
 
-  city: z.string(),
-  country: z.string(),
-  countryCode: z.string().nullable().optional(),
-
-  latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional(),
+  city: z.string(),    // required here (override of optional in LocationSchema)
+  country: z.string(), // required here
 
   timezone: z.string().default('UTC'),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 /* =========================================================
    AIRLINE / FLIGHT
 ========================================================= */
 
 export const AirlineSchema = z.object({
-  airlineId: z.string(),
+  airlineId: IdSchema,
 
   name: z.string(),
-  code: z.string(), // TK, PC, LH
+  code: z.string(),
 
   logo: z.string().nullable().optional(),
-  website: z.string().url().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+  website: z.url().nullable().optional(),
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 export const FlightSchema = z.object({
-  flightId: z.string(),
+  flightId: IdSchema,
 
-  airlineId: z.string(),
+  airlineId: IdSchema,
 
   flightNumber: z.string(),
 
-  originAirportId: z.string(),
-  destinationAirportId: z.string(),
+  originAirportId: IdSchema,
+  destinationAirportId: IdSchema,
 
   departureAt: z.coerce.date(),
   arrivalAt: z.coerce.date(),
@@ -125,23 +107,17 @@ export const FlightSchema = z.object({
   durationMinutes: z.number().int().positive().nullable().optional(),
 
   status: FlightSegmentStatusEnum.default('SCHEDULED'),
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+export const FlightFareSchema = PriceFieldsSchema.extend({
+  fareId: IdSchema,
 
-export const FlightFareSchema = z.object({
-  fareId: z.string(),
-
-  flightId: z.string(),
+  flightId: IdSchema,
 
   cabinClass: FlightCabinClassEnum.default('ECONOMY'),
 
-  name: z.string(), // EcoFly, ExtraFly, PrimeFly
+  name: z.string(),
   description: z.string().nullable().optional(),
-
-  price: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
 
   baggageAllowanceKg: z.number().nonnegative().nullable().optional(),
   cabinBaggageIncluded: z.boolean().default(true),
@@ -155,15 +131,12 @@ export const FlightFareSchema = z.object({
   saleEndsAt: z.coerce.date().nullable().optional(),
 
   active: z.boolean().default(true),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 export const FlightSeatSchema = z.object({
-  flightSeatId: z.string(),
+  flightSeatId: IdSchema,
 
-  flightId: z.string(),
+  flightId: IdSchema,
 
   cabinClass: FlightCabinClassEnum.default('ECONOMY'),
 
@@ -178,45 +151,35 @@ export const FlightSeatSchema = z.object({
 
   heldBySessionId: z.string().nullable().optional(),
   holdExpiresAt: z.coerce.date().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 /* =========================================================
    HOTEL
 ========================================================= */
 
 export const HotelTranslationSchema = z.object({
-  id: z.string(),
-  hotelId: z.string(),
+  id: IdSchema,
+  hotelId: IdSchema,
   lang: AppLanguageEnum,
 
   name: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),
+}).extend(SeoFieldsSchema.omit({ keywords: true }).shape)
 
-  seoTitle: z.string().nullable().optional(),
-  seoDescription: z.string().nullable().optional(),
-})
-
-export const HotelSchema = z.object({
-  hotelId: z.string(),
+export const HotelSchema = LocationSchema.extend({
+  hotelId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
 
   description: z.string().nullable().optional(),
 
-  locationId: z.string(),
+  locationId: IdSchema,
 
   address: z.string(),
-  city: z.string(),
-  country: z.string(),
-  countryCode: z.string().nullable().optional(),
-
-  latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional(),
+  city: z.string(),    // required here (override of optional in LocationSchema)
+  country: z.string(), // required here
 
   starRating: z.number().int().min(1).max(5).nullable().optional(),
 
@@ -228,16 +191,12 @@ export const HotelSchema = z.object({
   amenities: z.array(z.string()).default([]),
 
   active: z.boolean().default(true),
+}).extend(BaseEntitySchema.shape)
 
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-  deletedAt: z.coerce.date().nullable().optional(),
-})
+export const HotelRoomTypeSchema = PriceFieldsSchema.extend({
+  roomTypeId: IdSchema,
 
-export const HotelRoomTypeSchema = z.object({
-  roomTypeId: z.string(),
-
-  hotelId: z.string(),
+  hotelId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
@@ -253,18 +212,13 @@ export const HotelRoomTypeSchema = z.object({
   amenities: z.array(z.string()).default([]),
 
   basePrice: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+}).extend(BaseEntitySchema.shape)
 
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-  deletedAt: z.coerce.date().nullable().optional(),
-})
+export const HotelRoomInventorySchema = PriceFieldsSchema.extend({
+  inventoryId: IdSchema,
 
-export const HotelRoomInventorySchema = z.object({
-  inventoryId: z.string(),
-
-  hotelId: z.string(),
-  roomTypeId: z.string(),
+  hotelId: IdSchema,
+  roomTypeId: IdSchema,
 
   date: z.coerce.date(),
 
@@ -273,7 +227,6 @@ export const HotelRoomInventorySchema = z.object({
   heldRooms: z.number().int().nonnegative().default(0),
 
   price: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
 
   status: HotelRoomStatusEnum.default('AVAILABLE'),
 
@@ -285,14 +238,14 @@ export const HotelRoomInventorySchema = z.object({
 ========================================================= */
 
 export const TravelerSchema = z.object({
-  travelerId: z.string(),
+  travelerId: IdSchema,
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   firstName: z.string(),
   lastName: z.string(),
 
-  email: z.string().email().nullable().optional(),
+  email: EmailSchema.nullable().optional(),
   phone: z.string().nullable().optional(),
 
   type: GuestTypeEnum.default('ADULT'),
@@ -302,54 +255,48 @@ export const TravelerSchema = z.object({
   nationality: z.string().nullable().optional(),
   passportNumber: z.string().nullable().optional(),
   passportExpiresAt: z.coerce.date().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 /* =========================================================
    BOOKING
 ========================================================= */
 
-export const TravelBookingSchema = z.object({
-  bookingId: z.string(),
+export const TravelBookingSchema = OrderTotalsSchema.pick({
+  subtotal: true,
+  serviceFee: true,
+  discountTotal: true,
+  taxTotal: true,
+  total: true,
+}).extend({
+  bookingId: IdSchema,
   bookingNumber: z.string(),
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   buyerName: z.string(),
-  buyerEmail: z.string().email(),
+  buyerEmail: EmailSchema,
   buyerPhone: z.string().nullable().optional(),
 
   status: TravelBookingStatusEnum.default('PENDING'),
 
-  subtotal: z.number().nonnegative(),
-  serviceFee: z.number().nonnegative().default(0),
-  discountTotal: z.number().nonnegative().default(0),
-  taxTotal: z.number().nonnegative().default(0),
-  total: z.number().nonnegative(),
-
-  currency: z.string().default('TRY'),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
+  currency: CurrencySchema,
 
   paidAt: z.coerce.date().nullable().optional(),
   cancelledAt: z.coerce.date().nullable().optional(),
   refundedAt: z.coerce.date().nullable().optional(),
-})
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 export const FlightBookingItemSchema = z.object({
-  flightBookingItemId: z.string(),
+  flightBookingItemId: IdSchema,
 
-  bookingId: z.string(),
+  bookingId: IdSchema,
 
-  flightId: z.string(),
-  fareId: z.string(),
+  flightId: IdSchema,
+  fareId: IdSchema,
 
-  travelerId: z.string(),
+  travelerId: IdSchema,
 
-  flightSeatId: z.string().nullable().optional(),
+  flightSeatId: IdSchema.nullable().optional(),
   seatLabel: z.string().nullable().optional(),
 
   cabinClass: FlightCabinClassEnum,
@@ -365,12 +312,12 @@ export const FlightBookingItemSchema = z.object({
 })
 
 export const HotelBookingItemSchema = z.object({
-  hotelBookingItemId: z.string(),
+  hotelBookingItemId: IdSchema,
 
-  bookingId: z.string(),
+  bookingId: IdSchema,
 
-  hotelId: z.string(),
-  roomTypeId: z.string(),
+  hotelId: IdSchema,
+  roomTypeId: IdSchema,
 
   checkInDate: z.coerce.date(),
   checkOutDate: z.coerce.date(),
@@ -394,36 +341,25 @@ export const HotelBookingItemSchema = z.object({
    PAYMENT
 ========================================================= */
 
-export const TravelPaymentSchema = z.object({
-  paymentId: z.string(),
-  bookingId: z.string(),
-
-  provider: z.string(),
-  providerPaymentId: z.string().nullable().optional(),
-
-  status: TravelPaymentStatusEnum.default('PENDING'),
-
-  amount: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+// Fix 5: Use PaymentBaseSchema directly (status already has PaymentStatusEnum)
+export const TravelPaymentSchema = PaymentBaseSchema.extend({
+  bookingId: IdSchema,
 
   paidAt: z.coerce.date().nullable().optional(),
   failedAt: z.coerce.date().nullable().optional(),
   refundedAt: z.coerce.date().nullable().optional(),
 
-  rawResponse: z.record(z.unknown()).nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
+  rawResponse: z.record(z.string(), z.unknown()).nullable().optional(),
+}).extend(BaseEntitySchema.omit({ deletedAt: true }).shape)
 
 /* =========================================================
    CANCELLATION / REFUND
 ========================================================= */
 
 export const TravelCancellationSchema = z.object({
-  cancellationId: z.string(),
+  cancellationId: IdSchema,
 
-  bookingId: z.string(),
+  bookingId: IdSchema,
 
   reason: z.string().nullable().optional(),
 

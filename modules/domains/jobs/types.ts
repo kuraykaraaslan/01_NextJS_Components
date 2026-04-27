@@ -1,5 +1,7 @@
 import { z } from 'zod'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema } from '../common/BaseTypes'
+import { CurrencySchema } from '../common/MoneyTypes'
 
 /* =========================================================
    ENUMS
@@ -45,19 +47,12 @@ export const ApplicationStatusEnum = z.enum([
   'WITHDRAWN',
 ])
 
-export const EmploymentCurrencyEnum = z.enum([
-  'TRY',
-  'USD',
-  'EUR',
-  'GBP',
-])
-
 /* =========================================================
    COMPANY
 ========================================================= */
 
 export const CompanySchema = z.object({
-  companyId: z.string(),
+  companyId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
@@ -65,7 +60,7 @@ export const CompanySchema = z.object({
   description: z.string().nullable().optional(),
 
   logo: z.string().nullable().optional(),
-  website: z.string().url().nullable().optional(),
+  website: z.url().nullable().optional(),
 
   industry: z.string().nullable().optional(),
   size: z.string().nullable().optional(),
@@ -84,14 +79,14 @@ export const CompanySchema = z.object({
 ========================================================= */
 
 export const JobCategorySchema = z.object({
-  categoryId: z.string(),
+  categoryId: IdSchema,
 
   title: z.string(),
   slug: z.string(),
 
   description: z.string().nullable().optional(),
 
-  parentId: z.string().nullable().optional(),
+  parentId: IdSchema.nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -99,7 +94,7 @@ export const JobCategorySchema = z.object({
 })
 
 export const JobTagSchema = z.object({
-  tagId: z.string(),
+  tagId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
@@ -112,10 +107,10 @@ export const JobTagSchema = z.object({
 ========================================================= */
 
 export const JobSchema = z.object({
-  jobId: z.string(),
+  jobId: IdSchema,
 
-  companyId: z.string(),
-  categoryId: z.string().nullable().optional(),
+  companyId: IdSchema,
+  categoryId: IdSchema.nullable().optional(),
 
   title: z.string(),
   slug: z.string(),
@@ -134,7 +129,7 @@ export const JobSchema = z.object({
 
   salaryMin: z.number().nonnegative().nullable().optional(),
   salaryMax: z.number().nonnegative().nullable().optional(),
-  currency: EmploymentCurrencyEnum.default('TRY'),
+  currency: CurrencySchema,
   salaryVisible: z.boolean().default(true),
 
   positions: z.number().int().positive().default(1),
@@ -160,8 +155,8 @@ export const JobSchema = z.object({
 ========================================================= */
 
 export const JobTranslationSchema = z.object({
-  id: z.string(),
-  jobId: z.string(),
+  id: IdSchema,
+  jobId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -196,9 +191,9 @@ export const JobWithDataSchema = JobSchema.extend({
 ========================================================= */
 
 export const ApplicantProfileSchema = z.object({
-  applicantId: z.string(),
+  applicantId: IdSchema,
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   firstName: z.string(),
   lastName: z.string(),
@@ -216,9 +211,9 @@ export const ApplicantProfileSchema = z.object({
 })
 
 export const ResumeSchema = z.object({
-  resumeId: z.string(),
+  resumeId: IdSchema,
 
-  applicantId: z.string(),
+  applicantId: IdSchema,
 
   title: z.string(),
   fileUrl: z.string(),
@@ -233,12 +228,12 @@ export const ResumeSchema = z.object({
 ========================================================= */
 
 export const JobApplicationSchema = z.object({
-  applicationId: z.string(),
+  applicationId: IdSchema,
 
-  jobId: z.string(),
-  applicantId: z.string(),
+  jobId: IdSchema,
+  applicantId: IdSchema,
 
-  resumeId: z.string().nullable().optional(),
+  resumeId: IdSchema.nullable().optional(),
 
   coverLetter: z.string().nullable().optional(),
 
@@ -265,9 +260,9 @@ export const InterviewTypeEnum = z.enum([
 ])
 
 export const InterviewSchema = z.object({
-  interviewId: z.string(),
+  interviewId: IdSchema,
 
-  applicationId: z.string(),
+  applicationId: IdSchema,
 
   type: InterviewTypeEnum,
 
@@ -275,7 +270,7 @@ export const InterviewSchema = z.object({
   durationMinutes: z.number().int().positive(),
 
   location: z.string().nullable().optional(),
-  meetingUrl: z.string().url().nullable().optional(),
+  meetingUrl: z.url().nullable().optional(),
 
   interviewerName: z.string().nullable().optional(),
 
@@ -290,18 +285,18 @@ export const InterviewSchema = z.object({
 ========================================================= */
 
 export const SavedJobSchema = z.object({
-  savedJobId: z.string(),
+  savedJobId: IdSchema,
 
-  jobId: z.string(),
-  userId: z.string(),
+  jobId: IdSchema,
+  userId: IdSchema,
 
   createdAt: z.coerce.date().optional(),
 })
 
 export const JobAlertSchema = z.object({
-  alertId: z.string(),
+  alertId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
   keywords: z.array(z.string()).default([]),
   location: z.string().nullable().optional(),
@@ -321,7 +316,6 @@ export type JobType = z.infer<typeof JobTypeEnum>
 export type JobWorkMode = z.infer<typeof JobWorkModeEnum>
 export type JobExperienceLevel = z.infer<typeof JobExperienceLevelEnum>
 export type ApplicationStatus = z.infer<typeof ApplicationStatusEnum>
-export type EmploymentCurrency = z.infer<typeof EmploymentCurrencyEnum>
 
 export type Company = z.infer<typeof CompanySchema>
 export type JobCategory = z.infer<typeof JobCategorySchema>

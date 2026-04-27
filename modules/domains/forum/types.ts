@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema } from '../common/BaseTypes'
 
 /* =========================================================
    ENUMS
@@ -56,8 +57,8 @@ export const ForumMemberRoleEnum = z.enum([
 ========================================================= */
 
 export const ForumCategoryTranslationSchema = z.object({
-  id: z.string(),
-  categoryId: z.string(),
+  id: IdSchema,
+  categoryId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -66,7 +67,7 @@ export const ForumCategoryTranslationSchema = z.object({
 })
 
 export const ForumCategorySchema = z.object({
-  categoryId: z.string(),
+  categoryId: IdSchema,
 
   title: z.string(),
   slug: z.string(),
@@ -80,8 +81,8 @@ export const ForumCategorySchema = z.object({
 })
 
 export const ForumTranslationSchema = z.object({
-  id: z.string(),
-  forumId: z.string(),
+  id: IdSchema,
+  forumId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -90,10 +91,10 @@ export const ForumTranslationSchema = z.object({
 })
 
 export const ForumSchema = z.object({
-  forumId: z.string(),
-  categoryId: z.string(),
+  forumId: IdSchema,
+  categoryId: IdSchema,
 
-  parentForumId: z.string().nullable().optional(),
+  parentForumId: IdSchema.nullable().optional(),
 
   title: z.string(),
   slug: z.string(),
@@ -106,10 +107,10 @@ export const ForumSchema = z.object({
   topicCount: z.number().int().nonnegative().default(0),
   postCount: z.number().int().nonnegative().default(0),
 
-  lastTopicId: z.string().nullable().optional(),
-  lastPostId: z.string().nullable().optional(),
+  lastTopicId: IdSchema.nullable().optional(),
+  lastPostId: IdSchema.nullable().optional(),
   lastPostAt: z.coerce.date().nullable().optional(),
-  lastPostByUserId: z.string().nullable().optional(),
+  lastPostByUserId: IdSchema.nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -121,10 +122,10 @@ export const ForumSchema = z.object({
 ========================================================= */
 
 export const ForumTopicSchema = z.object({
-  topicId: z.string(),
-  forumId: z.string(),
+  topicId: IdSchema,
+  forumId: IdSchema,
 
-  authorId: z.string(),
+  authorId: IdSchema,
 
   title: z.string(),
   slug: z.string(),
@@ -137,10 +138,10 @@ export const ForumTopicSchema = z.object({
   viewCount: z.number().int().nonnegative().default(0),
   replyCount: z.number().int().nonnegative().default(0),
 
-  firstPostId: z.string().nullable().optional(),
-  lastPostId: z.string().nullable().optional(),
+  firstPostId: IdSchema.nullable().optional(),
+  lastPostId: IdSchema.nullable().optional(),
   lastPostAt: z.coerce.date().nullable().optional(),
-  lastPostByUserId: z.string().nullable().optional(),
+  lastPostByUserId: IdSchema.nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -152,13 +153,13 @@ export const ForumTopicSchema = z.object({
 ========================================================= */
 
 export const ForumPostSchema = z.object({
-  postId: z.string(),
-  topicId: z.string(),
-  forumId: z.string(),
+  postId: IdSchema,
+  topicId: IdSchema,
+  forumId: IdSchema,
 
-  authorId: z.string(),
+  authorId: IdSchema,
 
-  parentPostId: z.string().nullable().optional(),
+  parentPostId: IdSchema.nullable().optional(),
 
   content: z.string(),
 
@@ -166,7 +167,7 @@ export const ForumPostSchema = z.object({
 
   editCount: z.number().int().nonnegative().default(0),
   editedAt: z.coerce.date().nullable().optional(),
-  editedByUserId: z.string().nullable().optional(),
+  editedByUserId: IdSchema.nullable().optional(),
   editReason: z.string().nullable().optional(),
 
   ipAddress: z.string().nullable().optional(),
@@ -178,12 +179,12 @@ export const ForumPostSchema = z.object({
 })
 
 export const ForumPostRevisionSchema = z.object({
-  revisionId: z.string(),
-  postId: z.string(),
+  revisionId: IdSchema,
+  postId: IdSchema,
 
   content: z.string(),
 
-  editedByUserId: z.string(),
+  editedByUserId: IdSchema,
   editReason: z.string().nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
@@ -194,10 +195,10 @@ export const ForumPostRevisionSchema = z.object({
 ========================================================= */
 
 export const ForumAttachmentSchema = z.object({
-  attachmentId: z.string(),
+  attachmentId: IdSchema,
 
-  postId: z.string(),
-  uploadedByUserId: z.string(),
+  postId: IdSchema,
+  uploadedByUserId: IdSchema,
 
   fileName: z.string(),
   originalName: z.string().nullable().optional(),
@@ -218,10 +219,10 @@ export const ForumAttachmentSchema = z.object({
 ========================================================= */
 
 export const ForumReactionSchema = z.object({
-  reactionId: z.string(),
+  reactionId: IdSchema,
 
-  postId: z.string(),
-  userId: z.string(),
+  postId: IdSchema,
+  userId: IdSchema,
 
   type: ReactionTypeEnum.default('LIKE'),
 
@@ -229,21 +230,21 @@ export const ForumReactionSchema = z.object({
 })
 
 export const ForumBookmarkSchema = z.object({
-  bookmarkId: z.string(),
+  bookmarkId: IdSchema,
 
-  userId: z.string(),
-  topicId: z.string(),
+  userId: IdSchema,
+  topicId: IdSchema,
 
   createdAt: z.coerce.date().optional(),
 })
 
 export const ForumSubscriptionSchema = z.object({
-  subscriptionId: z.string(),
+  subscriptionId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
-  forumId: z.string().nullable().optional(),
-  topicId: z.string().nullable().optional(),
+  forumId: IdSchema.nullable().optional(),
+  topicId: IdSchema.nullable().optional(),
 
   emailNotifications: z.boolean().default(true),
   pushNotifications: z.boolean().default(true),
@@ -256,14 +257,14 @@ export const ForumSubscriptionSchema = z.object({
 ========================================================= */
 
 export const ForumReadStateSchema = z.object({
-  readStateId: z.string(),
+  readStateId: IdSchema,
 
-  userId: z.string(),
+  userId: IdSchema,
 
-  forumId: z.string().nullable().optional(),
-  topicId: z.string().nullable().optional(),
+  forumId: IdSchema.nullable().optional(),
+  topicId: IdSchema.nullable().optional(),
 
-  lastReadPostId: z.string().nullable().optional(),
+  lastReadPostId: IdSchema.nullable().optional(),
   lastReadAt: z.coerce.date(),
 
   createdAt: z.coerce.date().optional(),
@@ -275,20 +276,20 @@ export const ForumReadStateSchema = z.object({
 ========================================================= */
 
 export const ForumReportSchema = z.object({
-  reportId: z.string(),
+  reportId: IdSchema,
 
-  postId: z.string().nullable().optional(),
-  topicId: z.string().nullable().optional(),
-  reportedUserId: z.string().nullable().optional(),
+  postId: IdSchema.nullable().optional(),
+  topicId: IdSchema.nullable().optional(),
+  reportedUserId: IdSchema.nullable().optional(),
 
-  reportedByUserId: z.string(),
+  reportedByUserId: IdSchema,
 
   reason: z.string(),
   details: z.string().nullable().optional(),
 
   status: ReportStatusEnum.default('OPEN'),
 
-  reviewedByUserId: z.string().nullable().optional(),
+  reviewedByUserId: IdSchema.nullable().optional(),
   reviewedAt: z.coerce.date().nullable().optional(),
   resolutionNote: z.string().nullable().optional(),
 
@@ -296,14 +297,14 @@ export const ForumReportSchema = z.object({
 })
 
 export const ForumModerationLogSchema = z.object({
-  moderationLogId: z.string(),
+  moderationLogId: IdSchema,
 
-  moderatorUserId: z.string(),
+  moderatorUserId: IdSchema,
 
-  forumId: z.string().nullable().optional(),
-  topicId: z.string().nullable().optional(),
-  postId: z.string().nullable().optional(),
-  targetUserId: z.string().nullable().optional(),
+  forumId: IdSchema.nullable().optional(),
+  topicId: IdSchema.nullable().optional(),
+  postId: IdSchema.nullable().optional(),
+  targetUserId: IdSchema.nullable().optional(),
 
   action: z.string(),
   reason: z.string().nullable().optional(),
@@ -316,10 +317,10 @@ export const ForumModerationLogSchema = z.object({
 ========================================================= */
 
 export const ForumMemberSchema = z.object({
-  forumMemberId: z.string(),
+  forumMemberId: IdSchema,
 
-  forumId: z.string(),
-  userId: z.string(),
+  forumId: IdSchema,
+  userId: IdSchema,
 
   role: ForumMemberRoleEnum.default('MEMBER'),
 
@@ -333,10 +334,10 @@ export const ForumMemberSchema = z.object({
 })
 
 export const ForumBanSchema = z.object({
-  banId: z.string(),
+  banId: IdSchema,
 
-  forumId: z.string().nullable().optional(),
-  userId: z.string().nullable().optional(),
+  forumId: IdSchema.nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   ipAddress: z.string().nullable().optional(),
   email: z.string().email().nullable().optional(),
@@ -346,7 +347,7 @@ export const ForumBanSchema = z.object({
   startsAt: z.coerce.date().optional(),
   expiresAt: z.coerce.date().nullable().optional(),
 
-  createdByUserId: z.string(),
+  createdByUserId: IdSchema,
   createdAt: z.coerce.date().optional(),
 })
 
@@ -355,8 +356,8 @@ export const ForumBanSchema = z.object({
 ========================================================= */
 
 export const ForumUserProfileSchema = z.object({
-  forumProfileId: z.string(),
-  userId: z.string(),
+  forumProfileId: IdSchema,
+  userId: IdSchema,
 
   username: z.string(),
   displayName: z.string().nullable().optional(),

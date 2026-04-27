@@ -1,5 +1,11 @@
 import { z } from 'zod'
 import { AppLanguageEnum } from '../common/I18nTypes'
+import { IdSchema } from '../common/BaseTypes'
+import { CurrencySchema } from '../common/MoneyTypes'
+import { PaymentStatusEnum, PaymentBaseSchema } from '../common/PaymentTypes'
+import { DiscountTypeEnum, CouponBaseSchema } from '../common/DiscountTypes'
+import { AddressSchema as CommonAddressSchema } from '../common/AddressTypes'
+
 
 /* =========================================================
    ENUMS
@@ -43,15 +49,6 @@ export const OrderStatusEnum = z.enum([
   'PARTIALLY_REFUNDED',
 ])
 
-export const PaymentStatusEnum = z.enum([
-  'PENDING',
-  'AUTHORIZED',
-  'PAID',
-  'FAILED',
-  'CANCELLED',
-  'REFUNDED',
-])
-
 export const ShipmentStatusEnum = z.enum([
   'PENDING',
   'READY',
@@ -60,12 +57,6 @@ export const ShipmentStatusEnum = z.enum([
   'DELIVERED',
   'FAILED',
   'RETURNED',
-])
-
-export const DiscountTypeEnum = z.enum([
-  'PERCENTAGE',
-  'FIXED_AMOUNT',
-  'FREE_SHIPPING',
 ])
 
 export const ReturnStatusEnum = z.enum([
@@ -77,12 +68,18 @@ export const ReturnStatusEnum = z.enum([
 ])
 
 /* =========================================================
+   RE-EXPORTS FROM COMMON
+========================================================= */
+
+export { PaymentStatusEnum, DiscountTypeEnum }
+
+/* =========================================================
    TRANSLATIONS
 ========================================================= */
 
 export const ProductTranslationSchema = z.object({
-  id: z.string(),
-  productId: z.string(),
+  id: IdSchema,
+  productId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -92,11 +89,12 @@ export const ProductTranslationSchema = z.object({
 
   seoTitle: z.string().nullable().optional(),
   seoDescription: z.string().nullable().optional(),
+  keywords: z.array(z.string()).nullable().optional(),
 })
 
 export const ProductCategoryTranslationSchema = z.object({
-  id: z.string(),
-  categoryId: z.string(),
+  id: IdSchema,
+  categoryId: IdSchema,
   lang: AppLanguageEnum,
 
   title: z.string(),
@@ -109,14 +107,14 @@ export const ProductCategoryTranslationSchema = z.object({
 ========================================================= */
 
 export const ProductCategorySchema = z.object({
-  categoryId: z.string(),
+  categoryId: IdSchema,
 
   title: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),
   image: z.string().nullable().optional(),
 
-  parentId: z.string().nullable().optional(),
+  parentId: IdSchema.nullable().optional(),
 
   sortOrder: z.number().int().nonnegative().default(0),
 
@@ -126,14 +124,14 @@ export const ProductCategorySchema = z.object({
 })
 
 export const BrandSchema = z.object({
-  brandId: z.string(),
+  brandId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),
 
   logo: z.string().nullable().optional(),
-  website: z.string().url().nullable().optional(),
+  website: z.url().nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -141,14 +139,14 @@ export const BrandSchema = z.object({
 })
 
 export const SupplierSchema = z.object({
-  supplierId: z.string(),
+  supplierId: IdSchema,
 
   name: z.string(),
   contactName: z.string().nullable().optional(),
   email: z.string().email().nullable().optional(),
   phone: z.string().nullable().optional(),
 
-  website: z.string().url().nullable().optional(),
+  website: z.url().nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -160,7 +158,7 @@ export const SupplierSchema = z.object({
 ========================================================= */
 
 export const ProductSchema = z.object({
-  productId: z.string(),
+  productId: IdSchema,
 
   title: z.string(),
   slug: z.string(),
@@ -171,9 +169,9 @@ export const ProductSchema = z.object({
   type: ProductTypeEnum.default('PHYSICAL'),
   status: ProductStatusEnum.default('DRAFT'),
 
-  categoryId: z.string(),
-  brandId: z.string().nullable().optional(),
-  supplierId: z.string().nullable().optional(),
+  categoryId: IdSchema,
+  brandId: IdSchema.nullable().optional(),
+  supplierId: IdSchema.nullable().optional(),
 
   sku: z.string().nullable().optional(),
   barcode: z.string().nullable().optional(),
@@ -183,7 +181,7 @@ export const ProductSchema = z.object({
 
   basePrice: z.number().nonnegative(),
   salePrice: z.number().nonnegative().nullable().optional(),
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   stockStatus: StockStatusEnum.default('IN_STOCK'),
 
@@ -210,7 +208,7 @@ export const ProductSchema = z.object({
 ========================================================= */
 
 export const ProductAttributeSchema = z.object({
-  attributeId: z.string(),
+  attributeId: IdSchema,
 
   name: z.string(),
   slug: z.string(),
@@ -220,8 +218,8 @@ export const ProductAttributeSchema = z.object({
 })
 
 export const ProductAttributeValueSchema = z.object({
-  attributeValueId: z.string(),
-  attributeId: z.string(),
+  attributeValueId: IdSchema,
+  attributeId: IdSchema,
 
   value: z.string(),
   slug: z.string(),
@@ -233,8 +231,8 @@ export const ProductAttributeValueSchema = z.object({
 })
 
 export const ProductVariantSchema = z.object({
-  variantId: z.string(),
-  productId: z.string(),
+  variantId: IdSchema,
+  productId: IdSchema,
 
   title: z.string().nullable().optional(),
 
@@ -243,7 +241,7 @@ export const ProductVariantSchema = z.object({
 
   price: z.number().nonnegative(),
   salePrice: z.number().nonnegative().nullable().optional(),
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   image: z.string().nullable().optional(),
 
@@ -262,11 +260,11 @@ export const ProductVariantSchema = z.object({
 })
 
 export const ProductVariantOptionSchema = z.object({
-  variantOptionId: z.string(),
+  variantOptionId: IdSchema,
 
-  variantId: z.string(),
-  attributeId: z.string(),
-  attributeValueId: z.string(),
+  variantId: IdSchema,
+  attributeId: IdSchema,
+  attributeValueId: IdSchema,
 
   createdAt: z.coerce.date().optional(),
 })
@@ -276,7 +274,7 @@ export const ProductVariantOptionSchema = z.object({
 ========================================================= */
 
 export const WarehouseSchema = z.object({
-  warehouseId: z.string(),
+  warehouseId: IdSchema,
 
   name: z.string(),
   code: z.string(),
@@ -293,11 +291,11 @@ export const WarehouseSchema = z.object({
 })
 
 export const InventorySchema = z.object({
-  inventoryId: z.string(),
+  inventoryId: IdSchema,
 
-  productId: z.string(),
-  variantId: z.string().nullable().optional(),
-  warehouseId: z.string().nullable().optional(),
+  productId: IdSchema,
+  variantId: IdSchema.nullable().optional(),
+  warehouseId: IdSchema.nullable().optional(),
 
   quantity: z.number().int().nonnegative(),
   reservedQuantity: z.number().int().nonnegative().default(0),
@@ -317,17 +315,17 @@ export const InventoryMovementTypeEnum = z.enum([
 ])
 
 export const InventoryMovementSchema = z.object({
-  movementId: z.string(),
+  movementId: IdSchema,
 
-  inventoryId: z.string(),
+  inventoryId: IdSchema,
 
   type: InventoryMovementTypeEnum,
   quantity: z.number().int(),
 
   reason: z.string().nullable().optional(),
 
-  orderId: z.string().nullable().optional(),
-  orderItemId: z.string().nullable().optional(),
+  orderId: IdSchema.nullable().optional(),
+  orderItemId: IdSchema.nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
 })
@@ -360,9 +358,9 @@ export const ProductWithDataSchema = ProductSchema.extend({
 ========================================================= */
 
 export const CustomerSchema = z.object({
-  customerId: z.string(),
+  customerId: IdSchema,
 
-  userId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   email: z.string().email(),
   phone: z.string().nullable().optional(),
@@ -375,26 +373,19 @@ export const CustomerSchema = z.object({
   deletedAt: z.coerce.date().nullable().optional(),
 })
 
-export const AddressSchema = z.object({
-  addressId: z.string(),
+export const AddressSchema = CommonAddressSchema.extend({
+  addressId: IdSchema,
 
-  customerId: z.string().nullable().optional(),
+  customerId: IdSchema.nullable().optional(),
 
   firstName: z.string(),
   lastName: z.string(),
 
   company: z.string().nullable().optional(),
 
-  addressLine1: z.string(),
-  addressLine2: z.string().nullable().optional(),
-
   city: z.string(),
-  state: z.string().nullable().optional(),
   country: z.string(),
-  countryCode: z.string().nullable().optional(),
   postalCode: z.string(),
-
-  phone: z.string().nullable().optional(),
 
   isDefaultBilling: z.boolean().default(false),
   isDefaultShipping: z.boolean().default(false),
@@ -409,15 +400,15 @@ export const AddressSchema = z.object({
 ========================================================= */
 
 export const CartSchema = z.object({
-  cartId: z.string(),
+  cartId: IdSchema,
 
-  userId: z.string().nullable().optional(),
-  customerId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
+  customerId: IdSchema.nullable().optional(),
   sessionId: z.string().nullable().optional(),
 
   status: CartStatusEnum.default('ACTIVE'),
 
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   subtotal: z.number().nonnegative().default(0),
   discountTotal: z.number().nonnegative().default(0),
@@ -432,11 +423,11 @@ export const CartSchema = z.object({
 })
 
 export const CartItemSchema = z.object({
-  cartItemId: z.string(),
-  cartId: z.string(),
+  cartItemId: IdSchema,
+  cartId: IdSchema,
 
-  productId: z.string(),
-  variantId: z.string().nullable().optional(),
+  productId: IdSchema,
+  variantId: IdSchema.nullable().optional(),
 
   title: z.string(),
   sku: z.string().nullable().optional(),
@@ -456,11 +447,11 @@ export const CartItemSchema = z.object({
 ========================================================= */
 
 export const OrderSchema = z.object({
-  orderId: z.string(),
+  orderId: IdSchema,
   orderNumber: z.string(),
 
-  userId: z.string().nullable().optional(),
-  customerId: z.string().nullable().optional(),
+  userId: IdSchema.nullable().optional(),
+  customerId: IdSchema.nullable().optional(),
 
   customerEmail: z.string().email(),
   customerPhone: z.string().nullable().optional(),
@@ -473,10 +464,10 @@ export const OrderSchema = z.object({
   shippingTotal: z.number().nonnegative().default(0),
   total: z.number().nonnegative(),
 
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
-  billingAddressId: z.string().nullable().optional(),
-  shippingAddressId: z.string().nullable().optional(),
+  billingAddressId: IdSchema.nullable().optional(),
+  shippingAddressId: IdSchema.nullable().optional(),
 
   note: z.string().nullable().optional(),
 
@@ -490,11 +481,11 @@ export const OrderSchema = z.object({
 })
 
 export const OrderItemSchema = z.object({
-  orderItemId: z.string(),
-  orderId: z.string(),
+  orderItemId: IdSchema,
+  orderId: IdSchema,
 
-  productId: z.string(),
-  variantId: z.string().nullable().optional(),
+  productId: IdSchema,
+  variantId: IdSchema.nullable().optional(),
 
   title: z.string(),
   sku: z.string().nullable().optional(),
@@ -514,23 +505,14 @@ export const OrderItemSchema = z.object({
    PAYMENT
 ========================================================= */
 
-export const PaymentSchema = z.object({
-  paymentId: z.string(),
-  orderId: z.string(),
-
-  provider: z.string(),
-  providerPaymentId: z.string().nullable().optional(),
-
-  status: PaymentStatusEnum.default('PENDING'),
-
-  amount: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+export const PaymentSchema = PaymentBaseSchema.extend({
+  orderId: IdSchema,
 
   paidAt: z.coerce.date().nullable().optional(),
   failedAt: z.coerce.date().nullable().optional(),
   refundedAt: z.coerce.date().nullable().optional(),
 
-  rawResponse: z.record(z.unknown()).nullable().optional(),
+  rawResponse: z.record(z.string(), z.unknown()).nullable().optional(),
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
@@ -541,7 +523,7 @@ export const PaymentSchema = z.object({
 ========================================================= */
 
 export const ShippingMethodSchema = z.object({
-  shippingMethodId: z.string(),
+  shippingMethodId: IdSchema,
 
   name: z.string(),
   code: z.string(),
@@ -549,7 +531,7 @@ export const ShippingMethodSchema = z.object({
   description: z.string().nullable().optional(),
 
   basePrice: z.number().nonnegative(),
-  currency: z.string().default('TRY'),
+  currency: CurrencySchema,
 
   active: z.boolean().default(true),
 
@@ -558,14 +540,14 @@ export const ShippingMethodSchema = z.object({
 })
 
 export const ShipmentSchema = z.object({
-  shipmentId: z.string(),
-  orderId: z.string(),
+  shipmentId: IdSchema,
+  orderId: IdSchema,
 
-  shippingMethodId: z.string().nullable().optional(),
+  shippingMethodId: IdSchema.nullable().optional(),
 
   carrier: z.string().nullable().optional(),
   trackingNumber: z.string().nullable().optional(),
-  trackingUrl: z.string().url().nullable().optional(),
+  trackingUrl: z.url().nullable().optional(),
 
   status: ShipmentStatusEnum.default('PENDING'),
 
@@ -580,27 +562,18 @@ export const ShipmentSchema = z.object({
    COUPON
 ========================================================= */
 
-export const CouponSchema = z.object({
-  couponId: z.string(),
-
-  code: z.string(),
-
-  discountType: DiscountTypeEnum,
-  discountValue: z.number().positive(),
-
+export const CouponSchema = CouponBaseSchema.extend({
   minOrderTotal: z.number().nonnegative().nullable().optional(),
-
-  maxUses: z.number().int().positive().nullable().optional(),
-  usedCount: z.number().int().nonnegative().default(0),
 
   startsAt: z.coerce.date().nullable().optional(),
   expiresAt: z.coerce.date().nullable().optional(),
 
-  active: z.boolean().default(true),
-
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().nullable().optional(),
   deletedAt: z.coerce.date().nullable().optional(),
+}).omit({ maxUsage: true, validFrom: true, validUntil: true, isActive: true }).extend({
+  maxUses: z.number().int().positive().nullable().optional(),
+  active: z.boolean().default(true),
 })
 
 /* =========================================================
@@ -615,11 +588,11 @@ export const ProductReviewStatusEnum = z.enum([
 ])
 
 export const ProductReviewSchema = z.object({
-  reviewId: z.string(),
+  reviewId: IdSchema,
 
-  productId: z.string(),
-  customerId: z.string().nullable().optional(),
-  userId: z.string().nullable().optional(),
+  productId: IdSchema,
+  customerId: IdSchema.nullable().optional(),
+  userId: IdSchema.nullable().optional(),
 
   rating: z.number().int().min(1).max(5),
 
@@ -638,10 +611,10 @@ export const ProductReviewSchema = z.object({
 ========================================================= */
 
 export const ReturnRequestSchema = z.object({
-  returnId: z.string(),
+  returnId: IdSchema,
 
-  orderId: z.string(),
-  customerId: z.string().nullable().optional(),
+  orderId: IdSchema,
+  customerId: IdSchema.nullable().optional(),
 
   status: ReturnStatusEnum.default('REQUESTED'),
 
@@ -658,12 +631,12 @@ export const ReturnRequestSchema = z.object({
 })
 
 export const ReturnItemSchema = z.object({
-  returnItemId: z.string(),
-  returnId: z.string(),
+  returnItemId: IdSchema,
+  returnId: IdSchema,
 
-  orderItemId: z.string(),
-  productId: z.string(),
-  variantId: z.string().nullable().optional(),
+  orderItemId: IdSchema,
+  productId: IdSchema,
+  variantId: IdSchema.nullable().optional(),
 
   quantity: z.number().int().positive(),
 
