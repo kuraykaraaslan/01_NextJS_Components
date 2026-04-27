@@ -170,7 +170,6 @@ export function ShowcaseShell() {
         <AppTopBar>
           <div className="ml-auto flex items-center gap-1">
             <GithubButton />
-            <LanguageSwitcher />
             <ThemeSwitcher />
             <UserMenu onlyAvatar
             user={{ userId: 'admin-1', email: 'admin@acme.com', userRole: 'ADMIN', userStatus: 'ACTIVE', userProfile: { name: 'Jane Doe', profilePicture: null } }} />
