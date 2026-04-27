@@ -1,0 +1,1030 @@
+'use client';
+import { useState } from 'react';
+import { LoginForm } from '@/modules/domains/common/auth/LoginForm';
+import { RegisterForm } from '@/modules/domains/common/auth/RegisterForm';
+import { OAuthButtons } from '@/modules/domains/common/auth/OAuthButtons';
+import { UserAvatar } from '@/modules/domains/common/user/UserAvatar';
+import { UserRoleBadge } from '@/modules/domains/common/user/UserRoleBadge';
+import { UserStatusBadge } from '@/modules/domains/common/user/UserStatusBadge';
+import { UserMenu } from '@/modules/domains/common/user/UserMenu';
+import { PriceDisplay } from '@/modules/domains/common/money/PriceDisplay';
+import { OrderTotalsCard } from '@/modules/domains/common/money/OrderTotalsCard';
+import { PaymentStatusBadge } from '@/modules/domains/common/payment/PaymentStatusBadge';
+import { AddressForm } from '@/modules/domains/common/address/AddressForm';
+import { AddressCard } from '@/modules/domains/common/address/AddressCard';
+import { PublishStatusBadge } from '@/modules/domains/common/status/PublishStatusBadge';
+import { VisibilityBadge } from '@/modules/domains/common/status/VisibilityBadge';
+import { LanguageSwitcher } from '@/modules/domains/common/i18n/LanguageSwitcher';
+import { ChangePasswordForm } from '@/modules/domains/common/auth/ChangePasswordForm';
+import { UserProfileCard } from '@/modules/domains/common/user/UserProfileCard';
+import { UserProfileForm } from '@/modules/domains/common/user/UserProfileForm';
+import { UserPreferencesForm } from '@/modules/domains/common/user/UserPreferencesForm';
+import { CouponInput } from '@/modules/domains/common/discount/CouponInput';
+import { DiscountBadge } from '@/modules/domains/common/discount/DiscountBadge';
+import { PaymentMethodSelector } from '@/modules/domains/common/payment/PaymentMethodSelector';
+import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSummaryCard';
+import type { PaymentMethod } from '@/modules/domains/common/PaymentTypes';
+import type { AppLanguage } from '@/modules/domains/common/I18nTypes';
+import type { ShowcaseComponent } from '../showcase.types';
+
+/* ─── demo users ─── */
+const ADMIN_USER = {
+  userId: 'u1',
+  email: 'admin@acme.com',
+  userRole: 'ADMIN' as const,
+  userStatus: 'ACTIVE' as const,
+  userProfile: { name: 'Jane Doe', profilePicture: null },
+};
+
+const AUTHOR_USER = {
+  userId: 'u2',
+  email: 'author@acme.com',
+  userRole: 'AUTHOR' as const,
+  userStatus: 'ACTIVE' as const,
+  userProfile: { name: 'John Smith', profilePicture: null },
+};
+
+const USER_NO_PROFILE = {
+  userId: 'u3',
+  email: 'user@acme.com',
+  userRole: 'USER' as const,
+  userStatus: 'INACTIVE' as const,
+};
+
+/* ─── LoginForm ─── */
+function LoginFormDefaultDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-lg font-semibold text-text-primary mb-4">Sign In</h2>
+      <LoginForm onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }} />
+    </div>
+  );
+}
+
+function LoginFormErrorDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-lg font-semibold text-text-primary mb-4">Sign In</h2>
+      <LoginForm error="Invalid email or password. Please try again." onSubmit={async () => {}} />
+    </div>
+  );
+}
+
+/* ─── RegisterForm ─── */
+function RegisterFormDefaultDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-lg font-semibold text-text-primary mb-4">Create Account</h2>
+      <RegisterForm onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }} />
+    </div>
+  );
+}
+
+function RegisterFormErrorDemo() {
+  const [error, setError] = useState('');
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-lg font-semibold text-text-primary mb-4">Create Account</h2>
+      <RegisterForm
+        error={error || undefined}
+        onSubmit={async () => { setError('This email address is already in use.'); }}
+      />
+    </div>
+  );
+}
+
+/* ─── OAuthButtons ─── */
+function OAuthButtonsAllDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg space-y-3">
+      <p className="text-sm text-text-secondary text-center">Or continue with</p>
+      <OAuthButtons onProvider={async (p) => { await new Promise((r) => setTimeout(r, 800)); console.log(p); }} />
+    </div>
+  );
+}
+
+function OAuthButtonsSelectDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg space-y-3">
+      <p className="text-sm text-text-secondary text-center">Social sign-in</p>
+      <OAuthButtons providers={['GOOGLE', 'GITHUB']} onProvider={() => {}} />
+    </div>
+  );
+}
+
+/* ─── UserAvatar ─── */
+function UserAvatarSizesDemo() {
+  return (
+    <div className="flex items-end gap-4 flex-wrap p-4">
+      {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+        <div key={size} className="flex flex-col items-center gap-1">
+          <UserAvatar user={ADMIN_USER} size={size} />
+          <span className="text-xs text-text-secondary">{size}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function UserAvatarStatusDemo() {
+  return (
+    <div className="flex items-center gap-6 p-4 flex-wrap">
+      <div className="flex flex-col items-center gap-1">
+        <UserAvatar user={ADMIN_USER} size="lg" status="online" />
+        <span className="text-xs text-text-secondary">online</span>
+      </div>
+      <div className="flex flex-col items-center gap-1">
+        <UserAvatar user={AUTHOR_USER} size="lg" status="away" />
+        <span className="text-xs text-text-secondary">away</span>
+      </div>
+      <div className="flex flex-col items-center gap-1">
+        <UserAvatar user={{ userId: 'u4', email: 'b@acme.com', userRole: 'USER', userStatus: 'ACTIVE', userProfile: { name: 'Alice Brown', profilePicture: null } }} size="lg" status="busy" />
+        <span className="text-xs text-text-secondary">busy</span>
+      </div>
+      <div className="flex flex-col items-center gap-1">
+        <UserAvatar user={USER_NO_PROFILE} size="lg" status="offline" />
+        <span className="text-xs text-text-secondary">offline</span>
+      </div>
+    </div>
+  );
+}
+
+/* ─── UserRoleBadge ─── */
+function UserRoleBadgesDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <UserRoleBadge role="ADMIN" />
+      <UserRoleBadge role="AUTHOR" />
+      <UserRoleBadge role="USER" />
+    </div>
+  );
+}
+
+function UserRoleBadgeSizesDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <UserRoleBadge role="ADMIN" size="sm" />
+      <UserRoleBadge role="ADMIN" size="md" />
+      <UserRoleBadge role="ADMIN" size="lg" />
+    </div>
+  );
+}
+
+/* ─── UserStatusBadge ─── */
+function UserStatusBadgesDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <UserStatusBadge status="ACTIVE" />
+      <UserStatusBadge status="INACTIVE" />
+      <UserStatusBadge status="BANNED" />
+    </div>
+  );
+}
+
+function UserStatusBadgeDotDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <UserStatusBadge status="ACTIVE" dot />
+      <UserStatusBadge status="INACTIVE" dot />
+      <UserStatusBadge status="BANNED" dot />
+    </div>
+  );
+}
+
+/* ─── UserMenu ─── */
+function UserMenuAdminDemo() {
+  return (
+    <div className="flex items-center justify-center p-8">
+      <UserMenu user={ADMIN_USER} />
+    </div>
+  );
+}
+
+function UserMenuCustomDemo() {
+  return (
+    <div className="flex items-center justify-center p-8">
+      <UserMenu
+        user={AUTHOR_USER}
+        items={[
+          { type: 'item', label: 'My Posts',  icon: '📝' },
+          { type: 'item', label: 'Settings',  icon: '⚙️' },
+          { type: 'separator' },
+          { type: 'item', label: 'Sign Out',  icon: '↩️', danger: true },
+        ]}
+      />
+    </div>
+  );
+}
+
+/* ─── PriceDisplay ─── */
+function PriceDisplaySizesDemo() {
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <PriceDisplay amount={1299.99} currency="TRY" size="sm" />
+      <PriceDisplay amount={1299.99} currency="TRY" size="md" />
+      <PriceDisplay amount={1299.99} currency="TRY" size="lg" />
+      <PriceDisplay amount={1299.99} currency="TRY" size="xl" />
+    </div>
+  );
+}
+
+function PriceDisplayCurrenciesDemo() {
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <div className="flex items-center gap-3">
+        <PriceDisplay amount={2499} currency="TRY" size="lg" />
+        <PriceDisplay amount={1799} currency="TRY" size="lg" strikethrough />
+      </div>
+      <PriceDisplay amount={89.99} currency="USD" locale="en-US" size="lg" />
+      <PriceDisplay amount={74.99} currency="EUR" locale="de-DE" size="lg" />
+    </div>
+  );
+}
+
+/* ─── PaymentStatusBadge ─── */
+function PaymentStatusBadgesDemo() {
+  const statuses = ['PENDING', 'AUTHORIZED', 'PAID', 'FAILED', 'CANCELLED', 'REFUNDED'] as const;
+  return (
+    <div className="flex flex-wrap gap-3 p-4">
+      {statuses.map((s) => <PaymentStatusBadge key={s} status={s} />)}
+    </div>
+  );
+}
+
+function PaymentStatusBadgeDotDemo() {
+  const statuses = ['PENDING', 'PAID', 'FAILED'] as const;
+  return (
+    <div className="flex flex-wrap gap-3 p-4">
+      {statuses.map((s) => <PaymentStatusBadge key={s} status={s} dot size="lg" />)}
+    </div>
+  );
+}
+
+/* ─── AddressForm ─── */
+function AddressFormEmptyDemo() {
+  return (
+    <div className="w-full max-w-lg mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">New Address</h2>
+      <AddressForm onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }} />
+    </div>
+  );
+}
+
+function AddressFormPrefilledDemo() {
+  return (
+    <div className="w-full max-w-lg mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Edit Address</h2>
+      <AddressForm
+        initial={{
+          fullName: 'Jane Doe',
+          phone: '+1 555 000 0000',
+          addressLine1: '123 Main Street, Apt 4B',
+          city: 'New York',
+          state: 'NY',
+          postalCode: '10001',
+          country: 'United States',
+          countryCode: 'US',
+        }}
+        submitLabel="Update"
+        onCancel={() => {}}
+        onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }}
+      />
+    </div>
+  );
+}
+
+/* ─── AddressCard ─── */
+const DEMO_ADDRESS = {
+  addressLine1: '123 Main Street, Apt 4B',
+  addressLine2: 'Near Central Park',
+  fullName: 'Jane Doe',
+  phone: '+1 555 000 0000',
+  city: 'New York',
+  state: 'NY',
+  postalCode: '10001',
+  country: 'United States',
+  countryCode: 'US',
+};
+
+function AddressCardDefaultDemo() {
+  return (
+    <div className="w-full max-w-sm p-4">
+      <AddressCard address={DEMO_ADDRESS} onEdit={() => {}} onDelete={() => {}} />
+    </div>
+  );
+}
+
+function AddressCardSelectedDemo() {
+  const [selected, setSelected] = useState(0);
+  const addresses = [
+    DEMO_ADDRESS,
+    { addressLine1: '456 Oak Avenue', city: 'Los Angeles', state: 'CA', postalCode: '90001', country: 'United States', countryCode: 'US', fullName: 'John Smith' },
+  ];
+  return (
+    <div className="w-full max-w-sm p-4 space-y-3">
+      {addresses.map((addr, i) => (
+        <AddressCard key={i} address={addr} selected={selected === i} onEdit={() => setSelected(i)} />
+      ))}
+    </div>
+  );
+}
+
+/* ─── OrderTotalsCard ─── */
+function OrderTotalsCardBasicDemo() {
+  return (
+    <div className="w-full max-w-xs p-4">
+      <OrderTotalsCard
+        locale="en-US"
+        totals={{ subtotal: 89.99, discountTotal: 0, taxTotal: 0, serviceFee: 0, shippingTotal: 0, total: 89.99, currency: 'USD' }}
+      />
+    </div>
+  );
+}
+
+function OrderTotalsCardFullDemo() {
+  return (
+    <div className="w-full max-w-xs p-4">
+      <OrderTotalsCard
+        locale="en-US"
+        totals={{ subtotal: 149.99, discountTotal: 20, taxTotal: 11.99, serviceFee: 2.99, shippingTotal: 9.99, total: 153.96, currency: 'USD' }}
+      />
+    </div>
+  );
+}
+
+/* ─── PublishStatusBadge ─── */
+function PublishStatusBadgesDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <PublishStatusBadge status="DRAFT" />
+      <PublishStatusBadge status="PUBLISHED" />
+      <PublishStatusBadge status="ARCHIVED" />
+    </div>
+  );
+}
+
+function PublishStatusBadgeNoIconDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <PublishStatusBadge status="DRAFT"     showIcon={false} size="sm" />
+      <PublishStatusBadge status="PUBLISHED" showIcon={false} size="sm" />
+      <PublishStatusBadge status="ARCHIVED"  showIcon={false} size="sm" />
+    </div>
+  );
+}
+
+/* ─── VisibilityBadge ─── */
+function VisibilityBadgesDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <VisibilityBadge visibility="PUBLIC" />
+      <VisibilityBadge visibility="PRIVATE" />
+      <VisibilityBadge visibility="UNLISTED" />
+    </div>
+  );
+}
+
+function VisibilityBadgeSizesDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <VisibilityBadge visibility="PUBLIC" size="sm" />
+      <VisibilityBadge visibility="PUBLIC" size="md" />
+      <VisibilityBadge visibility="PUBLIC" size="lg" />
+    </div>
+  );
+}
+
+/* ─── LanguageSwitcher ─── */
+const DEMO_LANGS = ['en', 'tr', 'de', 'fr', 'ar'] as AppLanguage[];
+
+function LanguageSwitcherDefaultDemo() {
+  const [lang, setLang] = useState<AppLanguage>('en' as AppLanguage);
+  return (
+    <div className="flex flex-col items-center gap-3 p-4">
+      <LanguageSwitcher value={lang} onChange={setLang} languages={DEMO_LANGS} />
+      <p className="text-xs text-text-secondary">Selected: <code className="font-mono">{lang}</code></p>
+    </div>
+  );
+}
+
+function LanguageSwitcherRTLDemo() {
+  const [lang, setLang] = useState<AppLanguage>('ar' as AppLanguage);
+  return (
+    <div className="flex flex-col items-center gap-3 p-4">
+      <LanguageSwitcher value={lang} onChange={setLang} languages={DEMO_LANGS} />
+      <p className="text-xs text-text-secondary">RTL detected for: <code className="font-mono">{lang}</code></p>
+    </div>
+  );
+}
+
+/* ─── ChangePasswordForm ─── */
+function ChangePasswordFormDefaultDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Change Password</h2>
+      <ChangePasswordForm onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }} />
+    </div>
+  );
+}
+
+function ChangePasswordFormErrorDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Change Password</h2>
+      <ChangePasswordForm error="Current password is incorrect." onSubmit={async () => {}} />
+    </div>
+  );
+}
+
+/* ─── UserProfileCard ─── */
+function UserProfileCardFullDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <UserProfileCard
+        user={{ ...ADMIN_USER, userProfile: { name: 'Jane Doe', username: 'janedoe', biography: 'Full-stack engineer. Loves design systems and coffee.', profilePicture: null } }}
+        actions={<button className="text-xs text-primary border border-border rounded-md px-3 py-1 hover:bg-surface-overlay">Edit</button>}
+      />
+    </div>
+  );
+}
+
+function UserProfileCardMinimalDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <UserProfileCard user={USER_NO_PROFILE} />
+    </div>
+  );
+}
+
+/* ─── UserProfileForm ─── */
+function UserProfileFormEmptyDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Edit Profile</h2>
+      <UserProfileForm onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }} />
+    </div>
+  );
+}
+
+function UserProfileFormPrefilledDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Edit Profile</h2>
+      <UserProfileForm
+        initial={{ name: 'Jane Doe', username: 'janedoe', biography: 'Full-stack engineer. Loves design systems.' }}
+        onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }}
+      />
+    </div>
+  );
+}
+
+/* ─── UserPreferencesForm ─── */
+function UserPreferencesFormDefaultDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Preferences</h2>
+      <UserPreferencesForm onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }} />
+    </div>
+  );
+}
+
+function UserPreferencesFormPrefilledDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <h2 className="text-base font-semibold text-text-primary mb-4">Preferences</h2>
+      <UserPreferencesForm
+        initial={{ theme: 'DARK', language: 'tr', emailNotifications: false, newsletter: false }}
+        onSubmit={async (v) => { await new Promise((r) => setTimeout(r, 800)); console.log(v); }}
+      />
+    </div>
+  );
+}
+
+/* ─── CouponInput ─── */
+function CouponInputDefaultDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <p className="text-sm font-medium text-text-primary mb-3">Have a coupon?</p>
+      <CouponInput
+        onApply={async (code) => {
+          await new Promise((r) => setTimeout(r, 600));
+          return code === 'SAVE20' ? { success: true, message: '20% discount applied!' } : { success: false, message: 'Invalid coupon code.' };
+        }}
+      />
+      <p className="text-xs text-text-secondary mt-2">Try: <code className="font-mono">SAVE20</code></p>
+    </div>
+  );
+}
+
+function CouponInputAppliedDemo() {
+  return (
+    <div className="w-full max-w-sm mx-auto p-6 bg-surface-raised border border-border rounded-lg">
+      <p className="text-sm font-medium text-text-primary mb-3">Have a coupon?</p>
+      <CouponInput appliedCode="SAVE20" onApply={async () => ({ success: true })} onRemove={() => {}} />
+    </div>
+  );
+}
+
+/* ─── DiscountBadge ─── */
+function DiscountBadgeTypesDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <DiscountBadge discountType="PERCENTAGE" discountValue={20} />
+      <DiscountBadge discountType="FIXED" discountValue={50} currency="TRY" />
+      <DiscountBadge discountType="FREE_SHIPPING" discountValue={0} />
+    </div>
+  );
+}
+
+function DiscountBadgeSizesDemo() {
+  return (
+    <div className="flex items-center gap-3 p-4 flex-wrap">
+      <DiscountBadge discountType="PERCENTAGE" discountValue={10} size="sm" />
+      <DiscountBadge discountType="PERCENTAGE" discountValue={10} size="md" />
+      <DiscountBadge discountType="PERCENTAGE" discountValue={10} size="lg" />
+    </div>
+  );
+}
+
+/* ─── PaymentMethodSelector ─── */
+function PaymentMethodSelectorDefaultDemo() {
+  const [method, setMethod] = useState<PaymentMethod>('CREDIT_CARD');
+  return (
+    <div className="w-full max-w-lg mx-auto p-4">
+      <PaymentMethodSelector value={method} onChange={setMethod} />
+    </div>
+  );
+}
+
+function PaymentMethodSelectorCustomDemo() {
+  const [method, setMethod] = useState<PaymentMethod | undefined>(undefined);
+  return (
+    <div className="w-full max-w-sm mx-auto p-4">
+      <PaymentMethodSelector
+        value={method}
+        onChange={setMethod}
+        methods={['CREDIT_CARD', 'WALLET', 'BANK_TRANSFER']}
+      />
+    </div>
+  );
+}
+
+/* ─── PaymentSummaryCard ─── */
+function PaymentSummaryCardPaidDemo() {
+  return (
+    <div className="w-full max-w-xs mx-auto p-4">
+      <PaymentSummaryCard
+        payment={{ paymentId: 'pay_001', provider: 'Stripe', providerPaymentId: 'pi_3Nf9xZ2eZvKYlo2C', method: 'CREDIT_CARD', status: 'PAID', amount: 153.96, currency: 'USD' }}
+      />
+    </div>
+  );
+}
+
+function PaymentSummaryCardPendingDemo() {
+  return (
+    <div className="w-full max-w-xs mx-auto p-4">
+      <PaymentSummaryCard
+        payment={{ paymentId: 'pay_002', provider: 'Iyzico', method: 'BANK_TRANSFER', status: 'PENDING', amount: 2499, currency: 'TRY' }}
+      />
+    </div>
+  );
+}
+
+/* ─── builder ─── */
+export function buildCommonDomainData(): ShowcaseComponent[] {
+  return [
+    {
+      id: 'common-login-form',
+      title: 'LoginForm',
+      category: 'Domain',
+      abbr: 'LF',
+      description: 'Email + password sign-in form with inline validation, "Remember me" checkbox, and server-error banner.',
+      filePath: 'modules/domains/common/auth/LoginForm.tsx',
+      sourceCode: `'use client';
+import { LoginForm } from '@/modules/domains/common/auth/LoginForm';
+
+<LoginForm
+  onSubmit={async ({ email, password, rememberMe }) => {
+    await signIn(email, password);
+  }}
+  error="Invalid email or password."
+/>`,
+      variants: [
+        { title: 'Default', layout: 'stack', preview: <LoginFormDefaultDemo />, code: `<LoginForm onSubmit={handleLogin} />` },
+        { title: 'Server error', layout: 'stack', preview: <LoginFormErrorDemo />, code: `<LoginForm onSubmit={handleLogin} error="Invalid email or password." />` },
+      ],
+    },
+    {
+      id: 'common-register-form',
+      title: 'RegisterForm',
+      category: 'Domain',
+      abbr: 'RF',
+      description: 'Registration form with email, password, and confirm-password fields. Real-time password match validation and server-error support.',
+      filePath: 'modules/domains/common/auth/RegisterForm.tsx',
+      sourceCode: `'use client';
+import { RegisterForm } from '@/modules/domains/common/auth/RegisterForm';
+
+<RegisterForm
+  onSubmit={async ({ email, password }) => {
+    await register(email, password);
+  }}
+/>`,
+      variants: [
+        { title: 'Default', layout: 'stack', preview: <RegisterFormDefaultDemo />, code: `<RegisterForm onSubmit={handleRegister} />` },
+        { title: 'Server error', layout: 'stack', preview: <RegisterFormErrorDemo />, code: `<RegisterForm onSubmit={handleRegister} error="This email is already in use." />` },
+      ],
+    },
+    {
+      id: 'common-oauth-buttons',
+      title: 'OAuthButtons',
+      category: 'Domain',
+      abbr: 'OA',
+      description: 'Social sign-in buttons for Google, GitHub, Discord, and Microsoft. Accepts a providers prop to show only a subset.',
+      filePath: 'modules/domains/common/auth/OAuthButtons.tsx',
+      sourceCode: `'use client';
+import { OAuthButtons } from '@/modules/domains/common/auth/OAuthButtons';
+
+// All providers
+<OAuthButtons onProvider={(provider) => signInWithOAuth(provider)} />
+
+// Selected providers
+<OAuthButtons providers={['GOOGLE', 'GITHUB']} onProvider={handleOAuth} />`,
+      variants: [
+        { title: 'All providers', layout: 'stack', preview: <OAuthButtonsAllDemo />, code: `<OAuthButtons onProvider={handleOAuth} />` },
+        { title: 'Selected providers', layout: 'stack', preview: <OAuthButtonsSelectDemo />, code: `<OAuthButtons providers={['GOOGLE', 'GITHUB']} onProvider={handleOAuth} />` },
+      ],
+    },
+    {
+      id: 'common-user-avatar',
+      title: 'UserAvatar',
+      category: 'Domain',
+      abbr: 'UA',
+      description: 'Avatar that consumes the SafeUser type. Falls back to initials when no profile picture is set; supports online/away/busy/offline status dots.',
+      filePath: 'modules/domains/common/user/UserAvatar.tsx',
+      sourceCode: `'use client';
+import { UserAvatar } from '@/modules/domains/common/user/UserAvatar';
+
+<UserAvatar user={currentUser} size="md" status="online" />`,
+      variants: [
+        { title: 'Sizes', preview: <UserAvatarSizesDemo />, code: `<UserAvatar user={user} size="xs" />\n<UserAvatar user={user} size="sm" />\n<UserAvatar user={user} size="md" />\n<UserAvatar user={user} size="lg" />\n<UserAvatar user={user} size="xl" />` },
+        { title: 'Status indicators', preview: <UserAvatarStatusDemo />, code: `<UserAvatar user={user} size="lg" status="online" />\n<UserAvatar user={user} size="lg" status="away" />\n<UserAvatar user={user} size="lg" status="busy" />\n<UserAvatar user={user} size="lg" status="offline" />` },
+      ],
+    },
+    {
+      id: 'common-user-role-badge',
+      title: 'UserRoleBadge',
+      category: 'Domain',
+      abbr: 'RB',
+      description: 'Color-coded badge for ADMIN / AUTHOR / USER roles. ADMIN renders as error (red), AUTHOR as primary (blue), USER as neutral.',
+      filePath: 'modules/domains/common/user/UserRoleBadge.tsx',
+      sourceCode: `'use client';
+import { UserRoleBadge } from '@/modules/domains/common/user/UserRoleBadge';
+
+<UserRoleBadge role="ADMIN" />
+<UserRoleBadge role="AUTHOR" size="sm" />`,
+      variants: [
+        { title: 'All roles', preview: <UserRoleBadgesDemo />, code: `<UserRoleBadge role="ADMIN" />\n<UserRoleBadge role="AUTHOR" />\n<UserRoleBadge role="USER" />` },
+        { title: 'Sizes', preview: <UserRoleBadgeSizesDemo />, code: `<UserRoleBadge role="ADMIN" size="sm" />\n<UserRoleBadge role="ADMIN" size="md" />\n<UserRoleBadge role="ADMIN" size="lg" />` },
+      ],
+    },
+    {
+      id: 'common-user-status-badge',
+      title: 'UserStatusBadge',
+      category: 'Domain',
+      abbr: 'SB',
+      description: 'Color-coded badge for ACTIVE / INACTIVE / BANNED user statuses. Optional dot prop adds a leading status indicator.',
+      filePath: 'modules/domains/common/user/UserStatusBadge.tsx',
+      sourceCode: `'use client';
+import { UserStatusBadge } from '@/modules/domains/common/user/UserStatusBadge';
+
+<UserStatusBadge status="ACTIVE" />
+<UserStatusBadge status="BANNED" dot />`,
+      variants: [
+        { title: 'All statuses', preview: <UserStatusBadgesDemo />, code: `<UserStatusBadge status="ACTIVE" />\n<UserStatusBadge status="INACTIVE" />\n<UserStatusBadge status="BANNED" />` },
+        { title: 'With dot', preview: <UserStatusBadgeDotDemo />, code: `<UserStatusBadge status="ACTIVE" dot />\n<UserStatusBadge status="INACTIVE" dot />\n<UserStatusBadge status="BANNED" dot />` },
+      ],
+    },
+    {
+      id: 'common-user-menu',
+      title: 'UserMenu',
+      category: 'Domain',
+      abbr: 'UM',
+      description: 'User dropdown that consumes SafeUser. Understands the UserRole enum, shows English role labels, and accepts custom dropdown items.',
+      filePath: 'modules/domains/common/user/UserMenu.tsx',
+      sourceCode: `'use client';
+import { UserMenu } from '@/modules/domains/common/user/UserMenu';
+
+<UserMenu user={currentUser} align="right" />`,
+      variants: [
+        { title: 'Admin user', preview: <UserMenuAdminDemo />, code: `<UserMenu user={{ userId: 'u1', email: 'admin@acme.com', userRole: 'ADMIN', userStatus: 'ACTIVE', userProfile: { name: 'Jane Doe', profilePicture: null } }} />` },
+        { title: 'Custom items', preview: <UserMenuCustomDemo />, code: `<UserMenu user={authorUser} items={[\n  { type: 'item', label: 'My Posts', icon: '📝' },\n  { type: 'separator' },\n  { type: 'item', label: 'Sign Out', icon: '↩️', danger: true },\n]} />` },
+      ],
+    },
+    {
+      id: 'common-price-display',
+      title: 'PriceDisplay',
+      category: 'Domain',
+      abbr: 'PD',
+      description: 'Currency formatter using Intl.NumberFormat. Supports any ISO 4217 code and locale. Strikethrough prop renders an original/crossed-out price.',
+      filePath: 'modules/domains/common/money/PriceDisplay.tsx',
+      sourceCode: `'use client';
+import { PriceDisplay } from '@/modules/domains/common/money/PriceDisplay';
+
+<PriceDisplay amount={1299.99} currency="USD" size="lg" />
+<PriceDisplay amount={1799} currency="USD" size="lg" strikethrough />`,
+      variants: [
+        { title: 'Sizes', preview: <PriceDisplaySizesDemo />, code: `<PriceDisplay amount={1299.99} currency="USD" size="sm" />\n<PriceDisplay amount={1299.99} currency="USD" size="md" />\n<PriceDisplay amount={1299.99} currency="USD" size="lg" />\n<PriceDisplay amount={1299.99} currency="USD" size="xl" />` },
+        { title: 'Multi-currency + strikethrough', preview: <PriceDisplayCurrenciesDemo />, code: `<PriceDisplay amount={2499} currency="TRY" size="lg" />\n<PriceDisplay amount={1799} currency="TRY" size="lg" strikethrough />\n<PriceDisplay amount={89.99} currency="USD" locale="en-US" size="lg" />\n<PriceDisplay amount={74.99} currency="EUR" locale="de-DE" size="lg" />` },
+      ],
+    },
+    {
+      id: 'common-payment-status-badge',
+      title: 'PaymentStatusBadge',
+      category: 'Domain',
+      abbr: 'PS',
+      description: 'Color-coded badge for all PaymentStatus values: PENDING / AUTHORIZED / PAID / FAILED / CANCELLED / REFUNDED.',
+      filePath: 'modules/domains/common/payment/PaymentStatusBadge.tsx',
+      sourceCode: `'use client';
+import { PaymentStatusBadge } from '@/modules/domains/common/payment/PaymentStatusBadge';
+
+<PaymentStatusBadge status="PAID" />
+<PaymentStatusBadge status="PENDING" dot size="lg" />`,
+      variants: [
+        { title: 'All statuses', preview: <PaymentStatusBadgesDemo />, code: `<PaymentStatusBadge status="PENDING" />\n<PaymentStatusBadge status="AUTHORIZED" />\n<PaymentStatusBadge status="PAID" />\n<PaymentStatusBadge status="FAILED" />\n<PaymentStatusBadge status="CANCELLED" />\n<PaymentStatusBadge status="REFUNDED" />` },
+        { title: 'With dot, large', preview: <PaymentStatusBadgeDotDemo />, code: `<PaymentStatusBadge status="PENDING" dot size="lg" />\n<PaymentStatusBadge status="PAID" dot size="lg" />\n<PaymentStatusBadge status="FAILED" dot size="lg" />` },
+      ],
+    },
+    {
+      id: 'common-address-form',
+      title: 'AddressForm',
+      category: 'Domain',
+      abbr: 'AF',
+      description: 'Full address form with full name, phone, address lines, city, state/district, postal code, and country. Pre-fillable via the initial prop.',
+      filePath: 'modules/domains/common/address/AddressForm.tsx',
+      sourceCode: `'use client';
+import { AddressForm } from '@/modules/domains/common/address/AddressForm';
+
+<AddressForm
+  initial={{ fullName: 'Jane Doe', city: 'New York', country: 'United States' }}
+  onSubmit={async (values) => saveAddress(values)}
+  onCancel={() => setOpen(false)}
+/>`,
+      variants: [
+        { title: 'Empty', layout: 'stack', preview: <AddressFormEmptyDemo />, code: `<AddressForm onSubmit={handleSave} />` },
+        { title: 'Pre-filled', layout: 'stack', preview: <AddressFormPrefilledDemo />, code: `<AddressForm initial={existingAddress} submitLabel="Update" onCancel={handleCancel} onSubmit={handleUpdate} />` },
+      ],
+    },
+    {
+      id: 'common-address-card',
+      title: 'AddressCard',
+      category: 'Domain',
+      abbr: 'AC',
+      description: 'Read-only address display card with full name, phone, address lines, city, state, postal code, and country. Supports selected state and optional Edit/Delete actions.',
+      filePath: 'modules/domains/common/address/AddressCard.tsx',
+      sourceCode: `'use client';
+import { AddressCard } from '@/modules/domains/common/address/AddressCard';
+
+<AddressCard
+  address={savedAddress}
+  selected={selectedId === address.id}
+  onEdit={() => openEditModal(address)}
+  onDelete={() => deleteAddress(address.id)}
+/>`,
+      variants: [
+        { title: 'Default', preview: <AddressCardDefaultDemo />, code: `<AddressCard address={address} onEdit={handleEdit} onDelete={handleDelete} />` },
+        { title: 'Selectable list', preview: <AddressCardSelectedDemo />, code: `<AddressCard address={address} selected={selected === idx} onEdit={() => setSelected(idx)} />` },
+      ],
+    },
+    {
+      id: 'common-order-totals-card',
+      title: 'OrderTotalsCard',
+      category: 'Domain',
+      abbr: 'OT',
+      description: 'Order summary card showing subtotal, discount, tax, service fee, shipping, and an emphasized total. Zero-value lines are hidden automatically.',
+      filePath: 'modules/domains/common/money/OrderTotalsCard.tsx',
+      sourceCode: `'use client';
+import { OrderTotalsCard } from '@/modules/domains/common/money/OrderTotalsCard';
+
+<OrderTotalsCard
+  currency="USD"
+  locale="en-US"
+  totals={{ subtotal: 149.99, discountTotal: 20, taxTotal: 11.99, shippingTotal: 9.99, total: 153.96 }}
+/>`,
+      variants: [
+        { title: 'No extras', preview: <OrderTotalsCardBasicDemo />, code: `<OrderTotalsCard currency="USD" totals={{ subtotal: 89.99, total: 89.99 }} />` },
+        { title: 'With discount, tax & shipping', preview: <OrderTotalsCardFullDemo />, code: `<OrderTotalsCard currency="USD" totals={{ subtotal: 149.99, discountTotal: 20, taxTotal: 11.99, shippingTotal: 9.99, total: 153.96 }} />` },
+      ],
+    },
+    {
+      id: 'common-publish-status-badge',
+      title: 'PublishStatusBadge',
+      category: 'Domain',
+      abbr: 'PB',
+      description: 'Badge for DRAFT / PUBLISHED / ARCHIVED content states with contextual Font Awesome icons. Icon can be hidden via showIcon={false}.',
+      filePath: 'modules/domains/common/status/PublishStatusBadge.tsx',
+      sourceCode: `'use client';
+import { PublishStatusBadge } from '@/modules/domains/common/status/PublishStatusBadge';
+
+<PublishStatusBadge status="PUBLISHED" />
+<PublishStatusBadge status="DRAFT" showIcon={false} size="sm" />`,
+      variants: [
+        { title: 'All statuses', preview: <PublishStatusBadgesDemo />, code: `<PublishStatusBadge status="DRAFT" />\n<PublishStatusBadge status="PUBLISHED" />\n<PublishStatusBadge status="ARCHIVED" />` },
+        { title: 'Without icon, small', preview: <PublishStatusBadgeNoIconDemo />, code: `<PublishStatusBadge status="DRAFT" showIcon={false} size="sm" />\n<PublishStatusBadge status="PUBLISHED" showIcon={false} size="sm" />` },
+      ],
+    },
+    {
+      id: 'common-visibility-badge',
+      title: 'VisibilityBadge',
+      category: 'Domain',
+      abbr: 'VB',
+      description: 'Badge for PUBLIC / PRIVATE / UNLISTED visibility states with eye/lock icons. PUBLIC is green, PRIVATE is red, UNLISTED is neutral.',
+      filePath: 'modules/domains/common/status/VisibilityBadge.tsx',
+      sourceCode: `'use client';
+import { VisibilityBadge } from '@/modules/domains/common/status/VisibilityBadge';
+
+<VisibilityBadge visibility="PUBLIC" />
+<VisibilityBadge visibility="PRIVATE" size="sm" />`,
+      variants: [
+        { title: 'All states', preview: <VisibilityBadgesDemo />, code: `<VisibilityBadge visibility="PUBLIC" />\n<VisibilityBadge visibility="PRIVATE" />\n<VisibilityBadge visibility="UNLISTED" />` },
+        { title: 'Sizes', preview: <VisibilityBadgeSizesDemo />, code: `<VisibilityBadge visibility="PUBLIC" size="sm" />\n<VisibilityBadge visibility="PUBLIC" size="md" />\n<VisibilityBadge visibility="PUBLIC" size="lg" />` },
+      ],
+    },
+    {
+      id: 'common-language-switcher',
+      title: 'LanguageSwitcher',
+      category: 'Domain',
+      abbr: 'LS',
+      description: 'Dropdown language selector using AppLanguage, LANG_NAMES and LANG_FLAGS from I18nTypes. RTL direction is applied per-option automatically.',
+      filePath: 'modules/domains/common/i18n/LanguageSwitcher.tsx',
+      sourceCode: `'use client';
+import { LanguageSwitcher } from '@/modules/domains/common/i18n/LanguageSwitcher';
+
+// Controlled — driven by AVAILABLE_LANGUAGES from env
+<LanguageSwitcher value={lang} onChange={setLang} />
+
+// Explicit list
+<LanguageSwitcher
+  value={lang}
+  onChange={setLang}
+  languages={['en', 'tr', 'de', 'fr', 'ar']}
+/>`,
+      variants: [
+        { title: 'Default', preview: <LanguageSwitcherDefaultDemo />, code: `<LanguageSwitcher value={lang} onChange={setLang} languages={['en', 'tr', 'de', 'fr']} />` },
+        { title: 'RTL selected', preview: <LanguageSwitcherRTLDemo />, code: `<LanguageSwitcher value="ar" onChange={setLang} languages={['en', 'tr', 'de', 'fr', 'ar']} />` },
+      ],
+    },
+    {
+      id: 'common-change-password-form',
+      title: 'ChangePasswordForm',
+      category: 'Domain',
+      abbr: 'CP',
+      description: 'Current password + new password + confirm fields with match validation and server-error banner.',
+      filePath: 'modules/domains/common/auth/ChangePasswordForm.tsx',
+      sourceCode: `'use client';
+import { ChangePasswordForm } from '@/modules/domains/common/auth/ChangePasswordForm';
+
+<ChangePasswordForm
+  onSubmit={async ({ currentPassword, newPassword }) => {
+    await updatePassword(currentPassword, newPassword);
+  }}
+  error={serverError}
+/>`,
+      variants: [
+        { title: 'Default', layout: 'stack' as const, preview: <ChangePasswordFormDefaultDemo />, code: `<ChangePasswordForm onSubmit={handleSubmit} />` },
+        { title: 'Server error', layout: 'stack' as const, preview: <ChangePasswordFormErrorDemo />, code: `<ChangePasswordForm onSubmit={handleSubmit} error="Current password is incorrect." />` },
+      ],
+    },
+    {
+      id: 'common-user-profile-card',
+      title: 'UserProfileCard',
+      category: 'Domain',
+      abbr: 'PC',
+      description: 'Profile card with cover banner, avatar, display name, username, bio, role and status badges, and an optional actions slot.',
+      filePath: 'modules/domains/common/user/UserProfileCard.tsx',
+      sourceCode: `'use client';
+import { UserProfileCard } from '@/modules/domains/common/user/UserProfileCard';
+
+<UserProfileCard
+  user={currentUser}
+  actions={<Button variant="outline" size="sm">Edit</Button>}
+/>`,
+      variants: [
+        { title: 'Full profile', layout: 'stack' as const, preview: <UserProfileCardFullDemo />, code: `<UserProfileCard user={user} actions={<Button variant="outline" size="sm">Edit</Button>} />` },
+        { title: 'No profile data', preview: <UserProfileCardMinimalDemo />, code: `<UserProfileCard user={user} />` },
+      ],
+    },
+    {
+      id: 'common-user-profile-form',
+      title: 'UserProfileForm',
+      category: 'Domain',
+      abbr: 'PF',
+      description: 'Controlled form for editing display name, username, bio, and profile picture URL. Username validation: 3–32 chars, lowercase alphanumeric + underscore.',
+      filePath: 'modules/domains/common/user/UserProfileForm.tsx',
+      sourceCode: `'use client';
+import { UserProfileForm } from '@/modules/domains/common/user/UserProfileForm';
+
+<UserProfileForm
+  initial={{ name: 'Jane Doe', username: 'janedoe' }}
+  onSubmit={async (values) => saveProfile(values)}
+/>`,
+      variants: [
+        { title: 'Empty', layout: 'stack' as const, preview: <UserProfileFormEmptyDemo />, code: `<UserProfileForm onSubmit={handleSave} />` },
+        { title: 'Pre-filled', layout: 'stack' as const, preview: <UserProfileFormPrefilledDemo />, code: `<UserProfileForm initial={{ name: 'Jane Doe', username: 'janedoe', biography: '...' }} onSubmit={handleSave} />` },
+      ],
+    },
+    {
+      id: 'common-user-preferences-form',
+      title: 'UserPreferencesForm',
+      category: 'Domain',
+      abbr: 'UP',
+      description: 'Preferences form with theme and language selects plus email/push notification and newsletter toggles.',
+      filePath: 'modules/domains/common/user/UserPreferencesForm.tsx',
+      sourceCode: `'use client';
+import { UserPreferencesForm } from '@/modules/domains/common/user/UserPreferencesForm';
+
+<UserPreferencesForm
+  initial={currentUser.userPreferences}
+  onSubmit={async (prefs) => savePreferences(prefs)}
+/>`,
+      variants: [
+        { title: 'Defaults', layout: 'stack' as const, preview: <UserPreferencesFormDefaultDemo />, code: `<UserPreferencesForm onSubmit={handleSave} />` },
+        { title: 'Pre-filled', layout: 'stack' as const, preview: <UserPreferencesFormPrefilledDemo />, code: `<UserPreferencesForm initial={{ theme: 'DARK', language: 'tr', emailNotifications: false }} onSubmit={handleSave} />` },
+      ],
+    },
+    {
+      id: 'common-coupon-input',
+      title: 'CouponInput',
+      category: 'Domain',
+      abbr: 'CI',
+      description: 'Coupon code input with apply/remove flow. Calls onApply which returns success/error; shows applied state once a valid code is accepted.',
+      filePath: 'modules/domains/common/discount/CouponInput.tsx',
+      sourceCode: `'use client';
+import { CouponInput } from '@/modules/domains/common/discount/CouponInput';
+
+<CouponInput
+  onApply={async (code) => {
+    const result = await validateCoupon(code);
+    return { success: result.valid, message: result.message };
+  }}
+  appliedCode={appliedCoupon}
+  onRemove={() => setAppliedCoupon(undefined)}
+/>`,
+      variants: [
+        { title: 'Default (try SAVE20)', layout: 'stack' as const, preview: <CouponInputDefaultDemo />, code: `<CouponInput onApply={async (code) => validateCoupon(code)} />` },
+        { title: 'Applied state', layout: 'stack' as const, preview: <CouponInputAppliedDemo />, code: `<CouponInput appliedCode="SAVE20" onApply={handleApply} onRemove={handleRemove} />` },
+      ],
+    },
+    {
+      id: 'common-discount-badge',
+      title: 'DiscountBadge',
+      category: 'Domain',
+      abbr: 'DB',
+      description: 'Formats and displays a discount: percentage (e.g. "20% off"), fixed amount with currency, or free shipping.',
+      filePath: 'modules/domains/common/discount/DiscountBadge.tsx',
+      sourceCode: `'use client';
+import { DiscountBadge } from '@/modules/domains/common/discount/DiscountBadge';
+
+<DiscountBadge discountType="PERCENTAGE" discountValue={20} />
+<DiscountBadge discountType="FIXED" discountValue={50} currency="TRY" />
+<DiscountBadge discountType="FREE_SHIPPING" discountValue={0} />`,
+      variants: [
+        { title: 'All types', preview: <DiscountBadgeTypesDemo />, code: `<DiscountBadge discountType="PERCENTAGE" discountValue={20} />\n<DiscountBadge discountType="FIXED" discountValue={50} currency="TRY" />\n<DiscountBadge discountType="FREE_SHIPPING" discountValue={0} />` },
+        { title: 'Sizes', preview: <DiscountBadgeSizesDemo />, code: `<DiscountBadge discountType="PERCENTAGE" discountValue={10} size="sm" />\n<DiscountBadge discountType="PERCENTAGE" discountValue={10} size="md" />\n<DiscountBadge discountType="PERCENTAGE" discountValue={10} size="lg" />` },
+      ],
+    },
+    {
+      id: 'common-payment-method-selector',
+      title: 'PaymentMethodSelector',
+      category: 'Domain',
+      abbr: 'PM',
+      description: 'Radio-group style card selector for payment methods. Shows icon, label, and description. Default set: credit card, debit card, bank transfer, wallet.',
+      filePath: 'modules/domains/common/payment/PaymentMethodSelector.tsx',
+      sourceCode: `'use client';
+import { PaymentMethodSelector } from '@/modules/domains/common/payment/PaymentMethodSelector';
+
+const [method, setMethod] = useState<PaymentMethod>('CREDIT_CARD');
+
+<PaymentMethodSelector value={method} onChange={setMethod} />`,
+      variants: [
+        { title: 'Default (4 methods)', layout: 'stack' as const, preview: <PaymentMethodSelectorDefaultDemo />, code: `<PaymentMethodSelector value={method} onChange={setMethod} />` },
+        { title: 'Custom subset', layout: 'stack' as const, preview: <PaymentMethodSelectorCustomDemo />, code: `<PaymentMethodSelector value={method} onChange={setMethod} methods={['CREDIT_CARD', 'WALLET', 'BANK_TRANSFER']} />` },
+      ],
+    },
+    {
+      id: 'common-payment-summary-card',
+      title: 'PaymentSummaryCard',
+      category: 'Domain',
+      abbr: 'SC',
+      description: 'Read-only payment summary card: amount, method, provider, provider reference, and status badge.',
+      filePath: 'modules/domains/common/payment/PaymentSummaryCard.tsx',
+      sourceCode: `'use client';
+import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSummaryCard';
+
+<PaymentSummaryCard payment={order.payment} />`,
+      variants: [
+        { title: 'Paid via Stripe', preview: <PaymentSummaryCardPaidDemo />, code: `<PaymentSummaryCard payment={{ provider: 'Stripe', method: 'CREDIT_CARD', status: 'PAID', amount: 153.96, currency: 'USD', ... }} />` },
+        { title: 'Pending bank transfer', preview: <PaymentSummaryCardPendingDemo />, code: `<PaymentSummaryCard payment={{ provider: 'Iyzico', method: 'BANK_TRANSFER', status: 'PENDING', amount: 2499, currency: 'TRY', ... }} />` },
+      ],
+    },
+  ];
+}

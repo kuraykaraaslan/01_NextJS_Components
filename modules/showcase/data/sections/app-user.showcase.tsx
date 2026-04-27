@@ -1,5 +1,5 @@
 'use client';
-import { UserMenu } from '@/modules/app/UserMenu';
+import { UserMenu } from '@/modules/domains/common/user/UserMenu';
 import { GlobalSearch, type SearchResult } from '@/modules/app/GlobalSearch';
 import { AppCommandBar, type CommandItem } from '@/modules/app/AppCommandBar';
 import { Badge } from '@/modules/ui/Badge';
@@ -10,9 +10,8 @@ import type { ShowcaseComponent } from '../showcase.types';
 const DEMO_USER = {
   userId: 'demo-1',
   email: 'jane@acme.com',
-  userRole: 'Admin',
-  userStatus: 'ACTIVE',
-  userPreferences: null,
+  userRole: 'ADMIN' as const,
+  userStatus: 'ACTIVE' as const,
   userProfile: { name: 'Jane Doe', profilePicture: null },
 };
 
@@ -39,9 +38,8 @@ function UserMenuCustomDemo() {
         user={{
           userId: 'demo-2',
           email: 'john@acme.com',
-          userRole: 'Editor',
-          userStatus: 'ACTIVE',
-          userPreferences: null,
+          userRole: 'AUTHOR' as const,
+          userStatus: 'ACTIVE' as const,
           userProfile: { name: 'John Smith', profilePicture: null },
         }}
         items={[

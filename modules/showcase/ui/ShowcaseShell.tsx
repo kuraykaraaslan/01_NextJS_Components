@@ -8,7 +8,7 @@ import { CopyButton } from './CopyButton';
 import { cn } from '@/libs/utils/cn';
 import { buildShowcaseData, type ShowcaseVariant } from '@/modules/showcase/data/showcase.data';
 import SHOWCASE_NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
-import { LanguageSwitcher } from '@/modules/app/LanguageSwitcher';
+import { LanguageSwitcher } from '@/modules/domains/common/i18n/LanguageSwitcher';
 import { ThemeSwitcher } from '@/modules/app/ThemeSwitcher';
 
 const categoryStyles: Record<string, string> = {
@@ -172,32 +172,42 @@ export function ShowcaseShell() {
         </AppTopBar>
       }
     >
-      <div className="mb-2">
-        <div className="flex items-center gap-3 mb-1">
-          <h2 className="text-2xl font-bold text-text-primary leading-tight">
-            {selected.title}
-          </h2>
-          <span
-            className={cn(
-              'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium',
-              categoryStyles[selected.category]
-            )}
-          >
-            {selected.category}
-          </span>
+      {!selected ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <p className="text-4xl mb-4">🚧</p>
+          <h2 className="text-xl font-semibold text-text-primary mb-1">Showcase coming soon</h2>
+          <p className="text-sm text-text-secondary">No preview has been added for this component yet.</p>
         </div>
-        <p className="text-sm text-text-secondary max-w-2xl">{selected.description}</p>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        {selected.variants.map((variant: any) => (
-          <div key={variant.title} className={variant.layout === 'stack' ? 'xl:col-span-2' : ''}>
-            <VariantBlock variant={variant} />
+      ) : (
+        <>
+          <div className="mb-2">
+            <div className="flex items-center gap-3 mb-1">
+              <h2 className="text-2xl font-bold text-text-primary leading-tight">
+                {selected.title}
+              </h2>
+              <span
+                className={cn(
+                  'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium',
+                  categoryStyles[selected.category]
+                )}
+              >
+                {selected.category}
+              </span>
+            </div>
+            <p className="text-sm text-text-secondary max-w-2xl">{selected.description}</p>
           </div>
-        ))}
-      </div>
 
-      <SourceBlock filePath={selected.filePath} sourceCode={selected.sourceCode} />
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            {selected.variants.map((variant: any) => (
+              <div key={variant.title} className={variant.layout === 'stack' ? 'xl:col-span-2' : ''}>
+                <VariantBlock variant={variant} />
+              </div>
+            ))}
+          </div>
+
+          <SourceBlock filePath={selected.filePath} sourceCode={selected.sourceCode} />
+        </>
+      )}
     </AppShell>
   );
 }

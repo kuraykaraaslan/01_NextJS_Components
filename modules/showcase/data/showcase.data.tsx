@@ -4,6 +4,7 @@ import { buildAtomsData } from './sections/ui-atoms.showcase';
 import { buildMoleculesData } from './sections/ui-molecules.showcase';
 import { buildOrganismsData } from './sections/ui-organisms.showcase';
 import { buildAppPatternsData } from './sections/app-patterns.showcase';
+import { buildCommonDomainData } from './sections/domain-common.showcase';
 
 export function buildShowcaseData() {
   return [
@@ -11,5 +12,6 @@ export function buildShowcaseData() {
     ...buildMoleculesData(),
     ...buildOrganismsData(),
     ...buildAppPatternsData(),
+    ...buildCommonDomainData(),
   ];
 }

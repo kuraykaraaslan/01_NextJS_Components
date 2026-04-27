@@ -2,21 +2,20 @@
 import { AppShell } from '@/modules/app/AppShell';
 import { AppSidebar } from '@/modules/app/AppSidebar';
 import { AppTopBar } from '@/modules/app/AppTopBar';
-import { UserMenu } from '@/modules/app/UserMenu';
+import { UserMenu } from '@/modules/domains/common/user/UserMenu';
 import { GlobalSearch } from '@/modules/app/GlobalSearch';
 import { Avatar } from '@/modules/ui/Avatar';
 import { Badge } from '@/modules/ui/Badge';
 import { Button } from '@/modules/ui/Button';
 import { Card } from '@/modules/ui/Card';
-import { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
 
-const DEMO_USER = {
+const DEMO_USER: ComponentProps<typeof UserMenu>['user'] = {
   userId: 'demo-1',
   email: 'jane@acme.com',
-  userRole: 'Admin',
+  userRole: 'ADMIN',
   userStatus: 'ACTIVE',
-  userPreferences: null,
   userProfile: { name: 'Jane Doe', profilePicture: null },
 };
 
