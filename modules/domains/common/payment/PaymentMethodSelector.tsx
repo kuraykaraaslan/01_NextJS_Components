@@ -1,72 +1,57 @@
 'use client';
+import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faPaypal,
+  faApple,
+  faGoogle,
+  faBitcoin,
+} from '@fortawesome/free-brands-svg-icons';
+import { faChevronDown, faCreditCard } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/libs/utils/cn';
-import type { PaymentMethod } from '../PaymentTypes';
+import { RadioGroup, RadioOption } from '@/modules/ui/RadioGroup';
+import { DropdownMenu, type DropdownItem } from '@/modules/ui/DropdownMenu';
 
-const METHOD_META: Record<PaymentMethod, { label: string; icon: string; description: string }> = {
-  CREDIT_CARD:   { label: 'Credit Card',    icon: '💳', description: 'Visa, Mastercard, Amex' },
-  DEBIT_CARD:    { label: 'Debit Card',     icon: '🏦', description: 'Direct from your bank' },
-  BANK_TRANSFER: { label: 'Bank Transfer',  icon: '🔁', description: 'EFT / Wire transfer'    },
-  CASH:          { label: 'Cash',           icon: '💵', description: 'Pay on delivery'         },
-  WALLET:        { label: 'Digital Wallet', icon: '📱', description: 'Apple Pay, Google Pay'   },
-  CRYPTO:        { label: 'Crypto',         icon: '₿',  description: 'BTC, ETH, USDT'          },
-};
+type PaymentMethod = 'card' | 'paypal' | 'apple' | 'google' | 'crypto';
+
+const paymentOptions: RadioOption[] = [
+  { value: 'card', label: 'Credit Card', icon: <FontAwesomeIcon icon={faCreditCard} className="h-4 w-4 text-blue-600" /> },
+  { value: 'paypal', label: 'PayPal', icon: <FontAwesomeIcon icon={faPaypal} className="h-4 w-4 text-blue-500" /> },
+  { value: 'apple', label: 'Apple Pay', icon: <FontAwesomeIcon icon={faApple} className="h-4 w-4 text-gray-900" /> },
+  { value: 'google', label: 'Google Pay', icon: <FontAwesomeIcon icon={faGoogle} className="h-4 w-4 text-blue-600" /> },
+  { value: 'crypto', label: 'Cryptocurrency', icon: <FontAwesomeIcon icon={faBitcoin} className="h-4 w-4 text-orange-500" /> },
+];
 
 type PaymentMethodSelectorProps = {
   value?: PaymentMethod;
-  onChange: (method: PaymentMethod) => void;
-  methods?: PaymentMethod[];
+  onChange?: (method: PaymentMethod) => void;
   disabled?: boolean;
   className?: string;
 };
 
-const DEFAULT_METHODS: PaymentMethod[] = ['CREDIT_CARD', 'DEBIT_CARD', 'BANK_TRANSFER', 'WALLET'];
-
 export function PaymentMethodSelector({
   value,
   onChange,
-  methods = DEFAULT_METHODS,
   disabled = false,
   className,
 }: PaymentMethodSelectorProps) {
+  const [selected, setSelected] = useState<PaymentMethod>(value || 'card');
+
   return (
-    <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-2', className)} role="radiogroup" aria-label="Payment method">
-      {methods.map((method) => {
-        const meta     = METHOD_META[method];
-        const selected = value === method;
-        return (
-          <button
-            key={method}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            disabled={disabled}
-            onClick={() => onChange(method)}
-            className={cn(
-              'flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
-              'disabled:opacity-50 disabled:cursor-not-allowed',
-              selected
-                ? 'border-primary bg-primary-subtle'
-                : 'border-border bg-surface-raised hover:border-border-strong hover:bg-surface-overlay'
-            )}
-          >
-            <span className="text-xl shrink-0" aria-hidden="true">{meta.icon}</span>
-            <div className="min-w-0">
-              <p className={cn('text-sm font-medium', selected ? 'text-primary' : 'text-text-primary')}>
-                {meta.label}
-              </p>
-              <p className="text-xs text-text-secondary truncate">{meta.description}</p>
-            </div>
-            <span
-              className={cn(
-                'ml-auto shrink-0 w-4 h-4 rounded-full border-2 transition-colors',
-                selected ? 'border-primary bg-primary' : 'border-border'
-              )}
-              aria-hidden="true"
-            />
-          </button>
-        );
-      })}
+    <div className={cn('w-full', className)}>
+      <RadioGroup
+        name="payment-method"
+        legend="Payment method"
+        options={paymentOptions}
+        value={selected}
+        variant='card'
+        columns={2}
+        onChange={(val) => {
+          setSelected(val as PaymentMethod);
+          onChange?.(val as PaymentMethod);
+        }}
+        disabled={disabled}
+      />
     </div>
   );
 }
