@@ -438,8 +438,27 @@ function Legend() {
 }
 
 /* ─────────────────────────────────────────────
-   SectionDetailHeader — back button + section info
+   Map panel headers — identical chrome, different content
 ───────────────────────────────────────────── */
+
+function MapHeader() {
+  return (
+    <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-surface-overlay text-text-secondary">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+          <rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-text-primary">Koltuk Haritası</p>
+        <p className="text-[11px] text-text-secondary">Bölüme tıklayın → koltuk seçin</p>
+      </div>
+    </div>
+  );
+}
 
 function SectionDetailHeader({
   node,
@@ -452,28 +471,21 @@ function SectionDetailHeader({
   const total = countAllSeats(node);
 
   return (
-    <div className="flex items-center gap-3 border-b border-border bg-surface-raised px-4 py-3">
+    <div className="flex items-center gap-3 border-b border-border px-4 py-3">
       <button
         type="button"
         onClick={onBack}
         className={cn(
-          'flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5',
-          'text-xs font-semibold text-text-secondary',
-          'hover:bg-surface-overlay hover:text-text-primary transition-colors',
+          'flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border',
+          'bg-surface-overlay text-text-secondary',
+          'hover:bg-surface-sunken hover:text-text-primary transition-colors',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-focus',
         )}
         aria-label="Haritaya dön"
       >
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-          <path
-            d="M10 12L6 8l4-4"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        Haritaya Dön
       </button>
 
       <div className="flex-1 min-w-0">
@@ -716,33 +728,6 @@ function VenueMapView({
         })}
       </svg>
 
-      {/* Map legend */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-border px-4 py-3 text-[11px] text-text-secondary">
-        {(
-          [
-            { color: 'var(--success)',       opacity: 0.35, border: 'var(--success)',      label: 'Müsait (>50%)' },
-            { color: 'var(--warning)',        opacity: 0.35, border: 'var(--warning)',      label: 'Az Kaldı' },
-            { color: 'var(--error)',          opacity: 0.35, border: 'var(--error)',        label: 'Kritik (<15%)' },
-            { color: 'var(--surface-sunken)', opacity: 1,    border: 'var(--border-strong)',label: 'Tükendi' },
-            { color: 'var(--primary)',        opacity: 0.5,  border: 'var(--primary)',      label: 'Seçili Koltuk' },
-          ] as const
-        ).map(({ color, opacity, border, label }) => (
-          <div key={label} className="flex items-center gap-1.5">
-            <div
-              className="h-3.5 w-3.5 rounded"
-              style={{
-                backgroundColor: color,
-                opacity,
-                border: `1.5px solid ${border}`,
-              }}
-            />
-            <span>{label}</span>
-          </div>
-        ))}
-        <span className="ml-auto italic text-[10px] text-text-disabled">
-          Bölüme tıklayın → koltuk seçin
-        </span>
-      </div>
     </div>
   );
 }
@@ -789,30 +774,23 @@ export function SeatMapPicker({
 
     return (
       <div className={cn('rounded-xl border border-border bg-surface-raised overflow-hidden', className)}>
+        {/* Header — same height/padding, only content differs */}
+        {activeNode
+          ? <SectionDetailHeader node={activeNode} onBack={() => setActiveSectionId(null)} />
+          : <MapHeader />
+        }
+
+        {/* Content */}
         {activeNode ? (
-          /* Seat detail panel */
-          <>
-            <SectionDetailHeader node={activeNode} onBack={() => setActiveSectionId(null)} />
-            <div className="p-4 space-y-4">
-              <SectionView
-                node={activeNode}
-                selectedIds={selectedIds}
-                onToggle={onSeatToggle}
-                maxReached={maxReached}
-              />
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
-                <Legend />
-                <p className="text-sm font-semibold text-text-primary">
-                  {selectedIds.size} koltuk seçili
-                  {maxSelectable != null && (
-                    <span className="font-normal text-text-secondary"> / {maxSelectable} max</span>
-                  )}
-                </p>
-              </div>
-            </div>
-          </>
+          <div className="p-4">
+            <SectionView
+              node={activeNode}
+              selectedIds={selectedIds}
+              onToggle={onSeatToggle}
+              maxReached={maxReached}
+            />
+          </div>
         ) : (
-          /* Venue overview map */
           <VenueMapView
             sections={sections}
             shapes={mapShapes}
@@ -828,20 +806,16 @@ export function SeatMapPicker({
           />
         )}
 
-        {/* Persistent total when on map view */}
-        {!activeNode && selectedIds.size > 0 && (
-          <div className="flex items-center justify-between border-t border-border bg-primary-subtle px-4 py-2">
-            <span className="text-xs font-semibold text-primary">
-              {selectedIds.size} koltuk seçildi
-              {maxSelectable != null && (
-                <span className="font-normal"> / {maxSelectable} maks</span>
-              )}
-            </span>
-            <span className="text-xs text-text-secondary">
-              Bir bölüme tıklayarak değiştirebilirsiniz.
-            </span>
-          </div>
-        )}
+        {/* Footer — identical in both views */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3">
+          <Legend />
+          <p className="text-sm font-semibold text-text-primary">
+            {selectedIds.size} koltuk seçili
+            {maxSelectable != null && (
+              <span className="font-normal text-text-secondary"> / {maxSelectable} max</span>
+            )}
+          </p>
+        </div>
       </div>
     );
   }
