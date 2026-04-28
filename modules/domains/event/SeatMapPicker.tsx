@@ -1,13 +1,13 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { cn } from '@/libs/utils/cn';
-import type { VenueSection, VenueSeat, EventSectionPricing } from './types';
+import type { VenueSection, VenueSeat, EventSectionPricing, SeatStatus } from './types';
+
+export type { SeatStatus };
 
 /* ─────────────────────────────────────────────
    Public types
 ───────────────────────────────────────────── */
-
-export type SeatStatus = 'AVAILABLE' | 'HELD' | 'SOLD' | 'BLOCKED';
 
 export type SeatInfo = {
   seat: VenueSeat;
@@ -37,8 +37,14 @@ export type SectionMapShape = {
   labelX: number;
   /** Center Y coordinate for the text label */
   labelY: number;
-  /** Optional rotation angle in degrees for the label */
+  /** Optional rotation angle in degrees for the SVG label */
   labelRotate?: number;
+  /**
+   * Rotation angle (degrees, clockwise) applied to the seat grid when this
+   * section is active. Use positive values for left-side sections facing the
+   * stage, negative for right-side sections. Typical range: ±10–20°.
+   */
+  seatGridAngle?: number;
 };
 
 type SeatMapPickerProps = {
@@ -279,11 +285,13 @@ function SeatGrid({
   selectedIds,
   onToggle,
   maxReached,
+  angle = 0,
 }: {
   seats: SeatInfo[];
   selectedIds: Set<string>;
   onToggle: (id: string) => void;
   maxReached: boolean;
+  angle?: number;
 }) {
   const rows = useMemo(() => groupByRow(seats), [seats]);
 
@@ -295,9 +303,14 @@ function SeatGrid({
     );
   }
 
+  const rotated = angle !== 0;
+
   return (
-    <div className="overflow-x-auto pb-2">
-      <div className="inline-flex flex-col gap-1.5 min-w-max">
+    <div className={rotated ? 'flex items-center justify-center py-6 px-10' : 'overflow-x-auto pb-2'}>
+      <div
+        className="inline-flex flex-col gap-1.5 min-w-max"
+        style={rotated ? { transform: `rotate(${angle}deg)` } : undefined}
+      >
         {[...rows.entries()].map(([row, rowSeats]) => (
           <div key={row} className="flex items-center gap-1.5">
             <span className="w-5 shrink-0 text-right text-[10px] font-bold text-text-secondary">
@@ -330,12 +343,14 @@ function SectionView({
   selectedIds,
   onToggle,
   maxReached,
+  gridAngle = 0,
   depth = 0,
 }: {
   node: SectionNode;
   selectedIds: Set<string>;
   onToggle: (id: string) => void;
   maxReached: boolean;
+  gridAngle?: number;
   depth?: number;
 }) {
   const [activeSubIdx, setActiveSubIdx] = useState(0);
@@ -375,6 +390,7 @@ function SectionView({
           selectedIds={selectedIds}
           onToggle={onToggle}
           maxReached={maxReached}
+          gridAngle={gridAngle}
           depth={depth + 1}
         />
       </div>
@@ -403,6 +419,7 @@ function SectionView({
         selectedIds={selectedIds}
         onToggle={onToggle}
         maxReached={maxReached}
+        angle={gridAngle}
       />
     </div>
   );
@@ -771,6 +788,8 @@ export function SeatMapPicker({
     const activeNode = activeSectionId
       ? (sections.find((n) => n.section.sectionId === activeSectionId) ?? null)
       : null;
+    const activeShape = mapShapes.find((s) => s.sectionId === activeSectionId);
+    const gridAngle = activeShape?.seatGridAngle ?? 0;
 
     return (
       <div className={cn('rounded-xl border border-border bg-surface-raised overflow-hidden', className)}>
@@ -788,6 +807,7 @@ export function SeatMapPicker({
               selectedIds={selectedIds}
               onToggle={onSeatToggle}
               maxReached={maxReached}
+              gridAngle={gridAngle}
             />
           </div>
         ) : (

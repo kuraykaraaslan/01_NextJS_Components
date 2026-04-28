@@ -97,10 +97,16 @@ export function CheckoutSuccess({
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <Button variant="outline" fullWidth onClick={() => window.print()}>
           Yazdır / PDF
         </Button>
+        <a
+          href="/themes/event/orders"
+          className="flex flex-1 items-center justify-center rounded-md border border-border bg-surface-raised hover:bg-surface-overlay px-4 py-2 text-sm font-medium text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+        >
+          Siparişlerim
+        </a>
         <a
           href={`/themes/event/events/${event.slug}`}
           className="flex flex-1 items-center justify-center rounded-md bg-primary text-primary-fg hover:bg-primary-hover px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"

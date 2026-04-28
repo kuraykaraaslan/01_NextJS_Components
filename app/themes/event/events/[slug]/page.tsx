@@ -6,11 +6,15 @@ import { EventCategoryBadge } from '@/modules/domains/event/EventCategoryBadge';
 import { OrganizerCard } from '@/modules/domains/event/OrganizerCard';
 import { EventInfoGrid } from '@/modules/domains/event/EventInfoGrid';
 import { TicketSidebarBox } from '@/modules/domains/event/TicketSidebarBox';
+import { ArtistCard } from '@/modules/domains/event/ArtistCard';
+import { VenueCard } from '@/modules/domains/event/VenueCard';
 import {
   getEventBySlug,
   getPricingsByEventId,
+  getVenueByEventId,
+  getArtistsByEventId,
+  getEventsByVenueId,
   ORGANIZERS,
-  VENUES,
   EVENTS,
 } from '@/app/themes/event/event.data';
 
@@ -27,7 +31,9 @@ export default async function EventDetailPage({ params }: Props) {
 
   const pricings = getPricingsByEventId(event.eventId);
   const organizer = ORGANIZERS.find((o) => o.organizerId === event.organizerId) ?? null;
-  const venue = VENUES[0]; // link first venue for demo
+  const venue = getVenueByEventId(event.eventId);
+  const artists = getArtistsByEventId(event.eventId);
+  const venueEventCount = venue ? getEventsByVenueId(venue.venueId).length : 0;
 
   const isSoldOut = event.status === 'SOLD_OUT';
   const isCancelled = event.status === 'CANCELLED';
@@ -105,6 +111,26 @@ export default async function EventDetailPage({ params }: Props) {
                     #{tag}
                   </span>
                 ))}
+              </div>
+            )}
+
+            {/* artists */}
+            {artists.length > 0 && (
+              <div className="space-y-3">
+                <h2 className="text-lg font-bold text-text-primary">Sanatçılar</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {artists.map((artist) => (
+                    <ArtistCard key={artist.artistId} artist={artist} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* venue */}
+            {venue && (
+              <div className="space-y-3">
+                <h2 className="text-lg font-bold text-text-primary">Mekan</h2>
+                <VenueCard venue={venue} eventCount={venueEventCount} className="max-w-sm" />
               </div>
             )}
 

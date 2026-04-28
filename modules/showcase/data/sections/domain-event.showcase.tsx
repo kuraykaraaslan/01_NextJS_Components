@@ -40,17 +40,17 @@ function SeatMapTheaterDemo() {
     setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
 
   const sections: VenueSection[] = [
-    { sectionId: 'th-parket',  hallId: 'th', name: 'Parket',      label: 'Parket',      capacity: 96, sortOrder: 0 },
-    { sectionId: 'th-sol',     hallId: 'th', name: 'Sol Yan',     label: 'Sol Yan',     capacity: 36, sortOrder: 1 },
-    { sectionId: 'th-sag',     hallId: 'th', name: 'Sağ Yan',     label: 'Sağ Yan',     capacity: 36, sortOrder: 2 },
-    { sectionId: 'th-balkon',  hallId: 'th', name: 'Üst Balkon',  label: 'Üst Balkon',  capacity: 70, sortOrder: 3 },
+    { sectionId: 'th-parket',   venueId: 'venue-theater', name: 'Parket',      label: 'Parket',      capacity: 96, sortOrder: 0 },
+    { sectionId: 'th-sol',      venueId: 'venue-theater', name: 'Sol Yan',     label: 'Sol Yan',     capacity: 36, sortOrder: 1 },
+    { sectionId: 'th-sag',      venueId: 'venue-theater', name: 'Sağ Yan',     label: 'Sağ Yan',     capacity: 36, sortOrder: 2 },
+    { sectionId: 'th-balkon',   venueId: 'venue-theater', name: 'Üst Balkon',  label: 'Üst Balkon',  capacity: 70, sortOrder: 3 },
   ];
 
   const pricings: EventSectionPricing[] = [
-    { eventSectionPricingId: 'th-p1', eventId: 'th-e', hallId: 'th', sectionId: 'th-parket', name: 'Parket',     price: 1200, currency: 'TRY', capacity: 96, soldCount: 36, active: true },
-    { eventSectionPricingId: 'th-p2', eventId: 'th-e', hallId: 'th', sectionId: 'th-sol',    name: 'Sol Yan',   price: 800,  currency: 'TRY', capacity: 36, soldCount: 12, active: true },
-    { eventSectionPricingId: 'th-p3', eventId: 'th-e', hallId: 'th', sectionId: 'th-sag',    name: 'Sağ Yan',  price: 800,  currency: 'TRY', capacity: 36, soldCount: 12, active: true },
-    { eventSectionPricingId: 'th-p4', eventId: 'th-e', hallId: 'th', sectionId: 'th-balkon', name: 'Üst Balkon', price: 450, currency: 'TRY', capacity: 70, soldCount: 30, active: true },
+    { eventSectionPricingId: 'th-p1', eventId: 'th-e',  sectionId: 'th-parket', name: 'Parket',     price: 1200, currency: 'TRY', capacity: 96, soldCount: 36, active: true },
+    { eventSectionPricingId: 'th-p2', eventId: 'th-e',  sectionId: 'th-sol',    name: 'Sol Yan',   price: 800,  currency: 'TRY', capacity: 36, soldCount: 12, active: true },
+    { eventSectionPricingId: 'th-p3', eventId: 'th-e',  sectionId: 'th-sag',    name: 'Sağ Yan',  price: 800,  currency: 'TRY', capacity: 36, soldCount: 12, active: true },
+    { eventSectionPricingId: 'th-p4', eventId: 'th-e',  sectionId: 'th-balkon', name: 'Üst Balkon', price: 450, currency: 'TRY', capacity: 70, soldCount: 30, active: true },
   ];
 
   const seatInfos: SeatInfo[] = [];
@@ -91,10 +91,10 @@ function SeatMapTheaterDemo() {
   const tree = buildSectionTree(sections, seatInfos, pricings);
 
   const mapShapes: SectionMapShape[] = [
-    { sectionId: 'th-parket', points: '170,93 510,93 558,290 122,290',                labelX: 340, labelY: 185 },
-    { sectionId: 'th-sol',    points: '32,93 170,93 122,290 18,248',                  labelX: 95,  labelY: 185 },
-    { sectionId: 'th-sag',    points: '510,93 648,93 662,248 558,290',                labelX: 585, labelY: 185 },
-    { sectionId: 'th-balkon', points: '18,248 122,290 558,290 662,248 674,438 6,438', labelX: 340, labelY: 360 },
+    { sectionId: 'th-parket', points: '170,93 510,93 558,290 122,290',                labelX: 340, labelY: 185, seatGridAngle:   0 },
+    { sectionId: 'th-sol',    points: '32,93 170,93 122,290 18,248',                  labelX: 95,  labelY: 185, seatGridAngle:  14 },
+    { sectionId: 'th-sag',    points: '510,93 648,93 662,248 558,290',                labelX: 585, labelY: 185, seatGridAngle: -14 },
+    { sectionId: 'th-balkon', points: '18,248 122,290 558,290 662,248 674,438 6,438', labelX: 340, labelY: 360, seatGridAngle:   0 },
   ];
 
   return (
@@ -179,7 +179,6 @@ const DEMO_PRICINGS: EventSectionPricing[] = [
   {
     eventSectionPricingId: 'p1',
     eventId: 'evt-1',
-    hallId: 'hall-1',
     sectionId: 'sec-1',
     name: 'Genel Giriş',
     description: null,
@@ -192,7 +191,6 @@ const DEMO_PRICINGS: EventSectionPricing[] = [
   {
     eventSectionPricingId: 'p2',
     eventId: 'evt-1',
-    hallId: 'hall-1',
     sectionId: 'sec-2',
     name: 'Oturma — Kategori B',
     description: null,
@@ -205,7 +203,6 @@ const DEMO_PRICINGS: EventSectionPricing[] = [
   {
     eventSectionPricingId: 'p3',
     eventId: 'evt-1',
-    hallId: 'hall-1',
     sectionId: 'sec-3',
     name: 'VIP',
     description: null,
@@ -222,7 +219,6 @@ const DEMO_TICKET: IssuedTicket = {
   orderId: 'ORD-XY9Z12',
   orderItemId: 'OI-TKT-A1B2C3',
   eventId: 'evt-1',
-  hallId: 'hall-1',
   sectionId: 'sec-1',
   seatId: 'seat-1',
   eventSeatId: 'eseat-1',
@@ -443,7 +439,7 @@ export function buildEventDomainData(): ShowcaseComponent[] {
 />`,
       variants: [
         {
-          title: 'Geçerli bilet',
+          title: 'Yatay bilet (varsayılan)',
           layout: 'stack',
           preview: (
             <TicketCard
@@ -461,6 +457,58 @@ export function buildEventDomainData(): ShowcaseComponent[] {
   ticket={ticket}
   event={{ title, startAt, venueName, venueCity }}
   section={{ sectionName: 'Genel Giriş' }}
+/>`,
+        },
+        {
+          title: 'Dikey bilet',
+          layout: 'side',
+          preview: (
+            <div className="flex justify-center">
+              <TicketCard
+                ticket={DEMO_TICKET}
+                event={{
+                  title: DEMO_EVENT.title,
+                  startAt: DEMO_EVENT.startAt,
+                  venueName: 'Atatürk Olimpiyat Stadyumu',
+                  venueCity: 'İstanbul',
+                }}
+                section={{ sectionName: 'Genel Giriş', seatLabel: 'B-14' }}
+                orientation="vertical"
+                className="w-72"
+              />
+            </div>
+          ),
+          code: `<TicketCard
+  ticket={ticket}
+  event={{ title, startAt, venueName, venueCity }}
+  section={{ sectionName: 'Genel Giriş', seatLabel: 'B-14' }}
+  orientation="vertical"
+  className="w-72"
+/>`,
+        },
+        {
+          title: 'İptal bilet (dikey)',
+          layout: 'side',
+          preview: (
+            <div className="flex justify-center">
+              <TicketCard
+                ticket={{ ...DEMO_TICKET, status: 'CANCELLED' }}
+                event={{
+                  title: DEMO_EVENT.title,
+                  startAt: DEMO_EVENT.startAt,
+                  venueName: 'Atatürk Olimpiyat Stadyumu',
+                  venueCity: 'İstanbul',
+                }}
+                orientation="vertical"
+                className="w-72"
+              />
+            </div>
+          ),
+          code: `<TicketCard
+  ticket={{ ...ticket, status: 'CANCELLED' }}
+  event={{ title, startAt, venueName, venueCity }}
+  orientation="vertical"
+  className="w-72"
 />`,
         },
       ],
@@ -537,7 +585,7 @@ export function buildEventDomainData(): ShowcaseComponent[] {
                 isCancelled={false}
                 eventSlug="coldplay-istanbul-2026"
                 remainingCapacity={800}
-                venue={{ name: 'Atatürk Olimpiyat Stadyumu', address: 'Başakşehir', city: 'İstanbul' }}
+                venue={{ venueId: 'venue-ataturk', slug: 'ataturk-olimpiyat', name: 'Atatürk Olimpiyat Stadyumu', address: 'Başakşehir', city: 'İstanbul', country: 'Türkiye', latitude: 41.0038, longitude: 28.6741 }}
               />
             </div>
           ),
@@ -679,13 +727,13 @@ const sections = buildSectionTree(allSections, seatInfos, pricings);
 />`,
       variants: (() => {
         /* ── demo sections & seats ── */
-        const SEC_FLOOR: VenueSection = { sectionId: 'sec-floor', hallId: 'h1', parentSectionId: null, name: 'Zemin', label: 'Zemin Kat', capacity: 60, sortOrder: 0 };
-        const SEC_BALCONY: VenueSection = { sectionId: 'sec-balcony', hallId: 'h1', parentSectionId: null, name: 'Balkon', label: 'Balkon', capacity: 40, sortOrder: 1 };
-        const SEC_VIP: VenueSection = { sectionId: 'sec-vip', hallId: 'h1', parentSectionId: null, name: 'VIP', label: 'VIP', capacity: 20, sortOrder: 2 };
+        const SEC_FLOOR: VenueSection = { sectionId: 'sec-floor', venueId: 'venue-demo', parentSectionId: null, name: 'Zemin', label: 'Zemin Kat', capacity: 60, sortOrder: 0 };
+        const SEC_BALCONY: VenueSection = { sectionId: 'sec-balcony', venueId: 'venue-demo', parentSectionId: null, name: 'Balkon', label: 'Balkon', capacity: 40, sortOrder: 1 };
+        const SEC_VIP: VenueSection = { sectionId: 'sec-vip', venueId: 'venue-demo', parentSectionId: null, name: 'VIP', label: 'VIP', capacity: 20, sortOrder: 2 };
 
         // Subsections of Zemin
-        const SEC_FLOOR_L: VenueSection = { sectionId: 'sec-floor-l', hallId: 'h1', parentSectionId: 'sec-floor', name: 'Sol Blok', label: 'Sol', capacity: 30, sortOrder: 0 };
-        const SEC_FLOOR_R: VenueSection = { sectionId: 'sec-floor-r', hallId: 'h1', parentSectionId: 'sec-floor', name: 'Sağ Blok', label: 'Sağ', capacity: 30, sortOrder: 1 };
+        const SEC_FLOOR_L: VenueSection = { sectionId: 'sec-floor-l', venueId: 'venue-demo', parentSectionId: 'sec-floor', name: 'Sol Blok', label: 'Sol', capacity: 30, sortOrder: 0 };
+        const SEC_FLOOR_R: VenueSection = { sectionId: 'sec-floor-r', venueId: 'venue-demo', parentSectionId: 'sec-floor', name: 'Sağ Blok', label: 'Sağ', capacity: 30, sortOrder: 1 };
 
         function makeSeat(sectionId: string, row: string, num: number, opts?: Partial<VenueSeat>): SeatInfo {
           const seatId = `${sectionId}-${row}${num}`;
@@ -735,10 +783,10 @@ const sections = buildSectionTree(allSections, seatInfos, pricings);
         }
 
         const pricings: EventSectionPricing[] = [
-          { eventSectionPricingId: 'p-fl', eventId: 'evt-1', hallId: 'h1', sectionId: 'sec-floor-l', name: 'Zemin Sol', price: 2500, currency: 'TRY', capacity: 30, soldCount: 7, active: true },
-          { eventSectionPricingId: 'p-fr', eventId: 'evt-1', hallId: 'h1', sectionId: 'sec-floor-r', name: 'Zemin Sağ', price: 2500, currency: 'TRY', capacity: 30, soldCount: 5, active: true },
-          { eventSectionPricingId: 'p-b',  eventId: 'evt-1', hallId: 'h1', sectionId: 'sec-balcony',  name: 'Balkon',     price: 1200, currency: 'TRY', capacity: 40, soldCount: 12, active: true },
-          { eventSectionPricingId: 'p-v',  eventId: 'evt-1', hallId: 'h1', sectionId: 'sec-vip',      name: 'VIP',        price: 8500, currency: 'TRY', capacity: 20, soldCount: 0, active: true },
+          { eventSectionPricingId: 'p-fl', eventId: 'evt-1', sectionId: 'sec-floor-l', name: 'Zemin Sol', price: 2500, currency: 'TRY', capacity: 30, soldCount: 7, active: true },
+          { eventSectionPricingId: 'p-fr', eventId: 'evt-1', sectionId: 'sec-floor-r', name: 'Zemin Sağ', price: 2500, currency: 'TRY', capacity: 30, soldCount: 5, active: true },
+          { eventSectionPricingId: 'p-b',  eventId: 'evt-1', sectionId: 'sec-balcony',  name: 'Balkon',     price: 1200, currency: 'TRY', capacity: 40, soldCount: 12, active: true },
+          { eventSectionPricingId: 'p-v',  eventId: 'evt-1', sectionId: 'sec-vip',      name: 'VIP',        price: 8500, currency: 'TRY', capacity: 20, soldCount: 0, active: true },
         ];
 
         const allSections = [SEC_FLOOR, SEC_BALCONY, SEC_VIP, SEC_FLOOR_L, SEC_FLOOR_R];

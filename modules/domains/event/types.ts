@@ -145,28 +145,9 @@ export const VenueSchema = LocationSchema.extend({
   deletedAt: z.coerce.date().nullable().optional(),
 })
 
-export const VenueHallSchema = z.object({
-  hallId: IdSchema,
-  venueId: IdSchema,
-
-  name: z.string(),
-  slug: z.string(),
-  description: z.string().nullable().optional(),
-
-  capacity: z.number().int().nonnegative().nullable().optional(),
-  floor: z.string().nullable().optional(),
-
-  image: z.string().nullable().optional(),
-  seatingMapImage: z.string().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-  deletedAt: z.coerce.date().nullable().optional(),
-})
-
 export const VenueSectionSchema = z.object({
   sectionId: IdSchema,
-  hallId: IdSchema,
+  venueId: IdSchema,
 
   parentSectionId: IdSchema.nullable().optional(),
 
@@ -249,22 +230,10 @@ export const EventSchema = z.object({
   deletedAt: z.coerce.date().nullable().optional(),
 })
 
-export const EventHallSchema = z.object({
-  eventHallId: IdSchema,
-  eventId: IdSchema,
-  hallId: IdSchema,
-
-  capacityOverride: z.number().int().nonnegative().nullable().optional(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().nullable().optional(),
-})
-
 export const EventSectionPricingSchema = z.object({
   eventSectionPricingId: IdSchema,
 
   eventId: IdSchema,
-  hallId: IdSchema,
   sectionId: IdSchema,
 
   name: z.string(),
@@ -290,7 +259,6 @@ export const EventSeatSchema = z.object({
   eventSeatId: IdSchema,
 
   eventId: IdSchema,
-  hallId: IdSchema,
   sectionId: IdSchema,
   seatId: IdSchema,
 
@@ -329,12 +297,6 @@ export const EventWithDataSchema = EventSchema.extend({
     verified: true,
   }),
 
-  halls: z.array(
-    EventHallSchema.extend({
-      hall: VenueHallSchema,
-    })
-  ).optional(),
-
   translations: z.array(EventTranslationSchema).optional(),
 })
 
@@ -346,7 +308,6 @@ export const TicketHoldSchema = z.object({
   holdId: IdSchema,
 
   eventId: IdSchema,
-  hallId: IdSchema,
   sectionId: IdSchema,
   seatId: IdSchema,
   eventSeatId: IdSchema,
@@ -397,7 +358,6 @@ export const OrderItemSchema = z.object({
   orderId: IdSchema,
 
   eventId: IdSchema,
-  hallId: IdSchema,
   sectionId: IdSchema,
   seatId: IdSchema,
   eventSeatId: IdSchema,
@@ -406,7 +366,6 @@ export const OrderItemSchema = z.object({
 
   seatLabel: z.string(),
   sectionName: z.string(),
-  hallName: z.string(),
 
   unitPrice: z.number().nonnegative(),
   serviceFee: z.number().nonnegative().default(0),
@@ -443,7 +402,6 @@ export const IssuedTicketSchema = z.object({
   orderItemId: IdSchema,
 
   eventId: IdSchema,
-  hallId: IdSchema,
   sectionId: IdSchema,
   seatId: IdSchema,
   eventSeatId: IdSchema,
@@ -529,12 +487,10 @@ export type EventCategory = z.infer<typeof EventCategorySchema>
 export type Organizer = z.infer<typeof OrganizerSchema>
 
 export type Venue = z.infer<typeof VenueSchema>
-export type VenueHall = z.infer<typeof VenueHallSchema>
 export type VenueSection = z.infer<typeof VenueSectionSchema>
 export type VenueSeat = z.infer<typeof VenueSeatSchema>
 
 export type Event = z.infer<typeof EventSchema>
-export type EventHall = z.infer<typeof EventHallSchema>
 export type EventSectionPricing = z.infer<typeof EventSectionPricingSchema>
 export type EventSeat = z.infer<typeof EventSeatSchema>
 export type EventWithData = z.infer<typeof EventWithDataSchema>
@@ -550,3 +506,42 @@ export type IssuedTicket = z.infer<typeof IssuedTicketSchema>
 export type TicketCheckIn = z.infer<typeof TicketCheckInSchema>
 
 export type Coupon = z.infer<typeof CouponSchema>
+
+/* =========================================================
+   ARTIST
+========================================================= */
+
+export const ArtistSchema = z.object({
+  artistId: IdSchema,
+  name: z.string(),
+  slug: z.string(),
+  bio: z.string().nullable().optional(),
+  shortBio: z.string().nullable().optional(),
+  image: z.string().nullable().optional(),
+  coverImage: z.string().nullable().optional(),
+  genres: z.array(z.string()).default([]),
+  origin: z.string().nullable().optional(),
+  website: z.string().nullable().optional(),
+  verified: z.boolean().default(false),
+  createdAt: z.coerce.date().optional(),
+})
+
+export type Artist = z.infer<typeof ArtistSchema>
+
+/* =========================================================
+   CHECKOUT VIEW TYPES
+========================================================= */
+
+export const BuyerInfoSchema = z.object({
+  name: z.string().min(1),
+  email: EmailSchema,
+  phone: z.string().min(1),
+})
+
+export const CartItemSchema = z.object({
+  pricing: EventSectionPricingSchema,
+  quantity: z.number().int().min(1),
+})
+
+export type BuyerInfo = z.infer<typeof BuyerInfoSchema>
+export type CartItem = z.infer<typeof CartItemSchema>

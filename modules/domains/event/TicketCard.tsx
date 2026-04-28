@@ -18,6 +18,7 @@ type Props = {
   ticket: IssuedTicket;
   event: EventInfo;
   section?: SectionInfo;
+  orientation?: 'horizontal' | 'vertical';
   className?: string;
 };
 
@@ -58,7 +59,8 @@ function QRPattern({ value }: { value: string }) {
   );
 }
 
-export function TicketCard({ ticket, event, section, className }: Props) {
+export function TicketCard({ ticket, event, section, orientation = 'horizontal', className }: Props) {
+  const isVertical = orientation === 'vertical';
   const statusColors: Record<string, string> = {
     VALID:       'text-success bg-success-subtle border-success/30',
     USED:        'text-text-secondary bg-surface-overlay border-border',
@@ -92,7 +94,7 @@ export function TicketCard({ ticket, event, section, className }: Props) {
       </div>
 
       {/* body */}
-      <div className="flex flex-col sm:flex-row">
+      <div className={cn('flex', isVertical ? 'flex-col' : 'flex-col sm:flex-row')}>
         {/* info side */}
         <div className="flex-1 p-5 space-y-3">
           <div>
@@ -149,15 +151,36 @@ export function TicketCard({ ticket, event, section, className }: Props) {
         </div>
 
         {/* dashed divider */}
-        <div className="relative sm:w-px sm:my-5 h-px sm:h-auto mx-5 sm:mx-0 my-0 bg-transparent">
-          <div className="absolute inset-0 border-dashed border-border sm:border-l sm:border-t-0 border-t" />
-          <div className="absolute -left-3 sm:left-auto sm:-top-3 top-1/2 sm:top-auto -translate-y-1/2 sm:translate-y-0 sm:-translate-x-1/2 h-6 w-6 rounded-full bg-surface-base border border-border" />
-          <div className="absolute -right-3 sm:right-auto sm:-bottom-3 bottom-1/2 sm:bottom-auto -translate-y-1/2 sm:translate-y-0 sm:translate-x-1/2 h-6 w-6 rounded-full bg-surface-base border border-border" />
+        <div className={cn(
+          'relative bg-transparent',
+          isVertical
+            ? 'h-px mx-5 my-0'
+            : 'sm:w-px sm:my-5 h-px sm:h-auto mx-5 sm:mx-0 my-0',
+        )}>
+          <div className={cn(
+            'absolute inset-0 border-dashed border-border',
+            isVertical ? 'border-t' : 'sm:border-l sm:border-t-0 border-t',
+          )} />
+          <div className={cn(
+            'absolute h-6 w-6 rounded-full bg-surface-base border border-border',
+            isVertical
+              ? '-top-3 left-1/2 -translate-x-1/2 -translate-y-0'
+              : '-left-3 sm:left-auto sm:-top-3 top-1/2 sm:top-auto -translate-y-1/2 sm:translate-y-0 sm:-translate-x-1/2',
+          )} />
+          <div className={cn(
+            'absolute h-6 w-6 rounded-full bg-surface-base border border-border',
+            isVertical
+              ? '-bottom-3 left-1/2 -translate-x-1/2 translate-y-0'
+              : '-right-3 sm:right-auto sm:-bottom-3 bottom-1/2 sm:bottom-auto -translate-y-1/2 sm:translate-y-0 sm:translate-x-1/2',
+          )} />
         </div>
 
         {/* QR side */}
-        <div className="flex flex-col items-center justify-center p-5 gap-2 sm:w-36">
-          <div className="h-28 w-28 text-text-primary">
+        <div className={cn(
+          'flex flex-col items-center justify-center p-5 gap-2',
+          isVertical ? 'w-full' : 'sm:w-36',
+        )}>
+          <div className={cn('text-text-primary', isVertical ? 'h-36 w-36' : 'h-28 w-28')}>
             <QRPattern value={ticket.qrCode} />
           </div>
           <p className="text-[10px] text-text-disabled font-mono text-center break-all">

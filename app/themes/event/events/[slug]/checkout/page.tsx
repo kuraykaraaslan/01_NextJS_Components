@@ -1,5 +1,5 @@
 'use client';
-import { useState, use } from 'react';
+import { useState, use, useMemo } from 'react';
 import { Button } from '@/modules/ui/Button';
 import { Input } from '@/modules/ui/Input';
 import { Breadcrumb } from '@/modules/ui/Breadcrumb';
@@ -9,31 +9,20 @@ import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm'
 import { CouponInput } from '@/modules/domains/common/discount/CouponInput';
 import { OrderTotalsCard } from '@/modules/domains/common/money/OrderTotalsCard';
 import { SectionPricingCard } from '@/modules/domains/event/SectionPricingCard';
+import { SeatMapPicker, buildSectionTree } from '@/modules/domains/event/SeatMapPicker';
 import { StepIndicator, type CheckoutStep } from '@/modules/domains/event/StepIndicator';
 import { CheckoutSuccess } from '@/modules/domains/event/CheckoutSuccess';
 import {
   getEventBySlug,
   getPricingsByEventId,
+  getSeatMapConfig,
   VENUES,
 } from '@/app/themes/event/event.data';
-import type { EventSectionPricing } from '@/modules/domains/event/types';
+import type { EventSectionPricing, BuyerInfo, CartItem } from '@/modules/domains/event/types';
 import type { CreditCardInput } from '@/modules/domains/common/PaymentTypes';
 import type { OrderTotals } from '@/modules/domains/common/MoneyTypes';
 
-/* ── types ── */
-
 type Step = CheckoutStep;
-
-type BuyerInfo = {
-  name: string;
-  email: string;
-  phone: string;
-};
-
-type CartItem = {
-  pricing: EventSectionPricing;
-  quantity: number;
-};
 
 const FMT = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
 const FMT_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -51,16 +40,24 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
   const event = getEventBySlug(slug);
   const pricings = event ? getPricingsByEventId(event.eventId) : [];
   const venue = VENUES[0];
+  const seatMapConfig = event ? getSeatMapConfig(event.eventId) : null;
 
   /* ── state ── */
   const [step, setStep] = useState<Step>('tickets');
   const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
   const [buyer, setBuyer] = useState<BuyerInfo>({ name: '', email: '', phone: '' });
   const [couponCode, setCouponCode] = useState<string | undefined>();
   const [discountPct, setDiscountPct] = useState(0);
   const [paying, setPaying] = useState(false);
   const [ticketId] = useState(`TKT-${Math.random().toString(36).slice(2, 9).toUpperCase()}`);
   const [orderId] = useState(`ORD-${Math.random().toString(36).slice(2, 9).toUpperCase()}`);
+
+  /* ── seat map tree (only for physical events) ── */
+  const sectionTree = useMemo(() => {
+    if (!seatMapConfig) return [];
+    return buildSectionTree(seatMapConfig.sections, seatMapConfig.seatInfos, pricings);
+  }, [seatMapConfig, pricings]);
 
   if (!event) {
     return (
@@ -77,15 +74,26 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
   }
 
   /* ── cart calculations ── */
-  const cartItems: CartItem[] = pricings
-    .map((p) => ({ pricing: p, quantity: quantities[p.eventSectionPricingId] ?? 0 }))
-    .filter((i) => i.quantity > 0);
+  const cartItems: CartItem[] = seatMapConfig
+    ? (() => {
+        const byPricing: Record<string, number> = {};
+        for (const seatId of selectedSeatIds) {
+          const info = seatMapConfig.seatInfos.find((s) => s.seat.seatId === seatId);
+          if (info?.pricingId) byPricing[info.pricingId] = (byPricing[info.pricingId] ?? 0) + 1;
+        }
+        return pricings
+          .map((p) => ({ pricing: p, quantity: byPricing[p.eventSectionPricingId] ?? 0 }))
+          .filter((i) => i.quantity > 0);
+      })()
+    : pricings
+        .map((p) => ({ pricing: p, quantity: quantities[p.eventSectionPricingId] ?? 0 }))
+        .filter((i) => i.quantity > 0);
 
   const subtotal = cartItems.reduce((acc, i) => acc + i.pricing.price * i.quantity, 0);
   const serviceFee = Math.round(subtotal * SERVICE_FEE_RATE);
   const discount = Math.round(subtotal * discountPct);
   const total = subtotal + serviceFee - discount;
-  const totalQty = cartItems.reduce((acc, i) => acc + i.quantity, 0);
+  const totalQty = seatMapConfig ? selectedSeatIds.length : cartItems.reduce((acc, i) => acc + i.quantity, 0);
 
   const orderTotals: OrderTotals = {
     subtotal,
@@ -168,21 +176,41 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
           {/* STEP 1: Ticket selection */}
           {step === 'tickets' && (
             <div className="space-y-4">
-              <div className="rounded-2xl border border-primary bg-surface-raised p-5 space-y-3">
-                <h2 className="font-bold text-text-primary">Bilet Seçimi</h2>
-                <p className="text-xs text-text-secondary">Bilet kategorisi ve adet seçin.</p>
-                <div className="space-y-3">
-                  {pricings.map((p) => (
-                    <SectionPricingCard
-                      key={p.eventSectionPricingId}
-                      pricing={p}
-                      quantity={quantities[p.eventSectionPricingId] ?? 0}
-                      onQuantityChange={(qty) => setQty(p.eventSectionPricingId, qty)}
-                      selected={(quantities[p.eventSectionPricingId] ?? 0) > 0}
-                    />
-                  ))}
+              {seatMapConfig ? (
+                <SeatMapPicker
+                  sections={sectionTree}
+                  selectedSeatIds={selectedSeatIds}
+                  onSeatToggle={(seatId) =>
+                    setSelectedSeatIds((prev) =>
+                      prev.includes(seatId) ? prev.filter((id) => id !== seatId) : [...prev, seatId]
+                    )
+                  }
+                  mapShapes={seatMapConfig.mapShapes}
+                  mapViewBox={seatMapConfig.mapViewBox}
+                  mapMaxWidth={seatMapConfig.mapMaxWidth}
+                  stagePoints={seatMapConfig.stagePoints}
+                  stageLabel={seatMapConfig.stageLabel}
+                  stageLabelX={seatMapConfig.stageLabelX}
+                  stageLabelY={seatMapConfig.stageLabelY}
+                  showStage
+                />
+              ) : (
+                <div className="rounded-2xl border border-primary bg-surface-raised p-5 space-y-3">
+                  <h2 className="font-bold text-text-primary">Bilet Seçimi</h2>
+                  <p className="text-xs text-text-secondary">Bilet kategorisi ve adet seçin.</p>
+                  <div className="space-y-3">
+                    {pricings.map((p) => (
+                      <SectionPricingCard
+                        key={p.eventSectionPricingId}
+                        pricing={p}
+                        quantity={quantities[p.eventSectionPricingId] ?? 0}
+                        onQuantityChange={(qty) => setQty(p.eventSectionPricingId, qty)}
+                        selected={(quantities[p.eventSectionPricingId] ?? 0) > 0}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <Button
                 fullWidth

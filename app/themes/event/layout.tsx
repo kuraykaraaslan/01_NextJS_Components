@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { SkipLink } from '@/modules/ui/SkipLink';
 import { SearchBar } from '@/modules/ui/SearchBar';
 
@@ -34,7 +35,9 @@ const CATEGORIES = [
   { label: 'Stand-up',  href: '/themes/event/events?category=standup',  icon: '😄' },
   { label: 'Festival',  href: '/themes/event/events?category=festival', icon: '🎪' },
   { label: 'Konferans', href: '/themes/event/events?category=konferans',icon: '💻' },
-  { label: 'Tümü',      href: '/themes/event/events',                   icon: null },
+  { label: 'Sanatçılar', href: '/themes/event/artists', icon: '🎤' },
+  { label: 'Mekanlar',  href: '/themes/event/venues',  icon: '🏟' },
+  { label: 'Tümü',      href: '/themes/event/events',  icon: null },
 ];
 
 const FOOTER_COLS = [
@@ -46,6 +49,8 @@ const FOOTER_COLS = [
       { label: 'Tiyatro & Sahne',   href: '/themes/event/events?category=tiyatro'  },
       { label: 'Festival',          href: '/themes/event/events?category=festival' },
       { label: 'Stand-up',          href: '/themes/event/events?category=standup'  },
+      { label: 'Sanatçılar',        href: '/themes/event/artists'                  },
+      { label: 'Mekanlar',          href: '/themes/event/venues'                   },
     ],
   },
   {
@@ -361,6 +366,13 @@ function TopBarDivider() {
 export default function EventThemeLayout({ children }: { children: React.ReactNode }) {
   const [search, setSearch]     = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
+
+  function handleSearch(q: string) {
+    if (!q.trim()) return;
+    router.push(`/themes/event/search?q=${encodeURIComponent(q.trim())}`);
+    setSearch('');
+  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#0e1521' }}>
@@ -405,7 +417,17 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
             </a>
             <TopBarDivider />
             <a
-              href="#"
+              href="/themes/event/orders"
+              className="text-xs transition-colors"
+              style={{ color: 'rgba(255,255,255,0.45)' }}
+              onMouseOver={(e) => (e.currentTarget.style.color = '#fff')}
+              onMouseOut={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
+            >
+              Siparişlerim
+            </a>
+            <TopBarDivider />
+            <a
+              href="/themes/event/tickets"
               className="flex items-center gap-1.5 text-xs transition-colors"
               style={{ color: 'rgba(255,255,255,0.45)' }}
               onMouseOver={(e) => (e.currentTarget.style.color = '#fff')}
@@ -459,7 +481,10 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
             </a>
 
             {/* Search */}
-            <div className="flex-1 min-w-0 max-w-lg">
+            <form
+              className="flex-1 min-w-0 max-w-lg"
+              onSubmit={(e) => { e.preventDefault(); handleSearch(search); }}
+            >
               <SearchBar
                 id="header-search"
                 placeholder="Etkinlik, sanatçı veya mekan ara..."
@@ -468,7 +493,7 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
                 onClear={() => setSearch('')}
                 className="[&_input]:bg-white/7 [&_input]:border-white/12 [&_input]:text-white [&_input]:placeholder:text-white/35 [&_input:focus]:border-blue-500 [&_input:focus]:bg-white/10"
               />
-            </div>
+            </form>
 
             {/* Desktop auth */}
             <div className="hidden lg:flex items-center gap-2 ml-auto shrink-0">

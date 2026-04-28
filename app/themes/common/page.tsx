@@ -30,6 +30,14 @@ const SECTIONS = [
     ],
   },
   {
+    id: 'utility',
+    title: 'Utility',
+    tag: 'common/utility',
+    pages: [
+      { title: 'Not Found (404)',  description: 'Full-page 404 with gradient icon, action buttons and decorative dots.', href: '/themes/common/not-found', icon: '🔍' },
+    ],
+  },
+  {
     id: 'account',
     title: 'Account',
     tag: 'common/user · common/address',
@@ -111,6 +119,7 @@ export default function CommonThemePage() {
             'UserProfileCard', 'UserProfileForm', 'UserPreferencesForm',
             'UserAvatar', 'UserMenu', 'UserRoleBadge', 'UserStatusBadge',
             'LanguageSwitcher', 'CurrencySelector',
+            'NotFoundPage',
           ].map((name) => (
             <span key={name} className="rounded-md bg-surface-overlay px-2.5 py-1 text-xs font-mono text-text-secondary">
               {name}
