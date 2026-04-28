@@ -8,6 +8,7 @@ export type AppSidebarNavItem = {
   label: string;
   icon?: React.ReactNode;
   badge?: number;
+  href?: string;
 };
 
 export type AppSidebarNavGroup = {
@@ -160,29 +161,46 @@ export function AppSidebar({
             )}
             {expanded && (
             <div className="space-y-0.5">
-              {group.items.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-current={item.id === activeId ? 'page' : undefined}
-                  title={effectiveCollapsed ? item.label : undefined}
-                  onClick={() => onSelect?.(item.id)}
-                  className={cn(
-                    'w-full flex items-center gap-2.5 rounded-lg text-sm transition-colors',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
-                    effectiveCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2 text-left',
-                    item.id === activeId
-                      ? 'bg-primary-subtle text-primary font-medium'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
-                  )}
-                >
-                  {item.icon && <span aria-hidden="true" className="shrink-0 w-5 text-center text-[15px] leading-none">{item.icon}</span>}
-                  {!effectiveCollapsed && <span className="flex-1 truncate">{item.label}</span>}
-                  {!effectiveCollapsed && item.badge != null && item.badge > 0 && (
-                    <Badge variant="primary" size="sm">{item.badge}</Badge>
-                  )}
-                </button>
-              ))}
+              {group.items.map((item) => {
+                const itemClassName = cn(
+                  'w-full flex items-center gap-2.5 rounded-lg text-sm transition-colors',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+                  effectiveCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2 text-left',
+                  item.id === activeId
+                    ? 'bg-primary-subtle text-primary font-medium'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-overlay'
+                );
+                const itemContent = (
+                  <>
+                    {item.icon && <span aria-hidden="true" className="shrink-0 w-5 text-center text-[15px] leading-none">{item.icon}</span>}
+                    {!effectiveCollapsed && <span className="flex-1 truncate">{item.label}</span>}
+                    {!effectiveCollapsed && item.badge != null && item.badge > 0 && (
+                      <Badge variant="primary" size="sm">{item.badge}</Badge>
+                    )}
+                  </>
+                );
+                return item.href ? (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    title={effectiveCollapsed ? item.label : undefined}
+                    className={itemClassName}
+                  >
+                    {itemContent}
+                  </a>
+                ) : (
+                  <button
+                    key={item.id}
+                    type="button"
+                    aria-current={item.id === activeId ? 'page' : undefined}
+                    title={effectiveCollapsed ? item.label : undefined}
+                    onClick={() => onSelect?.(item.id)}
+                    className={itemClassName}
+                  >
+                    {itemContent}
+                  </button>
+                );
+              })}
             </div>
             )}
           </div>

@@ -126,6 +126,7 @@ export function ShowcaseShell() {
       items: group.items.map((item) => ({
         id: item.id,
         label: item.title,
+        href: item.href,
         icon: (
           <span className="flex items-center justify-center w-6 h-6 rounded text-[11px] font-bold bg-surface-sunken text-text-secondary">
             {item.abbr}

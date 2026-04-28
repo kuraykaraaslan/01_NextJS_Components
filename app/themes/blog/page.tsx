@@ -18,7 +18,7 @@ import {
   BLOG_COMMENTS,
   BLOG_POSTS,
   FEATURED_POST,
-} from '@/app/domains/blog/blog.data';
+} from '@/app/themes/blog/blog.data';
 
 const LATEST_POSTS = BLOG_POSTS.slice(1, 5);
 const FEATURED_CATEGORY = FEATURED_POST.category;

@@ -168,13 +168,14 @@ function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps
                         )}
                       </>
                     );
+                    const isExternal = item.href ? !item.href.startsWith('/') : false;
                     return (
                       <li key={item.id}>
                         {item.href ? (
                           <a
                             href={item.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            target={isExternal ? '_blank' : undefined}
+                            rel={isExternal ? 'noopener noreferrer' : undefined}
                             title={collapsed ? `${item.title} (${item.category})` : undefined}
                             className={sharedClassName}
                           >
