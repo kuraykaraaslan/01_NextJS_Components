@@ -23,6 +23,24 @@ export type SectionNode = {
   subsections: SectionNode[];  // non-empty only for non-leaf sections
 };
 
+/**
+ * Describes how a top-level section is drawn on the venue SVG map.
+ * Provide either `points` (polygon) or `path` (arbitrary SVG path).
+ */
+export type SectionMapShape = {
+  sectionId: string;
+  /** SVG polygon points string, e.g. "100,200 300,200 350,400 50,400" */
+  points?: string;
+  /** SVG path d attribute (alternative to points) */
+  path?: string;
+  /** Center X coordinate for the text label */
+  labelX: number;
+  /** Center Y coordinate for the text label */
+  labelY: number;
+  /** Optional rotation angle in degrees for the label */
+  labelRotate?: number;
+};
+
 type SeatMapPickerProps = {
   sections: SectionNode[];
   selectedSeatIds: string[];
@@ -30,6 +48,25 @@ type SeatMapPickerProps = {
   maxSelectable?: number;
   showStage?: boolean;
   className?: string;
+  /**
+   * When provided, renders a full SVG venue map instead of the tab bar.
+   * Each entry links a SectionNode (by sectionId) to its polygon/path on the map.
+   */
+  mapShapes?: SectionMapShape[];
+  /** SVG viewBox attribute. Default: "0 0 800 560" */
+  mapViewBox?: string;
+  /** Max pixel width of the venue map. Default: 540 */
+  mapMaxWidth?: number;
+  /** SVG polygon points for the stage/pitch shape */
+  stagePoints?: string;
+  /** SVG path d attribute for the stage/pitch shape */
+  stagePath?: string;
+  /** Label shown inside the stage shape. Default: "SAHNE / SAHA" */
+  stageLabel?: string;
+  /** X coordinate for stage label */
+  stageLabelX?: number;
+  /** Y coordinate for stage label */
+  stageLabelY?: number;
 };
 
 /* ─────────────────────────────────────────────
@@ -68,7 +105,81 @@ export function buildSectionTree(
 }
 
 /* ─────────────────────────────────────────────
-   Internal helpers
+   Seat counting helpers (recursive)
+───────────────────────────────────────────── */
+
+function countAllSeats(node: SectionNode): number {
+  return (
+    node.seats.length +
+    node.subsections.reduce((acc, sub) => acc + countAllSeats(sub), 0)
+  );
+}
+
+function countAvailSeats(node: SectionNode): number {
+  return (
+    node.seats.filter((s) => s.status === 'AVAILABLE').length +
+    node.subsections.reduce((acc, sub) => acc + countAvailSeats(sub), 0)
+  );
+}
+
+function collectSeatIds(node: SectionNode): string[] {
+  return [
+    ...node.seats.map((s) => s.seat.seatId),
+    ...node.subsections.flatMap(collectSeatIds),
+  ];
+}
+
+/* ─────────────────────────────────────────────
+   SVG section fill style (availability-based)
+───────────────────────────────────────────── */
+
+function getSectionStyle(
+  node: SectionNode,
+  selectedCount: number,
+  isHovered: boolean,
+): React.CSSProperties {
+  const total = countAllSeats(node);
+  const avail = countAvailSeats(node);
+  const pct = total > 0 ? avail / total : 1;
+
+  let fill: string;
+  let fillOpacity: number;
+  let stroke: string;
+
+  if (selectedCount > 0) {
+    fill = 'var(--primary)';
+    fillOpacity = isHovered ? 0.65 : 0.48;
+    stroke = 'var(--primary)';
+  } else if (total === 0 || pct === 0) {
+    fill = 'var(--surface-sunken)';
+    fillOpacity = 1;
+    stroke = 'var(--border-strong)';
+  } else if (pct > 0.5) {
+    fill = 'var(--success)';
+    fillOpacity = isHovered ? 0.48 : 0.28;
+    stroke = 'var(--success)';
+  } else if (pct > 0.15) {
+    fill = 'var(--warning)';
+    fillOpacity = isHovered ? 0.55 : 0.32;
+    stroke = 'var(--warning)';
+  } else {
+    fill = 'var(--error)';
+    fillOpacity = isHovered ? 0.55 : 0.32;
+    stroke = 'var(--error)';
+  }
+
+  return {
+    fill,
+    fillOpacity,
+    stroke,
+    strokeWidth: isHovered ? 3 : 1.5,
+    transition: 'fill-opacity 0.12s ease, stroke-width 0.12s ease',
+    cursor: 'pointer',
+  };
+}
+
+/* ─────────────────────────────────────────────
+   Internal helpers — seat grid
 ───────────────────────────────────────────── */
 
 function groupByRow(seats: SeatInfo[]): Map<string, SeatInfo[]> {
@@ -76,8 +187,10 @@ function groupByRow(seats: SeatInfo[]): Map<string, SeatInfo[]> {
   const sorted = [...seats].sort((a, b) => {
     const rc = a.seat.row.localeCompare(b.seat.row, undefined, { numeric: true });
     if (rc !== 0) return rc;
-    return (parseInt(a.seat.number) || 0) - (parseInt(b.seat.number) || 0) ||
-      a.seat.number.localeCompare(b.seat.number, undefined, { numeric: true });
+    return (
+      (parseInt(a.seat.number) || 0) - (parseInt(b.seat.number) || 0) ||
+      a.seat.number.localeCompare(b.seat.number, undefined, { numeric: true })
+    );
   });
   for (const info of sorted) {
     const row = info.seat.row;
@@ -125,19 +238,13 @@ function SeatButton({
         className={cn(
           'relative flex h-7 w-7 items-center justify-center rounded text-[9px] font-bold border transition-all duration-100',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-focus',
-          // selected
           isSelected && 'bg-primary border-primary text-primary-fg scale-110 shadow-sm',
-          // available, not selected, not maxed
           !isSelected && status === 'AVAILABLE' && canInteract &&
             'bg-success-subtle border-success text-success-fg hover:bg-success hover:text-white hover:scale-110 cursor-pointer',
-          // available but max reached
           !isSelected && status === 'AVAILABLE' && !canInteract && !unavailable && !held &&
             'bg-surface-overlay border-border text-text-disabled cursor-not-allowed',
-          // held by someone else
           held && 'bg-warning-subtle border-warning text-warning cursor-not-allowed',
-          // sold / blocked
           unavailable && 'bg-surface-sunken border-transparent text-text-disabled opacity-35 cursor-not-allowed',
-          // accessible seat ring
           seat.accessible && !unavailable && 'ring-1 ring-info ring-offset-1',
         )}
       >
@@ -235,7 +342,6 @@ function SectionView({
 
   const availableCount = node.seats.filter((s) => s.status === 'AVAILABLE').length;
 
-  // Non-leaf: has subsections
   if (node.subsections.length > 0) {
     return (
       <div className="space-y-3">
@@ -275,10 +381,8 @@ function SectionView({
     );
   }
 
-  // Leaf: show seat grid
   return (
     <div className="space-y-3">
-      {/* pricing + availability row */}
       <div className="flex items-center justify-between text-sm">
         <span className="text-text-secondary">
           {availableCount} koltuk müsait
@@ -294,7 +398,6 @@ function SectionView({
           </span>
         )}
       </div>
-
       <SeatGrid
         seats={node.seats}
         selectedIds={selectedIds}
@@ -306,7 +409,7 @@ function SectionView({
 }
 
 /* ─────────────────────────────────────────────
-   Legend
+   Legend — seat status key
 ───────────────────────────────────────────── */
 
 function Legend() {
@@ -335,6 +438,316 @@ function Legend() {
 }
 
 /* ─────────────────────────────────────────────
+   SectionDetailHeader — back button + section info
+───────────────────────────────────────────── */
+
+function SectionDetailHeader({
+  node,
+  onBack,
+}: {
+  node: SectionNode;
+  onBack: () => void;
+}) {
+  const avail = countAvailSeats(node);
+  const total = countAllSeats(node);
+
+  return (
+    <div className="flex items-center gap-3 border-b border-border bg-surface-raised px-4 py-3">
+      <button
+        type="button"
+        onClick={onBack}
+        className={cn(
+          'flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5',
+          'text-xs font-semibold text-text-secondary',
+          'hover:bg-surface-overlay hover:text-text-primary transition-colors',
+          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-focus',
+        )}
+        aria-label="Haritaya dön"
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+          <path
+            d="M10 12L6 8l4-4"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        Haritaya Dön
+      </button>
+
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-text-primary truncate">
+          {node.section.label ?? node.section.name}
+        </p>
+        <p className="text-[11px] text-text-secondary">
+          {avail} / {total} koltuk müsait
+        </p>
+      </div>
+
+      {node.pricing && (
+        <div className="shrink-0 text-right">
+          <p className="text-sm font-black text-text-primary">
+            {node.pricing.price === 0
+              ? 'Ücretsiz'
+              : `₺${node.pricing.price.toLocaleString('tr-TR')}`}
+          </p>
+          <p className="text-[10px] text-text-secondary">koltuk başı</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   VenueMapView — SVG arena/hall overview
+───────────────────────────────────────────── */
+
+function VenueMapView({
+  sections,
+  shapes,
+  viewBox,
+  stagePoints,
+  stagePath,
+  stageLabel = 'SAHNE / SAHA',
+  stageLabelX,
+  stageLabelY,
+  maxWidth,
+  selectedIds,
+  onSectionClick,
+}: {
+  sections: SectionNode[];
+  shapes: SectionMapShape[];
+  viewBox: string;
+  stagePoints?: string;
+  stagePath?: string;
+  stageLabel?: string;
+  stageLabelX?: number;
+  stageLabelY?: number;
+  maxWidth: number;
+  selectedIds: Set<string>;
+  onSectionClick: (sectionId: string) => void;
+}) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const nodeById = useMemo(
+    () => new Map(sections.map((n) => [n.section.sectionId, n])),
+    [sections],
+  );
+
+  const hasStage = !!(stagePoints || stagePath);
+
+  return (
+    <div className="w-full" style={{ maxWidth: maxWidth }}>
+      <svg
+        viewBox={viewBox}
+        className="w-full h-auto select-none"
+        xmlns="http://www.w3.org/2000/svg"
+        role="group"
+        aria-label="Mekan koltuk haritası"
+      >
+        <defs>
+          <pattern id="smp-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+            <circle cx="12" cy="12" r="1" style={{ fill: 'var(--border)', opacity: 0.5 }} />
+          </pattern>
+        </defs>
+
+        {/* Blueprint background */}
+        <rect width="100%" height="100%" style={{ fill: 'var(--surface-raised)' }} />
+        <rect width="100%" height="100%" fill="url(#smp-dots)" />
+
+        {/* Stage / pitch */}
+        {hasStage && (
+          <g>
+            {stagePoints && (
+              <polygon
+                points={stagePoints}
+                style={{
+                  fill: 'var(--surface-overlay)',
+                  stroke: 'var(--border-strong)',
+                  strokeWidth: 2,
+                }}
+              />
+            )}
+            {stagePath && (
+              <path
+                d={stagePath}
+                style={{
+                  fill: 'var(--surface-overlay)',
+                  stroke: 'var(--border-strong)',
+                  strokeWidth: 2,
+                }}
+              />
+            )}
+            {stageLabelX != null && stageLabelY != null && (
+              <text
+                x={stageLabelX}
+                y={stageLabelY}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize={10}
+                letterSpacing={1.5}
+                style={{
+                  fill: 'var(--text-disabled)',
+                  fontWeight: 700,
+                  pointerEvents: 'none',
+                }}
+              >
+                {stageLabel}
+              </text>
+            )}
+          </g>
+        )}
+
+        {/* Section shapes */}
+        {shapes.map((shape) => {
+          const node = nodeById.get(shape.sectionId);
+          if (!node) return null;
+
+          const isHovered = hoveredId === shape.sectionId;
+          const seatIds = collectSeatIds(node);
+          const selectedCount = seatIds.filter((id) => selectedIds.has(id)).length;
+          const total = countAllSeats(node);
+          const avail = countAvailSeats(node);
+          const shapeStyle = getSectionStyle(node, selectedCount, isHovered);
+          const pricingLabel = node.pricing
+            ? node.pricing.price === 0
+              ? 'Ücretsiz'
+              : `₺${node.pricing.price.toLocaleString('tr-TR')}`
+            : null;
+
+          const lx = shape.labelX;
+          const ly = shape.labelY;
+          const rot = shape.labelRotate;
+          const rotTransform = (yOffset: number) =>
+            rot ? `rotate(${rot}, ${lx}, ${ly + yOffset})` : undefined;
+
+          return (
+            <g
+              key={shape.sectionId}
+              onClick={() => onSectionClick(shape.sectionId)}
+              onMouseEnter={() => setHoveredId(shape.sectionId)}
+              onMouseLeave={() => setHoveredId(null)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && onSectionClick(shape.sectionId)}
+              aria-label={`${node.section.label ?? node.section.name}: ${avail}/${total} müsait`}
+            >
+              {shape.points && (
+                <polygon points={shape.points} style={shapeStyle} />
+              )}
+              {shape.path && (
+                <path d={shape.path} style={shapeStyle} />
+              )}
+
+              {/* Hover ring glow */}
+              {isHovered && shape.points && (
+                <polygon
+                  points={shape.points}
+                  style={{
+                    fill: 'none',
+                    stroke: shapeStyle.stroke as string,
+                    strokeWidth: 5,
+                    strokeOpacity: 0.2,
+                    pointerEvents: 'none',
+                  }}
+                />
+              )}
+
+              {/* Section name */}
+              <text
+                x={lx} y={ly - (pricingLabel ? 12 : 6)}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize={13}
+                style={{ fill: 'var(--text-primary)', fontWeight: 800, pointerEvents: 'none' }}
+                transform={rotTransform(-(pricingLabel ? 12 : 6))}
+              >
+                {node.section.label ?? node.section.name}
+              </text>
+
+              {/* Price */}
+              {pricingLabel && (
+                <text
+                  x={lx} y={ly + 6}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fontSize={11}
+                  style={{ fill: 'var(--text-secondary)', fontWeight: 600, pointerEvents: 'none' }}
+                  transform={rotTransform(6)}
+                >
+                  {pricingLabel}
+                </text>
+              )}
+
+              {/* Availability */}
+              <text
+                x={lx} y={ly + (pricingLabel ? 22 : 10)}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize={9}
+                style={{ fill: 'var(--text-secondary)', pointerEvents: 'none' }}
+                transform={rotTransform(pricingLabel ? 22 : 10)}
+              >
+                {avail}/{total} müsait
+              </text>
+
+              {/* Selected-count badge */}
+              {selectedCount > 0 && (
+                <g style={{ pointerEvents: 'none' }}>
+                  <circle
+                    cx={lx + 36} cy={ly - 26}
+                    r={12}
+                    style={{ fill: 'var(--primary)' }}
+                  />
+                  <text
+                    x={lx + 36} y={ly - 26}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={9}
+                    style={{ fill: 'var(--primary-fg)', fontWeight: 800 }}
+                  >
+                    {selectedCount}
+                  </text>
+                </g>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+
+      {/* Map legend */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-border px-4 py-3 text-[11px] text-text-secondary">
+        {(
+          [
+            { color: 'var(--success)',       opacity: 0.35, border: 'var(--success)',      label: 'Müsait (>50%)' },
+            { color: 'var(--warning)',        opacity: 0.35, border: 'var(--warning)',      label: 'Az Kaldı' },
+            { color: 'var(--error)',          opacity: 0.35, border: 'var(--error)',        label: 'Kritik (<15%)' },
+            { color: 'var(--surface-sunken)', opacity: 1,    border: 'var(--border-strong)',label: 'Tükendi' },
+            { color: 'var(--primary)',        opacity: 0.5,  border: 'var(--primary)',      label: 'Seçili Koltuk' },
+          ] as const
+        ).map(({ color, opacity, border, label }) => (
+          <div key={label} className="flex items-center gap-1.5">
+            <div
+              className="h-3.5 w-3.5 rounded"
+              style={{
+                backgroundColor: color,
+                opacity,
+                border: `1.5px solid ${border}`,
+              }}
+            />
+            <span>{label}</span>
+          </div>
+        ))}
+        <span className="ml-auto italic text-[10px] text-text-disabled">
+          Bölüme tıklayın → koltuk seçin
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
    SeatMapPicker — main export
 ───────────────────────────────────────────── */
 
@@ -345,8 +758,17 @@ export function SeatMapPicker({
   maxSelectable,
   showStage = true,
   className,
+  mapShapes,
+  mapViewBox = '0 0 800 560',
+  mapMaxWidth = 540,
+  stagePoints,
+  stagePath,
+  stageLabel,
+  stageLabelX,
+  stageLabelY,
 }: SeatMapPickerProps) {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
   const selectedIds = useMemo(() => new Set(selectedSeatIds), [selectedSeatIds]);
   const maxReached = maxSelectable != null && selectedIds.size >= maxSelectable;
@@ -359,12 +781,76 @@ export function SeatMapPicker({
     );
   }
 
+  /* ── MAP MODE (mapShapes provided) ── */
+  if (mapShapes) {
+    const activeNode = activeSectionId
+      ? (sections.find((n) => n.section.sectionId === activeSectionId) ?? null)
+      : null;
+
+    return (
+      <div className={cn('rounded-xl border border-border bg-surface-raised overflow-hidden', className)}>
+        {activeNode ? (
+          /* Seat detail panel */
+          <>
+            <SectionDetailHeader node={activeNode} onBack={() => setActiveSectionId(null)} />
+            <div className="p-4 space-y-4">
+              <SectionView
+                node={activeNode}
+                selectedIds={selectedIds}
+                onToggle={onSeatToggle}
+                maxReached={maxReached}
+              />
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+                <Legend />
+                <p className="text-sm font-semibold text-text-primary">
+                  {selectedIds.size} koltuk seçili
+                  {maxSelectable != null && (
+                    <span className="font-normal text-text-secondary"> / {maxSelectable} max</span>
+                  )}
+                </p>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Venue overview map */
+          <VenueMapView
+            sections={sections}
+            shapes={mapShapes}
+            viewBox={mapViewBox}
+            stagePoints={stagePoints}
+            stagePath={stagePath}
+            stageLabel={stageLabel}
+            stageLabelX={stageLabelX}
+            stageLabelY={stageLabelY}
+            maxWidth={mapMaxWidth}
+            selectedIds={selectedIds}
+            onSectionClick={setActiveSectionId}
+          />
+        )}
+
+        {/* Persistent total when on map view */}
+        {!activeNode && selectedIds.size > 0 && (
+          <div className="flex items-center justify-between border-t border-border bg-primary-subtle px-4 py-2">
+            <span className="text-xs font-semibold text-primary">
+              {selectedIds.size} koltuk seçildi
+              {maxSelectable != null && (
+                <span className="font-normal"> / {maxSelectable} maks</span>
+              )}
+            </span>
+            <span className="text-xs text-text-secondary">
+              Bir bölüme tıklayarak değiştirebilirsiniz.
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  /* ── TAB MODE (fallback when no mapShapes) ── */
   const activeSection = sections[activeSectionIdx];
 
   return (
     <div className={cn('rounded-xl border border-border bg-surface-raised overflow-hidden', className)}>
-
-      {/* Stage indicator */}
       {showStage && (
         <div className="relative px-6 pt-5 pb-1">
           <div
@@ -375,13 +861,13 @@ export function SeatMapPicker({
               Sahne / Saha
             </span>
           </div>
-          {/* perspective lines */}
-          <div className="mx-auto mt-0 h-4 border-l border-r border-border opacity-30"
-            style={{ maxWidth: 240 }} />
+          <div
+            className="mx-auto mt-0 h-4 border-l border-r border-border opacity-30"
+            style={{ maxWidth: 240 }}
+          />
         </div>
       )}
 
-      {/* Top-level section tabs */}
       {sections.length > 1 && (
         <div className="flex gap-0.5 border-b border-border px-4 pt-3 overflow-x-auto">
           {sections.map((node, i) => (
@@ -409,7 +895,6 @@ export function SeatMapPicker({
         </div>
       )}
 
-      {/* Active section content */}
       <div className="p-4 space-y-4">
         <SectionView
           node={activeSection}
@@ -417,8 +902,6 @@ export function SeatMapPicker({
           onToggle={onSeatToggle}
           maxReached={maxReached}
         />
-
-        {/* Footer: legend + summary */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
           <Legend />
           <p className="text-sm font-semibold text-text-primary">

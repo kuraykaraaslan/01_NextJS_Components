@@ -14,7 +14,7 @@ import { CheckoutSuccess } from '@/modules/domains/event/CheckoutSuccess';
 import { HeroSlide } from '@/modules/domains/event/HeroSlide';
 import { SeatMapPicker, buildSectionTree } from '@/modules/domains/event/SeatMapPicker';
 import type { EventWithData, EventSectionPricing, Organizer, IssuedTicket, VenueSection, VenueSeat } from '@/modules/domains/event/types';
-import type { SeatInfo, SectionNode } from '@/modules/domains/event/SeatMapPicker';
+import type { SeatInfo, SectionNode, SectionMapShape } from '@/modules/domains/event/SeatMapPicker';
 import { useState } from 'react';
 
 /* ─── interactive wrappers ─── */
@@ -30,6 +30,85 @@ function SeatMapDemo({ sections, max }: { sections: SectionNode[]; max?: number 
       onSeatToggle={toggle}
       maxSelectable={max}
       showStage
+    />
+  );
+}
+
+function SeatMapTheaterDemo() {
+  const [selected, setSelected] = useState<string[]>([]);
+  const toggle = (id: string) =>
+    setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+
+  const sections: VenueSection[] = [
+    { sectionId: 'th-parket',  hallId: 'th', name: 'Parket',      label: 'Parket',      capacity: 96, sortOrder: 0 },
+    { sectionId: 'th-sol',     hallId: 'th', name: 'Sol Yan',     label: 'Sol Yan',     capacity: 36, sortOrder: 1 },
+    { sectionId: 'th-sag',     hallId: 'th', name: 'Sağ Yan',     label: 'Sağ Yan',     capacity: 36, sortOrder: 2 },
+    { sectionId: 'th-balkon',  hallId: 'th', name: 'Üst Balkon',  label: 'Üst Balkon',  capacity: 70, sortOrder: 3 },
+  ];
+
+  const pricings: EventSectionPricing[] = [
+    { eventSectionPricingId: 'th-p1', eventId: 'th-e', hallId: 'th', sectionId: 'th-parket', name: 'Parket',     price: 1200, currency: 'TRY', capacity: 96, soldCount: 36, active: true },
+    { eventSectionPricingId: 'th-p2', eventId: 'th-e', hallId: 'th', sectionId: 'th-sol',    name: 'Sol Yan',   price: 800,  currency: 'TRY', capacity: 36, soldCount: 12, active: true },
+    { eventSectionPricingId: 'th-p3', eventId: 'th-e', hallId: 'th', sectionId: 'th-sag',    name: 'Sağ Yan',  price: 800,  currency: 'TRY', capacity: 36, soldCount: 12, active: true },
+    { eventSectionPricingId: 'th-p4', eventId: 'th-e', hallId: 'th', sectionId: 'th-balkon', name: 'Üst Balkon', price: 450, currency: 'TRY', capacity: 70, soldCount: 30, active: true },
+  ];
+
+  const seatInfos: SeatInfo[] = [];
+
+  for (const row of ['A','B','C','D','E','F','G','H']) {
+    for (let n = 1; n <= 12; n++) {
+      const seatId = `th-parket-${row}${n}`;
+      const status: SeatInfo['status'] =
+        ['A','B','C'].includes(row) ? 'SOLD' :
+        row === 'D' && n <= 2       ? 'HELD' : 'AVAILABLE';
+      seatInfos.push({
+        seat: { seatId, sectionId: 'th-parket', row, number: String(n), label: null, x: null, y: null, accessible: row === 'H' && n === 12, companionSeat: false },
+        status,
+      });
+    }
+  }
+
+  for (const secId of ['th-sol', 'th-sag']) {
+    for (const row of ['A','B','C','D','E','F']) {
+      for (let n = 1; n <= 6; n++) {
+        seatInfos.push({
+          seat: { seatId: `${secId}-${row}${n}`, sectionId: secId, row, number: String(n), label: null, x: null, y: null, accessible: false, companionSeat: false },
+          status: ['A','B'].includes(row) ? 'SOLD' : 'AVAILABLE',
+        });
+      }
+    }
+  }
+
+  for (const row of ['A','B','C','D','E','F','G']) {
+    for (let n = 1; n <= 10; n++) {
+      seatInfos.push({
+        seat: { seatId: `th-balkon-${row}${n}`, sectionId: 'th-balkon', row, number: String(n), label: null, x: null, y: null, accessible: row === 'G' && n === 5, companionSeat: false },
+        status: ['A','B','C'].includes(row) ? 'SOLD' : 'AVAILABLE',
+      });
+    }
+  }
+
+  const tree = buildSectionTree(sections, seatInfos, pricings);
+
+  const mapShapes: SectionMapShape[] = [
+    { sectionId: 'th-parket', points: '170,93 510,93 558,290 122,290',                labelX: 340, labelY: 185 },
+    { sectionId: 'th-sol',    points: '32,93 170,93 122,290 18,248',                  labelX: 95,  labelY: 185 },
+    { sectionId: 'th-sag',    points: '510,93 648,93 662,248 558,290',                labelX: 585, labelY: 185 },
+    { sectionId: 'th-balkon', points: '18,248 122,290 558,290 662,248 674,438 6,438', labelX: 340, labelY: 360 },
+  ];
+
+  return (
+    <SeatMapPicker
+      sections={tree}
+      selectedSeatIds={selected}
+      onSeatToggle={toggle}
+      maxSelectable={6}
+      mapShapes={mapShapes}
+      mapViewBox="0 0 680 460"
+      stagePoints="225,18 455,18 455,88 225,88"
+      stageLabel="SAHNE"
+      stageLabelX={340}
+      stageLabelY={53}
     />
   );
 }
@@ -679,6 +758,32 @@ const sections = buildSectionTree(allSections, seatInfos, pricings);
   onSeatToggle={(id) => toggleSeat(id)}
   maxSelectable={4}
   showStage
+/>`,
+          },
+          {
+            title: 'SVG Salon Haritası — tıkla → koltuk seç',
+            layout: 'stack' as const,
+            preview: <SeatMapTheaterDemo />,
+            code: `import type { SectionMapShape } from '@/modules/domains/event/SeatMapPicker';
+
+const mapShapes: SectionMapShape[] = [
+  { sectionId: 'parket',     points: '170,93 510,93 558,290 122,290',                labelX: 340, labelY: 185 },
+  { sectionId: 'sol-yan',   points: '32,93 170,93 122,290 18,248',                  labelX: 95,  labelY: 185 },
+  { sectionId: 'sag-yan',   points: '510,93 648,93 662,248 558,290',                labelX: 585, labelY: 185 },
+  { sectionId: 'ust-balkon', points: '18,248 122,290 558,290 662,248 674,438 6,438', labelX: 340, labelY: 360 },
+];
+
+<SeatMapPicker
+  sections={sections}
+  selectedSeatIds={selected}
+  onSeatToggle={(id) => toggleSeat(id)}
+  maxSelectable={6}
+  mapShapes={mapShapes}
+  mapViewBox="0 0 680 460"
+  stagePoints="225,18 455,18 455,88 225,88"
+  stageLabel="SAHNE"
+  stageLabelX={340}
+  stageLabelY={53}
 />`,
           },
         ];

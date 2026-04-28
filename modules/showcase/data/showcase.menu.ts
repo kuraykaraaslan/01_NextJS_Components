@@ -152,35 +152,6 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: 'Auth Flow',
-    collapsible: true,
-    sectionStart: 'Live Demos',
-    items: [
-      { id: 'live-login',           title: 'Login',           category: 'Theme', abbr: 'Li', href: '/domains/common/auth/login' },
-      { id: 'live-register',        title: 'Register',        category: 'Theme', abbr: 'Rg', href: '/domains/common/auth/register' },
-      { id: 'live-forgot',          title: 'Forgot Password', category: 'Theme', abbr: 'FP', href: '/domains/common/auth/forgot-password' },
-      { id: 'live-change-password', title: 'Change Password', category: 'Theme', abbr: 'CP', href: '/domains/common/auth/change-password' },
-    ],
-  },
-  {
-    label: 'Checkout Flow',
-    collapsible: true,
-    items: [
-      { id: 'live-cart',    title: 'Cart',         category: 'Theme', abbr: 'Ct', href: '/domains/common/checkout' },
-      { id: 'live-address', title: 'Address',      category: 'Theme', abbr: 'Ad', href: '/domains/common/checkout/address' },
-      { id: 'live-payment', title: 'Payment',      category: 'Theme', abbr: 'Py', href: '/domains/common/checkout/payment' },
-      { id: 'live-confirm', title: 'Confirmation', category: 'Theme', abbr: 'Ok', href: '/domains/common/checkout/confirm' },
-    ],
-  },
-  {
-    label: 'Blog Demo',
-    collapsible: true,
-    items: [
-      { id: 'live-blog',         title: 'Blog Home',    category: 'Theme', abbr: 'Bh', href: '/domains/blog' },
-      { id: 'live-blog-archive', title: 'Blog Archive', category: 'Theme', abbr: 'Ba', href: '/domains/blog/archive' },
-    ],
-  },
-  {
     label: 'App Concepts',
     collapsible: true,
     sectionStart: 'App Concepts',
@@ -199,6 +170,16 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'splash-screen',      title: 'SplashScreen',      category: 'App', abbr: 'SS' },
     ],
   },
+  {
+    label: 'Themes',
+    collapsible: true,
+    sectionStart: 'Themes',
+    items: [
+      { id: 'common', title: 'Common Theme', category: 'Theme', abbr: 'CT' , href: '/themes/common' },
+      { id: 'blog',   title: 'Blog Theme',   category: 'Theme', abbr: 'BT' , href: '/themes/blog' },
+      { id: 'event',  title: 'Event Theme',  category: 'Theme', abbr: 'ET' , href: '/themes/event' },
+    ],
+  }
 ];
 
 export default NAV_GROUPS;
