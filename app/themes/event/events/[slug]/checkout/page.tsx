@@ -9,7 +9,8 @@ import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm'
 import { CouponInput } from '@/modules/domains/common/discount/CouponInput';
 import { OrderTotalsCard } from '@/modules/domains/common/money/OrderTotalsCard';
 import { SectionPricingCard } from '@/modules/domains/event/SectionPricingCard';
-import { TicketCard } from '@/modules/domains/event/TicketCard';
+import { StepIndicator, type CheckoutStep } from '@/modules/domains/event/StepIndicator';
+import { CheckoutSuccess } from '@/modules/domains/event/CheckoutSuccess';
 import {
   getEventBySlug,
   getPricingsByEventId,
@@ -21,7 +22,7 @@ import type { OrderTotals } from '@/modules/domains/common/MoneyTypes';
 
 /* ── types ── */
 
-type Step = 'tickets' | 'buyer' | 'payment' | 'confirm';
+type Step = CheckoutStep;
 
 type BuyerInfo = {
   name: string;
@@ -40,50 +41,6 @@ const FMT_TIME = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-
 
 const SERVICE_FEE_RATE = 0.05;
 const VALID_COUPON = 'BILLET20';
-
-/* ── StepIndicator ── */
-
-function StepIndicator({ current }: { current: Step }) {
-  const steps: { id: Step; label: string }[] = [
-    { id: 'tickets', label: 'Biletler' },
-    { id: 'buyer', label: 'Bilgiler' },
-    { id: 'payment', label: 'Ödeme' },
-    { id: 'confirm', label: 'Onay' },
-  ];
-  const currentIdx = steps.findIndex((s) => s.id === current);
-
-  return (
-    <div className="flex items-center gap-0">
-      {steps.map((step, i) => {
-        const done = i < currentIdx;
-        const active = i === currentIdx;
-        return (
-          <div key={step.id} className="flex items-center">
-            <div className="flex flex-col items-center gap-1">
-              <div
-                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                  done
-                    ? 'bg-success text-white'
-                    : active
-                      ? 'bg-primary text-primary-fg'
-                      : 'bg-surface-overlay text-text-disabled border border-border'
-                }`}
-              >
-                {done ? '✓' : i + 1}
-              </div>
-              <span className={`text-[10px] font-medium whitespace-nowrap ${active ? 'text-primary' : done ? 'text-text-secondary' : 'text-text-disabled'}`}>
-                {step.label}
-              </span>
-            </div>
-            {i < steps.length - 1 && (
-              <div className={`h-px w-12 sm:w-16 mb-4 transition-colors ${done ? 'bg-success' : 'bg-border'}`} />
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 /* ════════════════════════════════════════════
    Page
@@ -166,88 +123,17 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
   /* ── success view ── */
 
   if (step === 'confirm') {
-    const ticket = {
-      ticketId,
-      orderId,
-      orderItemId: `OI-${ticketId}`,
-      eventId: event.eventId,
-      hallId: 'hall-1',
-      sectionId: cartItems[0]?.pricing.sectionId ?? 'sec-1',
-      seatId: 'seat-auto',
-      eventSeatId: 'eseat-auto',
-      pricingId: cartItems[0]?.pricing.eventSectionPricingId ?? 'price-1',
-      attendeeName: buyer.name || null,
-      attendeeEmail: buyer.email || null,
-      qrCode: `QR-${ticketId}-${event.eventId}`.toUpperCase(),
-      barcode: null,
-      status: 'VALID' as const,
-      checkedInAt: null,
-      checkedInBy: null,
-      transferredToUserId: null,
-      transferredAt: null,
-      createdAt: new Date(),
-    };
-
     return (
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 py-12 space-y-6">
-        <div className="text-center space-y-3">
-          <span className="flex h-20 w-20 items-center justify-center rounded-full bg-success-subtle text-4xl mx-auto">
-            ✓
-          </span>
-          <h1 className="text-2xl font-black text-text-primary">Ödeme Başarılı!</h1>
-          <p className="text-text-secondary">
-            Biletiniz oluşturuldu. Sipariş numaranız: <strong>{orderId}</strong>
-          </p>
-          {buyer.email && (
-            <p className="text-xs text-text-secondary">
-              Bilet detayları <strong>{buyer.email}</strong> adresine gönderildi.
-            </p>
-          )}
-        </div>
-
-        <TicketCard
-          ticket={ticket}
-          event={{
-            title: event.title,
-            startAt: event.startAt,
-            venueName: venue.name,
-            venueCity: venue.city,
-          }}
-          section={cartItems[0] ? {
-            sectionName: cartItems[0].pricing.name,
-          } : undefined}
-        />
-
-        <div className="rounded-xl border border-border bg-surface-raised p-4 space-y-2 text-sm">
-          <p className="font-semibold text-text-primary">Sipariş özeti</p>
-          {cartItems.map((item) => (
-            <div key={item.pricing.eventSectionPricingId} className="flex justify-between text-text-secondary">
-              <span>{item.pricing.name} × {item.quantity}</span>
-              <span className="font-mono">{FMT.format(item.pricing.price * item.quantity)}</span>
-            </div>
-          ))}
-          <div className="border-t border-border pt-2 flex justify-between font-bold text-text-primary">
-            <span>Toplam</span>
-            <span className="font-mono">{FMT.format(total)}</span>
-          </div>
-        </div>
-
-        <div className="flex gap-3">
-          <Button
-            variant="outline"
-            fullWidth
-            onClick={() => window.print()}
-          >
-            Yazdır / PDF
-          </Button>
-          <a
-            href={`/themes/event/events/${slug}`}
-            className="flex flex-1 items-center justify-center rounded-md bg-primary text-primary-fg hover:bg-primary-hover px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
-          >
-            Etkinliğe Dön
-          </a>
-        </div>
-      </div>
+      <CheckoutSuccess
+        orderId={orderId}
+        ticketId={ticketId}
+        buyerName={buyer.name}
+        buyerEmail={buyer.email}
+        event={{ eventId: event.eventId, title: event.title, startAt: event.startAt, slug }}
+        venue={venue}
+        cartItems={cartItems}
+        total={total}
+      />
     );
   }
 

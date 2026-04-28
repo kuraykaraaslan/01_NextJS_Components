@@ -1,0 +1,715 @@
+'use client';
+import type { ShowcaseComponent } from '../showcase.types';
+import { EventStatusBadge } from '@/modules/domains/event/EventStatusBadge';
+import { EventFormatBadge } from '@/modules/domains/event/EventFormatBadge';
+import { EventCategoryBadge } from '@/modules/domains/event/EventCategoryBadge';
+import { EventCard } from '@/modules/domains/event/EventCard';
+import { OrganizerCard } from '@/modules/domains/event/OrganizerCard';
+import { SectionPricingCard } from '@/modules/domains/event/SectionPricingCard';
+import { TicketCard } from '@/modules/domains/event/TicketCard';
+import { EventInfoGrid } from '@/modules/domains/event/EventInfoGrid';
+import { TicketSidebarBox } from '@/modules/domains/event/TicketSidebarBox';
+import { StepIndicator } from '@/modules/domains/event/StepIndicator';
+import { CheckoutSuccess } from '@/modules/domains/event/CheckoutSuccess';
+import { HeroSlide } from '@/modules/domains/event/HeroSlide';
+import { SeatMapPicker, buildSectionTree } from '@/modules/domains/event/SeatMapPicker';
+import type { EventWithData, EventSectionPricing, Organizer, IssuedTicket, VenueSection, VenueSeat } from '@/modules/domains/event/types';
+import type { SeatInfo, SectionNode } from '@/modules/domains/event/SeatMapPicker';
+import { useState } from 'react';
+
+/* ─── interactive wrappers ─── */
+
+function SeatMapDemo({ sections, max }: { sections: SectionNode[]; max?: number }) {
+  const [selected, setSelected] = useState<string[]>([]);
+  const toggle = (id: string) =>
+    setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  return (
+    <SeatMapPicker
+      sections={sections}
+      selectedSeatIds={selected}
+      onSeatToggle={toggle}
+      maxSelectable={max}
+      showStage
+    />
+  );
+}
+
+/* ─── demo data ─── */
+
+const DEMO_CATEGORY = {
+  categoryId: 'cat-music',
+  title: 'Müzik',
+  slug: 'muzik',
+  image: null,
+};
+
+const DEMO_ORGANIZER: Organizer = {
+  organizerId: 'org-1',
+  name: 'LiveNation Türkiye',
+  slug: 'livenation-tr',
+  description: 'Türkiye\'nin önde gelen etkinlik organizatörü.',
+  logo: null,
+  website: 'https://livenation.com',
+  email: 'info@livenation.com.tr',
+  phone: null,
+  verified: true,
+};
+
+const DEMO_EVENT: EventWithData = {
+  eventId: 'evt-1',
+  title: 'Coldplay – Music of the Spheres World Tour',
+  slug: 'coldplay-istanbul-2026',
+  shortDescription: 'Coldplay\'in efsanevi dünya turnesinden İstanbul\'a görkemli bir durak.',
+  description: 'Coldplay, Music of the Spheres World Tour kapsamında İstanbul\'a geliyor.',
+  categoryId: 'cat-music',
+  organizerId: 'org-1',
+  format: 'PHYSICAL',
+  startAt: new Date('2026-08-15T20:00:00'),
+  endAt: new Date('2026-08-15T23:00:00'),
+  timezone: 'Europe/Istanbul',
+  image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80',
+  bannerImage: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600&q=80',
+  status: 'PUBLISHED',
+  visibility: 'PUBLIC',
+  minPrice: 1500,
+  maxPrice: 8500,
+  currency: 'TRY',
+  totalCapacity: 50000,
+  remainingCapacity: 3200,
+  onlineUrl: null,
+  tags: ['coldplay', 'müzik', 'konser'],
+  keywords: ['coldplay', 'istanbul', 'konser'],
+  category: DEMO_CATEGORY,
+  organizer: DEMO_ORGANIZER,
+};
+
+const DEMO_SOLD_OUT_EVENT: EventWithData = {
+  ...DEMO_EVENT,
+  eventId: 'evt-2',
+  title: 'Istanbul Caz Festivali',
+  slug: 'istanbul-caz-2026',
+  status: 'SOLD_OUT',
+  minPrice: 250,
+  maxPrice: 1200,
+  remainingCapacity: 0,
+  image: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=800&q=80',
+  category: { categoryId: 'cat-music', title: 'Müzik', slug: 'muzik', image: null },
+};
+
+const DEMO_PRICINGS: EventSectionPricing[] = [
+  {
+    eventSectionPricingId: 'p1',
+    eventId: 'evt-1',
+    hallId: 'hall-1',
+    sectionId: 'sec-1',
+    name: 'Genel Giriş',
+    description: null,
+    price: 1500,
+    currency: 'TRY',
+    capacity: 30000,
+    soldCount: 27500,
+    active: true,
+  },
+  {
+    eventSectionPricingId: 'p2',
+    eventId: 'evt-1',
+    hallId: 'hall-1',
+    sectionId: 'sec-2',
+    name: 'Oturma — Kategori B',
+    description: null,
+    price: 3500,
+    currency: 'TRY',
+    capacity: 15000,
+    soldCount: 14983,
+    active: true,
+  },
+  {
+    eventSectionPricingId: 'p3',
+    eventId: 'evt-1',
+    hallId: 'hall-1',
+    sectionId: 'sec-3',
+    name: 'VIP',
+    description: null,
+    price: 8500,
+    currency: 'TRY',
+    capacity: 5000,
+    soldCount: 4200,
+    active: true,
+  },
+];
+
+const DEMO_TICKET: IssuedTicket = {
+  ticketId: 'TKT-A1B2C3',
+  orderId: 'ORD-XY9Z12',
+  orderItemId: 'OI-TKT-A1B2C3',
+  eventId: 'evt-1',
+  hallId: 'hall-1',
+  sectionId: 'sec-1',
+  seatId: 'seat-1',
+  eventSeatId: 'eseat-1',
+  pricingId: 'p1',
+  attendeeName: 'Ahmet Yılmaz',
+  attendeeEmail: 'ahmet@example.com',
+  qrCode: 'QR-TKT-A1B2C3-EVT-1',
+  barcode: null,
+  status: 'VALID',
+  checkedInAt: null,
+  checkedInBy: null,
+  transferredToUserId: null,
+  transferredAt: null,
+  createdAt: new Date(),
+};
+
+/* ─── builders ─── */
+
+export function buildEventDomainData(): ShowcaseComponent[] {
+  return [
+
+    /* ── Badges ── */
+    {
+      id: 'event-status-badge',
+      title: 'EventStatusBadge',
+      category: 'Domain',
+      abbr: 'ES',
+      description: 'Etkinlik durumunu (PUBLISHED, SOLD_OUT, CANCELLED…) renkli badge ile gösterir.',
+      filePath: 'modules/domains/event/EventStatusBadge.tsx',
+      sourceCode: `import { EventStatusBadge } from '@/modules/domains/event/EventStatusBadge';
+// DRAFT | PUBLISHED | SCHEDULED | CANCELLED | POSTPONED | SOLD_OUT | ARCHIVED
+<EventStatusBadge status="PUBLISHED" />`,
+      variants: [
+        {
+          title: 'Tüm durumlar',
+          layout: 'stack',
+          preview: (
+            <div className="flex flex-wrap gap-2">
+              {(['DRAFT', 'PUBLISHED', 'SCHEDULED', 'CANCELLED', 'POSTPONED', 'SOLD_OUT', 'ARCHIVED'] as const).map((s) => (
+                <EventStatusBadge key={s} status={s} />
+              ))}
+            </div>
+          ),
+          code: `<EventStatusBadge status="DRAFT" />
+<EventStatusBadge status="PUBLISHED" />
+<EventStatusBadge status="SOLD_OUT" />`,
+        },
+        {
+          title: 'Boyutlar',
+          layout: 'stack',
+          preview: (
+            <div className="flex flex-wrap gap-2 items-center">
+              <EventStatusBadge status="CANCELLED" size="sm" />
+              <EventStatusBadge status="CANCELLED" size="md" />
+            </div>
+          ),
+          code: `<EventStatusBadge status="CANCELLED" size="sm" />
+<EventStatusBadge status="CANCELLED" size="md" />
+<EventStatusBadge status="CANCELLED" size="lg" />`,
+        },
+      ],
+    },
+
+    {
+      id: 'event-format-badge',
+      title: 'EventFormatBadge',
+      category: 'Domain',
+      abbr: 'EF',
+      description: 'Etkinlik formatını (PHYSICAL / ONLINE / HYBRID) emoji + etiket ile gösterir.',
+      filePath: 'modules/domains/event/EventFormatBadge.tsx',
+      sourceCode: `import { EventFormatBadge } from '@/modules/domains/event/EventFormatBadge';
+<EventFormatBadge format="PHYSICAL" />`,
+      variants: [
+        {
+          title: 'Tüm formatlar',
+          layout: 'stack',
+          preview: (
+            <div className="flex flex-wrap gap-2">
+              <EventFormatBadge format="PHYSICAL" />
+              <EventFormatBadge format="ONLINE" />
+              <EventFormatBadge format="HYBRID" />
+            </div>
+          ),
+          code: `<EventFormatBadge format="PHYSICAL" />
+<EventFormatBadge format="ONLINE" />
+<EventFormatBadge format="HYBRID" />`,
+        },
+      ],
+    },
+
+    {
+      id: 'event-category-badge',
+      title: 'EventCategoryBadge',
+      category: 'Domain',
+      abbr: 'EC',
+      description: 'Etkinlik kategorisini chip olarak gösterir; href verilirse tıklanabilir bağlantıya dönüşür.',
+      filePath: 'modules/domains/event/EventCategoryBadge.tsx',
+      sourceCode: `import { EventCategoryBadge } from '@/modules/domains/event/EventCategoryBadge';
+<EventCategoryBadge category={category} />
+<EventCategoryBadge category={category} href="/events?category=muzik" />`,
+      variants: [
+        {
+          title: 'Badge ve link',
+          layout: 'stack',
+          preview: (
+            <div className="flex flex-wrap gap-2">
+              <EventCategoryBadge category={DEMO_CATEGORY} />
+              <EventCategoryBadge category={{ title: 'Spor', slug: 'spor', image: null }} />
+              <EventCategoryBadge category={DEMO_CATEGORY} href="#" />
+            </div>
+          ),
+          code: `<EventCategoryBadge category={category} />
+<EventCategoryBadge category={category} href="/events?category=muzik" />`,
+        },
+      ],
+    },
+
+    /* ── Cards ── */
+    {
+      id: 'event-card',
+      title: 'EventCard',
+      category: 'Domain',
+      abbr: 'EV',
+      description: '16:9 görsel, fiyat pill, kategori/durum/format badge ve organizatör bilgisi içeren tam etkinlik kartı.',
+      filePath: 'modules/domains/event/EventCard.tsx',
+      sourceCode: `import { EventCard } from '@/modules/domains/event/EventCard';
+<EventCard event={event} />`,
+      variants: [
+        {
+          title: 'Yayında',
+          preview: <div className="w-72"><EventCard event={DEMO_EVENT} /></div>,
+          code: `<EventCard event={event} />`,
+        },
+        {
+          title: 'Satışı Bitti',
+          preview: <div className="w-72"><EventCard event={DEMO_SOLD_OUT_EVENT} /></div>,
+          code: `<EventCard event={soldOutEvent} />`,
+        },
+      ],
+    },
+
+    {
+      id: 'organizer-card',
+      title: 'OrganizerCard',
+      category: 'Domain',
+      abbr: 'OC',
+      description: 'Organizatör logo/baş harfleri, isim, doğrulanmış rozetleri ve iletişim bağlantılarını gösterir.',
+      filePath: 'modules/domains/event/OrganizerCard.tsx',
+      sourceCode: `import { OrganizerCard } from '@/modules/domains/event/OrganizerCard';
+<OrganizerCard organizer={organizer} />`,
+      variants: [
+        {
+          title: 'Doğrulanmış organizatör',
+          layout: 'stack',
+          preview: <OrganizerCard organizer={DEMO_ORGANIZER} />,
+          code: `<OrganizerCard organizer={organizer} />`,
+        },
+        {
+          title: 'Logosuz',
+          layout: 'stack',
+          preview: <OrganizerCard organizer={{ ...DEMO_ORGANIZER, verified: false, website: null, email: null }} />,
+          code: `<OrganizerCard organizer={{ ...organizer, verified: false }} />`,
+        },
+      ],
+    },
+
+    {
+      id: 'section-pricing-card',
+      title: 'SectionPricingCard',
+      category: 'Domain',
+      abbr: 'SP',
+      description: 'Bilet kategorisi seçim kartı; −/+ adet kontrolü, kapasite uyarısı ve seçili durumu içerir.',
+      filePath: 'modules/domains/event/SectionPricingCard.tsx',
+      sourceCode: `import { SectionPricingCard } from '@/modules/domains/event/SectionPricingCard';
+<SectionPricingCard
+  pricing={pricing}
+  quantity={2}
+  onQuantityChange={(qty) => setQty(qty)}
+  selected
+/>`,
+      variants: [
+        {
+          title: 'Seçili',
+          layout: 'stack',
+          preview: (
+            <div className="w-full max-w-md space-y-3">
+              <SectionPricingCard pricing={DEMO_PRICINGS[0]} quantity={2} onQuantityChange={() => {}} selected />
+            </div>
+          ),
+          code: `<SectionPricingCard pricing={pricing} quantity={2} onQuantityChange={setQty} selected />`,
+        },
+        {
+          title: 'Son koltuk uyarısı',
+          layout: 'stack',
+          preview: (
+            <div className="w-full max-w-md space-y-3">
+              <SectionPricingCard pricing={DEMO_PRICINGS[1]} quantity={0} onQuantityChange={() => {}} />
+            </div>
+          ),
+          code: `// soldCount yakın olduğunda "Son X koltuk" uyarısı gösterilir
+<SectionPricingCard pricing={pricing} quantity={0} onQuantityChange={setQty} />`,
+        },
+      ],
+    },
+
+    {
+      id: 'ticket-card',
+      title: 'TicketCard',
+      category: 'Domain',
+      abbr: 'TC',
+      description: 'Kesik çizgili ayırıcı ve SVG QR koduyla tam bilet görseli.',
+      filePath: 'modules/domains/event/TicketCard.tsx',
+      sourceCode: `import { TicketCard } from '@/modules/domains/event/TicketCard';
+<TicketCard
+  ticket={ticket}
+  event={{ title, startAt, venueName, venueCity }}
+  section={{ sectionName: 'Genel Giriş' }}
+/>`,
+      variants: [
+        {
+          title: 'Geçerli bilet',
+          layout: 'stack',
+          preview: (
+            <TicketCard
+              ticket={DEMO_TICKET}
+              event={{
+                title: DEMO_EVENT.title,
+                startAt: DEMO_EVENT.startAt,
+                venueName: 'Atatürk Olimpiyat Stadyumu',
+                venueCity: 'İstanbul',
+              }}
+              section={{ sectionName: 'Genel Giriş' }}
+            />
+          ),
+          code: `<TicketCard
+  ticket={ticket}
+  event={{ title, startAt, venueName, venueCity }}
+  section={{ sectionName: 'Genel Giriş' }}
+/>`,
+        },
+      ],
+    },
+
+    /* ── New components ── */
+    {
+      id: 'event-info-grid',
+      title: 'EventInfoGrid',
+      category: 'Domain',
+      abbr: 'EI',
+      description: 'Etkinlik detay sayfası için tarih/saat, mekan, format ve doluluk oranı bilgilerini düzenli bir kart içinde gösterir.',
+      filePath: 'modules/domains/event/EventInfoGrid.tsx',
+      sourceCode: `import { EventInfoGrid } from '@/modules/domains/event/EventInfoGrid';
+<EventInfoGrid
+  event={event}
+  venue={{ name: 'Atatürk Olimpiyat Stadyumu', address: 'Başakşehir, İstanbul' }}
+/>`,
+      variants: [
+        {
+          title: 'Tüm alanlar',
+          layout: 'stack',
+          preview: (
+            <EventInfoGrid
+              event={DEMO_EVENT}
+              venue={{ name: 'Atatürk Olimpiyat Stadyumu', address: 'Başakşehir, İstanbul' }}
+            />
+          ),
+          code: `<EventInfoGrid event={event} venue={venue} />`,
+        },
+        {
+          title: 'Online etkinlik (mekan yok)',
+          layout: 'stack',
+          preview: (
+            <EventInfoGrid
+              event={{ ...DEMO_EVENT, format: 'ONLINE', remainingCapacity: null }}
+              venue={null}
+            />
+          ),
+          code: `<EventInfoGrid event={{ ...event, format: 'ONLINE' }} venue={null} />`,
+        },
+      ],
+    },
+
+    {
+      id: 'ticket-sidebar-box',
+      title: 'TicketSidebarBox',
+      category: 'Domain',
+      abbr: 'TB',
+      description: 'Etkinlik detay sayfasının yapışkan sağ kenar çubuğu: fiyat başlığı, fiyatlandırma listesi, satın al butonu ve harita.',
+      filePath: 'modules/domains/event/TicketSidebarBox.tsx',
+      sourceCode: `import { TicketSidebarBox } from '@/modules/domains/event/TicketSidebarBox';
+<TicketSidebarBox
+  priceLabel="₺1.500 – ₺8.500"
+  pricings={pricings}
+  canBuy={true}
+  isSoldOut={false}
+  isCancelled={false}
+  eventSlug="coldplay-istanbul-2026"
+  remainingCapacity={3200}
+  venue={{ name: 'Atatürk Olimpiyat Stadyumu', address: 'Başakşehir', city: 'İstanbul' }}
+/>`,
+      variants: [
+        {
+          title: 'Satın alınabilir',
+          layout: 'stack',
+          preview: (
+            <div className="w-80">
+              <TicketSidebarBox
+                priceLabel="₺1.500 – ₺8.500"
+                pricings={DEMO_PRICINGS}
+                canBuy
+                isSoldOut={false}
+                isCancelled={false}
+                eventSlug="coldplay-istanbul-2026"
+                remainingCapacity={800}
+                venue={{ name: 'Atatürk Olimpiyat Stadyumu', address: 'Başakşehir', city: 'İstanbul' }}
+              />
+            </div>
+          ),
+          code: `<TicketSidebarBox
+  priceLabel="₺1.500 – ₺8.500"
+  pricings={pricings}
+  canBuy={true}
+  isSoldOut={false}
+  isCancelled={false}
+  eventSlug={event.slug}
+  remainingCapacity={800}
+  venue={venue}
+/>`,
+        },
+        {
+          title: 'Satışı bitti',
+          layout: 'stack',
+          preview: (
+            <div className="w-80">
+              <TicketSidebarBox
+                priceLabel="₺250 – ₺1.200"
+                pricings={[]}
+                canBuy={false}
+                isSoldOut
+                isCancelled={false}
+                eventSlug="istanbul-caz-2026"
+                remainingCapacity={0}
+              />
+            </div>
+          ),
+          code: `<TicketSidebarBox canBuy={false} isSoldOut={true} ... />`,
+        },
+      ],
+    },
+
+    {
+      id: 'step-indicator',
+      title: 'StepIndicator',
+      category: 'Domain',
+      abbr: 'SI',
+      description: 'Ödeme akışı (Biletler → Bilgiler → Ödeme → Onay) için 4 adımlı ilerleme göstergesi.',
+      filePath: 'modules/domains/event/StepIndicator.tsx',
+      sourceCode: `import { StepIndicator } from '@/modules/domains/event/StepIndicator';
+// 'tickets' | 'buyer' | 'payment' | 'confirm'
+<StepIndicator current="payment" />`,
+      variants: [
+        {
+          title: 'Tüm adım durumları',
+          layout: 'stack',
+          preview: (
+            <div className="space-y-6">
+              {(['tickets', 'buyer', 'payment', 'confirm'] as const).map((step) => (
+                <div key={step} className="space-y-1">
+                  <p className="text-xs text-text-secondary font-mono">{step}</p>
+                  <StepIndicator current={step} />
+                </div>
+              ))}
+            </div>
+          ),
+          code: `<StepIndicator current="tickets" />
+<StepIndicator current="buyer" />
+<StepIndicator current="payment" />
+<StepIndicator current="confirm" />`,
+        },
+      ],
+    },
+
+    {
+      id: 'checkout-success',
+      title: 'CheckoutSuccess',
+      category: 'Domain',
+      abbr: 'CS',
+      description: 'Başarılı ödeme sonrası gösterilen onay ekranı: QR bilet, sipariş özeti, yazdır/geri dön butonları.',
+      filePath: 'modules/domains/event/CheckoutSuccess.tsx',
+      sourceCode: `import { CheckoutSuccess } from '@/modules/domains/event/CheckoutSuccess';
+<CheckoutSuccess
+  orderId="ORD-XY9Z12"
+  ticketId="TKT-A1B2C3"
+  buyerName="Ahmet Yılmaz"
+  buyerEmail="ahmet@example.com"
+  event={{ eventId, title, startAt, slug }}
+  venue={{ name, city }}
+  cartItems={[{ pricing, quantity: 2 }]}
+  total={3000}
+/>`,
+      variants: [
+        {
+          title: 'Başarı ekranı',
+          layout: 'stack',
+          preview: (
+            <CheckoutSuccess
+              orderId="ORD-XY9Z12"
+              ticketId="TKT-A1B2C3"
+              buyerName="Ahmet Yılmaz"
+              buyerEmail="ahmet@example.com"
+              event={{
+                eventId: DEMO_EVENT.eventId,
+                title: DEMO_EVENT.title,
+                startAt: DEMO_EVENT.startAt,
+                slug: DEMO_EVENT.slug,
+              }}
+              venue={{ name: 'Atatürk Olimpiyat Stadyumu', city: 'İstanbul' }}
+              cartItems={[{ pricing: DEMO_PRICINGS[0], quantity: 2 }]}
+              total={3000}
+            />
+          ),
+          code: `<CheckoutSuccess
+  orderId="ORD-XY9Z12"
+  ticketId="TKT-A1B2C3"
+  buyerName="Ahmet Yılmaz"
+  buyerEmail="ahmet@example.com"
+  event={event}
+  venue={venue}
+  cartItems={cartItems}
+  total={total}
+/>`,
+        },
+      ],
+    },
+
+    {
+      id: 'seat-map-picker',
+      title: 'SeatMapPicker',
+      category: 'Domain',
+      abbr: 'SM',
+      description: 'Görsel koltuk seçim haritası: section/subsection sekme desteği, sıra-koltuk grid, renk kodlu durum, erişilebilirlik göstergesi.',
+      filePath: 'modules/domains/event/SeatMapPicker.tsx',
+      sourceCode: `import { SeatMapPicker, buildSectionTree } from '@/modules/domains/event/SeatMapPicker';
+
+// Flat veriden ağaç oluştur
+const sections = buildSectionTree(allSections, seatInfos, pricings);
+
+<SeatMapPicker
+  sections={sections}
+  selectedSeatIds={selected}
+  onSeatToggle={(id) => toggleSeat(id)}
+  maxSelectable={4}
+  showStage
+/>`,
+      variants: (() => {
+        /* ── demo sections & seats ── */
+        const SEC_FLOOR: VenueSection = { sectionId: 'sec-floor', hallId: 'h1', parentSectionId: null, name: 'Zemin', label: 'Zemin Kat', capacity: 60, sortOrder: 0 };
+        const SEC_BALCONY: VenueSection = { sectionId: 'sec-balcony', hallId: 'h1', parentSectionId: null, name: 'Balkon', label: 'Balkon', capacity: 40, sortOrder: 1 };
+        const SEC_VIP: VenueSection = { sectionId: 'sec-vip', hallId: 'h1', parentSectionId: null, name: 'VIP', label: 'VIP', capacity: 20, sortOrder: 2 };
+
+        // Subsections of Zemin
+        const SEC_FLOOR_L: VenueSection = { sectionId: 'sec-floor-l', hallId: 'h1', parentSectionId: 'sec-floor', name: 'Sol Blok', label: 'Sol', capacity: 30, sortOrder: 0 };
+        const SEC_FLOOR_R: VenueSection = { sectionId: 'sec-floor-r', hallId: 'h1', parentSectionId: 'sec-floor', name: 'Sağ Blok', label: 'Sağ', capacity: 30, sortOrder: 1 };
+
+        function makeSeat(sectionId: string, row: string, num: number, opts?: Partial<VenueSeat>): SeatInfo {
+          const seatId = `${sectionId}-${row}${num}`;
+          return {
+            seat: { seatId, sectionId, row, number: String(num), label: null, x: null, y: null, accessible: false, companionSeat: false, ...opts },
+            status: 'AVAILABLE',
+          };
+        }
+
+        // Floor Left: rows A-D, 8 seats each, some sold/held
+        const floorLSeats: SeatInfo[] = [];
+        for (const row of ['A', 'B', 'C', 'D']) {
+          for (let n = 1; n <= 8; n++) {
+            const id = `sec-floor-l-${row}${n}`;
+            let status: 'AVAILABLE' | 'SOLD' | 'HELD' = 'AVAILABLE';
+            if ((row === 'A' && n <= 3) || (row === 'B' && n === 5)) status = 'SOLD';
+            if (row === 'C' && (n === 2 || n === 3)) status = 'HELD';
+            floorLSeats.push({
+              seat: { seatId: id, sectionId: 'sec-floor-l', row, number: String(n), label: null, x: null, y: null, accessible: n === 8, companionSeat: false },
+              status,
+            });
+          }
+        }
+
+        // Floor Right: rows A-D, 8 seats each
+        const floorRSeats: SeatInfo[] = [];
+        for (const row of ['A', 'B', 'C', 'D']) {
+          for (let n = 1; n <= 8; n++) {
+            floorRSeats.push({ ...makeSeat('sec-floor-r', row, n), status: (row === 'A' && n > 5) ? 'SOLD' : 'AVAILABLE' });
+          }
+        }
+
+        // Balcony: rows E-G, 10 seats, flat (no subsections)
+        const balconySeats: SeatInfo[] = [];
+        for (const row of ['E', 'F', 'G']) {
+          for (let n = 1; n <= 10; n++) {
+            balconySeats.push({ ...makeSeat('sec-balcony', row, n), status: (row === 'E' && n <= 4) ? 'SOLD' : 'AVAILABLE' });
+          }
+        }
+
+        // VIP: rows V1-V2, 6 seats
+        const vipSeats: SeatInfo[] = [];
+        for (const row of ['V1', 'V2']) {
+          for (let n = 1; n <= 6; n++) {
+            vipSeats.push(makeSeat('sec-vip', row, n));
+          }
+        }
+
+        const pricings: EventSectionPricing[] = [
+          { eventSectionPricingId: 'p-fl', eventId: 'evt-1', hallId: 'h1', sectionId: 'sec-floor-l', name: 'Zemin Sol', price: 2500, currency: 'TRY', capacity: 30, soldCount: 7, active: true },
+          { eventSectionPricingId: 'p-fr', eventId: 'evt-1', hallId: 'h1', sectionId: 'sec-floor-r', name: 'Zemin Sağ', price: 2500, currency: 'TRY', capacity: 30, soldCount: 5, active: true },
+          { eventSectionPricingId: 'p-b',  eventId: 'evt-1', hallId: 'h1', sectionId: 'sec-balcony',  name: 'Balkon',     price: 1200, currency: 'TRY', capacity: 40, soldCount: 12, active: true },
+          { eventSectionPricingId: 'p-v',  eventId: 'evt-1', hallId: 'h1', sectionId: 'sec-vip',      name: 'VIP',        price: 8500, currency: 'TRY', capacity: 20, soldCount: 0, active: true },
+        ];
+
+        const allSections = [SEC_FLOOR, SEC_BALCONY, SEC_VIP, SEC_FLOOR_L, SEC_FLOOR_R];
+        const allSeats = [...floorLSeats, ...floorRSeats, ...balconySeats, ...vipSeats];
+        const sectionTree = buildSectionTree(allSections, allSeats, pricings);
+
+        return [
+          {
+            title: 'Section + subsection + koltuk seçimi',
+            layout: 'stack' as const,
+            preview: <SeatMapDemo sections={sectionTree} max={4} />,
+            code: `const sections = buildSectionTree(allSections, seatInfos, pricings);
+
+<SeatMapPicker
+  sections={sections}
+  selectedSeatIds={selected}
+  onSeatToggle={(id) => toggleSeat(id)}
+  maxSelectable={4}
+  showStage
+/>`,
+          },
+        ];
+      })(),
+    },
+
+    {
+      id: 'hero-slide',
+      title: 'HeroSlide',
+      category: 'Domain',
+      abbr: 'HS',
+      description: 'Slider içinde kullanılan tam ekran hero slayt: çift gradyan katmanı, badge\'ler, fiyat, CTA butonları.',
+      filePath: 'modules/domains/event/HeroSlide.tsx',
+      sourceCode: `import { HeroSlide } from '@/modules/domains/event/HeroSlide';
+import { Slider } from '@/modules/ui/Slider';
+
+const slides = events.map((e) => <HeroSlide key={e.eventId} event={e} />);
+<Slider slides={slides} autoPlay showDots showArrows loop className="rounded-none" />`,
+      variants: [
+        {
+          title: 'Tek slayt önizleme',
+          layout: 'stack',
+          preview: (
+            <div className="rounded-xl overflow-hidden" style={{ background: '#0a1220' }}>
+              <HeroSlide event={DEMO_EVENT} />
+            </div>
+          ),
+          code: `<HeroSlide event={event} />`,
+        },
+      ],
+    },
+
+  ];
+}
