@@ -1,104 +1,157 @@
-import { Button } from '@/modules/ui/Button';
 import { Badge } from '@/modules/ui/Badge';
+import { Slider } from '@/modules/ui/Slider';
 import { EventCard } from '@/modules/domains/event/EventCard';
 import { EventCategoryBadge } from '@/modules/domains/event/EventCategoryBadge';
 import { EventStatusBadge } from '@/modules/domains/event/EventStatusBadge';
 import {
   EVENTS,
   EVENT_CATEGORIES,
-  FEATURED_EVENT,
 } from '@/app/themes/event/event.data';
+import type { EventWithData } from '@/modules/domains/event/types';
 
+/* ── formatters ── */
 const FMT_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 const FMT_TIME = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
 const CATEGORY_ICONS: Record<string, string> = {
-  'cat-music': '🎵',
-  'cat-sports': '⚽',
-  'cat-theater': '🎭',
+  'cat-music':      '🎵',
+  'cat-sports':     '⚽',
+  'cat-theater':    '🎭',
   'cat-conference': '💻',
-  'cat-comedy': '😄',
-  'cat-festival': '🎪',
+  'cat-comedy':     '😄',
+  'cat-festival':   '🎪',
 };
 
-export default function EventThemePage() {
-  const priceLabel = FEATURED_EVENT.minPrice === 0
-    ? 'Ücretsiz'
-    : `₺${FEATURED_EVENT.minPrice?.toLocaleString('tr-TR')} den`;
+/* ── Hero slides — pick published events with an image ── */
+const HERO_EVENTS: EventWithData[] = EVENTS
+  .filter((e) => e.status === 'PUBLISHED' && (e.bannerImage ?? e.image))
+  .slice(0, 4);
+
+function HeroSlide({ event }: { event: EventWithData }) {
+  const img = event.bannerImage ?? event.image;
+  const isSoldOut = event.status === 'SOLD_OUT';
+
+  const priceLabel =
+    event.minPrice === 0
+      ? 'Ücretsiz'
+      : event.maxPrice != null && event.maxPrice !== event.minPrice
+        ? `₺${event.minPrice?.toLocaleString('tr-TR')} – ₺${event.maxPrice.toLocaleString('tr-TR')}`
+        : `₺${event.minPrice?.toLocaleString('tr-TR')} den`;
 
   return (
-    <div className="bg-surface-base">
+    <div className="relative flex items-end min-h-[520px] sm:min-h-[600px]">
+
+      {/* background image */}
+      {img && (
+        <img
+          src={img}
+          alt={event.title}
+          className="absolute inset-0 h-full w-full object-cover"
+          draggable={false}
+        />
+      )}
+
+      {/* layered gradients — left-side readability + bottom fade */}
+      <div className="absolute inset-0" style={{
+        background: [
+          'linear-gradient(to right, rgba(10,18,32,0.92) 0%, rgba(10,18,32,0.55) 55%, rgba(10,18,32,0.15) 100%)',
+          'linear-gradient(to top,   rgba(10,18,32,0.95) 0%, rgba(10,18,32,0.0)  45%)',
+        ].join(', '),
+      }} />
+
+      {/* content */}
+      <div className="relative w-full mx-auto max-w-7xl px-6 sm:px-8 pb-14 sm:pb-16 pt-12">
+        <div className="max-w-xl space-y-4">
+
+          {/* badges */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="primary" size="sm">Öne Çıkan</Badge>
+            <EventCategoryBadge category={event.category} size="sm" />
+            {event.status !== 'PUBLISHED' && <EventStatusBadge status={event.status} size="sm" />}
+          </div>
+
+          {/* title */}
+          <h2 className="text-3xl sm:text-5xl font-black text-white leading-tight drop-shadow-sm">
+            {event.title}
+          </h2>
+
+          {/* short description */}
+          {event.shortDescription && (
+            <p className="text-white/75 text-sm sm:text-base leading-relaxed line-clamp-2">
+              {event.shortDescription}
+            </p>
+          )}
+
+          {/* meta row */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/65">
+            <span className="flex items-center gap-1.5">
+              📅 {FMT_DATE.format(event.startAt)} · {FMT_TIME.format(event.startAt)}
+            </span>
+            <span className="flex items-center gap-1.5">
+              📍 İstanbul
+            </span>
+            <span className="flex items-center gap-1.5 font-bold text-white">
+              🎫 {priceLabel}
+            </span>
+          </div>
+
+          {/* CTAs */}
+          <div className="flex flex-wrap gap-3 pt-1">
+            <a
+              href={`/themes/event/events/${event.slug}/checkout`}
+              className="inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-bold text-white transition-all"
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+                boxShadow: '0 4px 18px rgba(59,130,246,0.45)',
+              }}
+            >
+              Bilet Al
+            </a>
+            <a
+              href={`/themes/event/events/${event.slug}`}
+              className="inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition-colors"
+              style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)' }}
+            >
+              Detaylar
+            </a>
+          </div>
+
+          {/* urgency */}
+          {event.remainingCapacity != null && event.remainingCapacity < 5000 && !isSoldOut && (
+            <p className="text-xs font-medium" style={{ color: '#fbbf24' }}>
+              🔥 Son {event.remainingCapacity.toLocaleString('tr-TR')} bilet!
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   Page
+════════════════════════════════════════════════════ */
+
+export default function EventThemePage() {
+  const heroSlides = HERO_EVENTS.map((event) => <HeroSlide key={event.eventId} event={event} />);
+
+  return (
+    <div>
       <style>{`
-        @keyframes evt-fade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes evt-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes evt-fade { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden">
-        {/* background */}
-        <div className="absolute inset-0 -z-10">
-          {FEATURED_EVENT.bannerImage && (
-            <img
-              src={FEATURED_EVENT.bannerImage}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-surface-base" />
-        </div>
-
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-20">
-          <div className="grid gap-8 lg:grid-cols-[1fr_auto] items-center">
-            <div className="space-y-5 motion-safe:animate-[evt-fade_0.7s_ease-out]">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="primary" size="sm">Öne Çıkan Etkinlik</Badge>
-                <EventCategoryBadge category={FEATURED_EVENT.category} size="sm" />
-                <EventStatusBadge status={FEATURED_EVENT.status} size="sm" />
-              </div>
-
-              <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight max-w-2xl">
-                {FEATURED_EVENT.title}
-              </h1>
-
-              <p className="text-white/80 text-base max-w-xl leading-relaxed">
-                {FEATURED_EVENT.shortDescription}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 text-white/70 text-sm">
-                <span className="flex items-center gap-1.5">
-                  📅 {FMT_DATE.format(FEATURED_EVENT.startAt)} · {FMT_TIME.format(FEATURED_EVENT.startAt)}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  📍 İstanbul, Türkiye
-                </span>
-                <span className="flex items-center gap-1.5 font-semibold text-white">
-                  🎫 {priceLabel}
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-3 pt-2">
-                <a
-                  href={`/themes/event/events/${FEATURED_EVENT.slug}`}
-                  className="inline-flex items-center justify-center rounded-md bg-primary text-primary-fg hover:bg-primary-hover px-5 py-2.5 text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
-                >
-                  Bilet Al
-                </a>
-                <a
-                  href={`/themes/event/events/${FEATURED_EVENT.slug}`}
-                  className="inline-flex items-center justify-center rounded-md border border-white/30 text-white hover:bg-white/10 px-5 py-2.5 text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
-                >
-                  Detayları Gör
-                </a>
-              </div>
-
-              {FEATURED_EVENT.remainingCapacity != null && (
-                <p className="text-xs text-white/50">
-                  🔥 {FEATURED_EVENT.remainingCapacity.toLocaleString('tr-TR')} koltuk kaldı
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+      {/* ── Hero Slider ── */}
+      <section style={{ background: '#0a1220' }}>
+        <Slider
+          slides={heroSlides}
+          autoPlay
+          autoPlayInterval={6000}
+          showDots
+          showArrows
+          loop
+          className="rounded-none"
+        />
       </section>
 
       {/* ── Categories ── */}
@@ -156,24 +209,36 @@ export default function EventThemePage() {
       </section>
 
       {/* ── CTA Banner ── */}
-      <section className="bg-primary">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <section
+        className="relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #1e2060 100%)' }}
+      >
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{ background: 'radial-gradient(ellipse at 80% 50%, #3b82f6 0%, transparent 65%)' }}
+        />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-14 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-2xl font-black text-primary-fg">Etkinliklerden Haberdar Ol</h2>
-            <p className="text-primary-fg/80 mt-1 text-sm">
+            <h2 className="text-2xl font-black text-white">Etkinliklerden Haberdar Ol</h2>
+            <p className="text-white/65 mt-1 text-sm">
               Sana özel etkinlikleri kaçırmamak için bildirimlere kaydol.
             </p>
           </div>
           <div className="flex gap-3 shrink-0">
-            <Button variant="outline" size="md" className="border-white/40 text-white hover:bg-white/15">
+            <a
+              href="#"
+              className="inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors"
+              style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.08)' }}
+            >
               Daha Fazla Bilgi
-            </Button>
-            <Button
-              size="md"
-              className="bg-white text-primary font-bold hover:bg-white/90"
+            </a>
+            <a
+              href="#"
+              className="inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold text-white transition-all"
+              style={{ background: 'linear-gradient(135deg, #3b82f6, #6366f1)', boxShadow: '0 4px 16px rgba(59,130,246,0.4)' }}
             >
               Ücretsiz Kaydol
-            </Button>
+            </a>
           </div>
         </div>
       </section>
