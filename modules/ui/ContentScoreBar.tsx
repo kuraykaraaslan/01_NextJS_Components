@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useMemo } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 export type ScoreRule = {
   label: string;
@@ -90,7 +92,7 @@ export function ContentScoreBar({
                 : 'bg-surface-sunken text-text-disabled border border-border'
             )}
           >
-            {r.pass && <span aria-hidden="true" className="font-bold">✓</span>}
+            {r.pass && <FontAwesomeIcon icon={faCheck} className="w-2.5 h-2.5" aria-hidden="true" />}
             {r.label}
           </span>
         ))}

@@ -1,5 +1,7 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 export type DateRange = { start: Date | null; end: Date | null };
 
@@ -87,7 +89,7 @@ export function DateRangePicker({
               className={inputClass}
             />
           </div>
-          <span aria-hidden="true" className="text-text-disabled shrink-0">→</span>
+          <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5 text-text-disabled shrink-0" aria-hidden="true" />
           <div className="flex-1 space-y-0.5">
             <label htmlFor={`${id}-end`} className="sr-only">End date</label>
             <input

@@ -3,6 +3,8 @@ import { cn } from '@/libs/utils/cn';
 import type { EventWithData } from './types';
 import { EventStatusBadge } from './EventStatusBadge';
 import { EventFormatBadge } from './EventFormatBadge';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faMicrophone, faCalendarDays, faTicket } from '@fortawesome/free-solid-svg-icons';
 import { EventCategoryBadge } from './EventCategoryBadge';
 
 type Props = {
@@ -44,8 +46,8 @@ export function EventCard({ event, href, className }: Props) {
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-4xl text-text-disabled">
-            🎫
+          <div className="flex h-full w-full items-center justify-center text-text-disabled">
+            <FontAwesomeIcon icon={faTicket} className="w-10 h-10" aria-hidden="true" />
           </div>
         )}
         {/* overlay badges */}
@@ -71,15 +73,15 @@ export function EventCard({ event, href, className }: Props) {
 
         <div className="mt-auto space-y-1 text-xs text-text-secondary">
           <div className="flex items-center gap-1.5">
-            <span>📅</span>
+            <FontAwesomeIcon icon={faCalendarDays} className="w-3 h-3 text-text-disabled shrink-0" aria-hidden="true" />
             <span>{FMT_DATE.format(event.startAt)} · {FMT_TIME.format(event.startAt)}</span>
           </div>
           {event.organizer && (
             <div className="flex items-center gap-1.5">
-              <span>🎤</span>
+              <FontAwesomeIcon icon={faMicrophone} className="w-3 h-3 text-text-disabled shrink-0" aria-hidden="true" />
               <span className="truncate">{event.organizer.name}</span>
               {event.organizer.verified && (
-                <span className="text-primary" title="Doğrulanmış organizatör">✓</span>
+                <FontAwesomeIcon icon={faCheck} className="w-3 h-3 text-primary shrink-0" title="Doğrulanmış organizatör" />
               )}
             </div>
           )}

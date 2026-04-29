@@ -295,6 +295,41 @@ Tailwind maps these tokens via `@theme inline` — use them as `bg-primary`, `te
 
 ---
 
+## Icons
+
+**All icons must be sourced from Font Awesome.** Do not use inline SVGs, emoji, or other icon libraries.
+
+### Installed packages
+
+| Package | Purpose |
+|---------|---------|
+| `@fortawesome/react-fontawesome` | React component wrapper |
+| `@fortawesome/fontawesome-svg-core` | Core SVG rendering engine |
+| `@fortawesome/free-solid-svg-icons` | Solid icon set (primary) |
+| `@fortawesome/free-brands-svg-icons` | Brand / logo icons |
+
+### Usage
+
+```tsx
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+
+// Inside JSX:
+<FontAwesomeIcon icon={faArrowRight} />
+<FontAwesomeIcon icon={faGithub} className="text-text-secondary" />
+```
+
+### Rules
+
+1. **Named imports only** — import the specific icon variable, never the whole set.
+2. **`className` for styling** — use Tailwind classes (`text-primary`, `w-4 h-4`, etc.) on the `<FontAwesomeIcon>` element; do not use the `size` prop with raw strings like `"lg"`.
+3. **`aria-hidden="true"`** on decorative icons; supply `aria-label` when the icon is the only content of a clickable element.
+4. **No inline SVG** — if an icon is unavailable in Font Awesome Free, raise the requirement with the team rather than embedding custom SVG.
+5. **No other icon libraries** — do not install or import `lucide-react`, `heroicons`, `react-icons`, or similar packages.
+
+---
+
 ## Utilities
 
 ### `libs/utils/cn.ts`

@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useEffect, useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 export type SelectOption = { value: string; label: string; icon?: React.ReactNode };
 
@@ -88,7 +90,7 @@ function CustomSelect({
         <span className={cn('flex-1', !selected && 'text-text-disabled')}>
           {selected ? selected.label : (placeholder ?? 'Select…')}
         </span>
-        <span aria-hidden="true" className="text-text-disabled text-xs">{open ? '▲' : '▼'}</span>
+        <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} className="w-3 h-3 text-text-disabled" aria-hidden="true" />
       </div>
 
       {open && (
@@ -147,7 +149,7 @@ function CustomSelect({
                   >
                     {opt.icon && <span className="shrink-0" aria-hidden="true">{opt.icon}</span>}
                     {opt.label}
-                    {active && <span className="ml-auto text-primary text-xs">✓</span>}
+                    {active && <FontAwesomeIcon icon={faCheck} className="ml-auto w-3 h-3 text-primary" aria-hidden="true" />}
                   </li>
                 );
               })

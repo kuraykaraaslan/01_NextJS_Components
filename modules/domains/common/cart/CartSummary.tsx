@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { cn } from '@/libs/utils/cn';
 import { CartItem } from './CartItem';
 import { OrderTotalsCard } from '../money/OrderTotalsCard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { CouponInput } from '../discount/CouponInput';
 import { Button } from '@/modules/ui/Button';
 import type { Cart, CartItem as CartItemType } from '../CartTypes';
@@ -37,7 +39,7 @@ export function CartSummary({
   if (cart.items.length === 0) {
     return (
       <div className={cn('flex flex-col items-center justify-center gap-3 py-12 text-center', className)}>
-        <span className="text-4xl" aria-hidden="true">🛒</span>
+        <FontAwesomeIcon icon={faCartShopping} className="w-10 h-10 text-text-disabled" aria-hidden="true" />
         <p className="font-medium text-text-primary">Your cart is empty</p>
         <p className="text-sm text-text-secondary">Add items to get started</p>
       </div>

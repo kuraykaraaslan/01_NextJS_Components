@@ -1,5 +1,7 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 export type BreadcrumbItem = { label: string; href?: string };
 
@@ -14,7 +16,7 @@ export function Breadcrumb({
   maxItems?: number;
   className?: string;
 }) {
-  const sep = separator ?? <span aria-hidden="true" className="text-text-disabled">›</span>;
+  const sep = separator ?? <FontAwesomeIcon icon={faChevronRight} className="w-2.5 h-2.5 text-text-disabled" aria-hidden="true" />;
 
   let displayed = items;
   let truncated = false;

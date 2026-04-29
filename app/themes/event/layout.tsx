@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SkipLink } from '@/modules/ui/SkipLink';
 import { SearchBar } from '@/modules/ui/SearchBar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faCheck, faXmark, faBars, faLocationDot, faTicket, faMusic, faTrophy, faMasksTheater, faFaceSmile, faStar, faLaptop, faSun, faMoon, faDesktop } from '@fortawesome/free-solid-svg-icons';
 
 /* ────────────────────────────────────────────────────────
    Data
@@ -29,14 +31,14 @@ const LANGUAGES = [
 ];
 
 const CATEGORIES = [
-  { label: 'Konserler', href: '/themes/event/events?category=muzik',    icon: '🎵' },
-  { label: 'Spor',      href: '/themes/event/events?category=spor',     icon: '⚽' },
-  { label: 'Tiyatro',   href: '/themes/event/events?category=tiyatro',  icon: '🎭' },
-  { label: 'Stand-up',  href: '/themes/event/events?category=standup',  icon: '😄' },
-  { label: 'Festival',  href: '/themes/event/events?category=festival', icon: '🎪' },
-  { label: 'Konferans', href: '/themes/event/events?category=konferans',icon: '💻' },
-  { label: 'Sanatçılar', href: '/themes/event/artists', icon: '🎤' },
-  { label: 'Mekanlar',  href: '/themes/event/venues',  icon: '🏟' },
+  { label: 'Konserler', href: '/themes/event/events?category=muzik',    icon: <FontAwesomeIcon icon={faMusic} className="w-4 h-4" aria-hidden="true" /> },
+  { label: 'Spor',      href: '/themes/event/events?category=spor',     icon: <FontAwesomeIcon icon={faTrophy} className="w-4 h-4" aria-hidden="true" /> },
+  { label: 'Tiyatro',   href: '/themes/event/events?category=tiyatro',  icon: <FontAwesomeIcon icon={faMasksTheater} className="w-4 h-4" aria-hidden="true" /> },
+  { label: 'Stand-up',  href: '/themes/event/events?category=standup',  icon: <FontAwesomeIcon icon={faFaceSmile} className="w-4 h-4" aria-hidden="true" /> },
+  { label: 'Festival',  href: '/themes/event/events?category=festival', icon: <FontAwesomeIcon icon={faStar} className="w-4 h-4" aria-hidden="true" /> },
+  { label: 'Konferans', href: '/themes/event/events?category=konferans',icon: <FontAwesomeIcon icon={faLaptop} className="w-4 h-4" aria-hidden="true" /> },
+  { label: 'Sanatçılar', href: '/themes/event/artists', icon: null },
+  { label: 'Mekanlar',  href: '/themes/event/venues',  icon: null },
   { label: 'Tümü',      href: '/themes/event/events',  icon: null },
 ];
 
@@ -160,13 +162,12 @@ function NavTriggerButton({
       onMouseOut={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}
     >
       {children}
-      <svg
+      <FontAwesomeIcon
+        icon={faChevronDown}
         className="h-3 w-3 transition-transform duration-200"
         style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={2}
-      >
-        <path d="M2 4l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+        aria-hidden="true"
+      />
     </button>
   );
 }
@@ -182,7 +183,7 @@ function CityPicker() {
   return (
     <div ref={ref} className="relative">
       <NavTriggerButton onClick={() => setOpen((p) => !p)} expanded={open}>
-        <span>📍</span>
+        <FontAwesomeIcon icon={faLocationDot} className="w-3 h-3" aria-hidden="true" />
         <span>{city.label}</span>
       </NavTriggerButton>
 
@@ -263,7 +264,7 @@ function LanguageSwitcher() {
                   >
                     <span className="text-base leading-none">{l.flag}</span>
                     <span>{l.label}</span>
-                    {active && <span className="ml-auto text-blue-400 text-xs">✓</span>}
+                    {active && <FontAwesomeIcon icon={faCheck} className="ml-auto w-3 h-3 text-blue-400" aria-hidden="true" />}
                   </button>
                 </li>
               );
@@ -281,10 +282,10 @@ function LanguageSwitcher() {
 
 type ThemeOption = 'light' | 'dark' | 'system';
 
-const THEME_OPTIONS: { id: ThemeOption; icon: string; label: string }[] = [
-  { id: 'light',  icon: '☀️', label: 'Açık'   },
-  { id: 'dark',   icon: '🌙', label: 'Koyu'   },
-  { id: 'system', icon: '🖥',  label: 'Sistem' },
+const THEME_OPTIONS: { id: ThemeOption; icon: React.ReactNode; label: string }[] = [
+  { id: 'light',  icon: <FontAwesomeIcon icon={faSun} className="w-3.5 h-3.5" aria-hidden="true" />,     label: 'Açık'   },
+  { id: 'dark',   icon: <FontAwesomeIcon icon={faMoon} className="w-3.5 h-3.5" aria-hidden="true" />,    label: 'Koyu'   },
+  { id: 'system', icon: <FontAwesomeIcon icon={faDesktop} className="w-3.5 h-3.5" aria-hidden="true" />, label: 'Sistem' },
 ];
 
 function NavThemeSwitcher() {
@@ -312,7 +313,7 @@ function NavThemeSwitcher() {
   return (
     <div ref={ref} className="relative">
       <NavTriggerButton onClick={() => setOpen((p) => !p)} expanded={open}>
-        <span className="text-sm leading-none">{mounted ? current.icon : '🖥'}</span>
+        <span className="leading-none flex items-center">{mounted ? current.icon : <FontAwesomeIcon icon={faDesktop} className="w-3.5 h-3.5" aria-hidden="true" />}</span>
         <span className="hidden sm:inline">{mounted ? current.label : 'Tema'}</span>
       </NavTriggerButton>
 
@@ -337,9 +338,9 @@ function NavThemeSwitcher() {
                     onMouseOver={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
                     onMouseOut={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
                   >
-                    <span className="text-base leading-none w-5 text-center">{opt.icon}</span>
+                    <span className="w-5 flex items-center justify-center">{opt.icon}</span>
                     <span>{opt.label}</span>
-                    {active && <span className="ml-auto text-blue-400 text-xs">✓</span>}
+                    {active && <FontAwesomeIcon icon={faCheck} className="ml-auto w-3 h-3 text-blue-400" aria-hidden="true" />}
                   </button>
                 </li>
               );
@@ -433,7 +434,7 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
               onMouseOver={(e) => (e.currentTarget.style.color = '#fff')}
               onMouseOut={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
             >
-              <span>🎫</span>
+              <FontAwesomeIcon icon={faTicket} className="w-3 h-3" aria-hidden="true" />
               <span>Biletlerim</span>
             </a>
           </div>
@@ -459,13 +460,13 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
               className="flex items-center gap-3 shrink-0 rounded-lg group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             >
               <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl text-xl transition-transform group-hover:scale-105"
+                className="flex h-10 w-10 items-center justify-center rounded-xl transition-transform group-hover:scale-105"
                 style={{
                   background: 'linear-gradient(135deg,#3b82f6 0%,#6366f1 100%)',
                   boxShadow: '0 4px 14px rgba(59,130,246,0.45)',
                 }}
               >
-                🎫
+                <FontAwesomeIcon icon={faTicket} className="w-5 h-5 text-white" aria-hidden="true" />
               </div>
               <div className="hidden sm:block">
                 <div className="text-[15px] font-black text-white tracking-tight leading-tight">
@@ -526,7 +527,7 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
               className="lg:hidden ml-auto flex h-9 w-9 items-center justify-center rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
               style={{ border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.7)' }}
             >
-              <span className="text-lg leading-none">{menuOpen ? '✕' : '☰'}</span>
+              <FontAwesomeIcon icon={menuOpen ? faXmark : faBars} className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -626,7 +627,7 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
         <div style={{ background: 'rgba(59,130,246,0.08)', borderBottom: '1px solid rgba(59,130,246,0.15)' }}>
           <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <p className="font-bold text-white text-sm">🎫 Etkinliklerden İlk Sen Haberdar Ol</p>
+              <p className="font-bold text-white text-sm flex items-center gap-2"><FontAwesomeIcon icon={faTicket} className="w-4 h-4" aria-hidden="true" /> Etkinliklerden İlk Sen Haberdar Ol</p>
               <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
                 Şehrine özel etkinlik bildirimleri ve erken bilet fırsatları.
               </p>
@@ -656,10 +657,10 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
             <div className="col-span-2 md:col-span-4 lg:col-span-1 space-y-4">
               <a href="/themes/event" className="flex items-center gap-2.5">
                 <div
-                  className="flex h-10 w-10 items-center justify-center rounded-xl text-xl"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl"
                   style={{ background: 'linear-gradient(135deg,#3b82f6,#6366f1)', boxShadow: '0 4px 14px rgba(59,130,246,0.4)' }}
                 >
-                  🎫
+                  <FontAwesomeIcon icon={faTicket} className="w-5 h-5 text-white" aria-hidden="true" />
                 </div>
                 <div>
                   <div className="font-black text-white text-base tracking-tight">BiletMaster</div>

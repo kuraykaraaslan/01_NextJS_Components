@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/modules/ui/Breadcrumb';
 import { EventCard } from '@/modules/domains/event/EventCard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faTicket, faGlobe, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import {
   ORGANIZERS,
   getOrganizerBySlug,
@@ -50,10 +52,10 @@ export default async function OrganizerDetailPage({ params }: Props) {
                 <h1 className="text-2xl font-black text-text-primary">{organizer.name}</h1>
                 {organizer.verified && (
                   <span
-                    className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-fg text-[11px] font-bold shrink-0"
+                    className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-fg shrink-0"
                     title="Doğrulanmış organizatör"
                   >
-                    ✓
+                    <FontAwesomeIcon icon={faCheck} className="w-3 h-3" aria-hidden="true" />
                   </span>
                 )}
               </div>
@@ -68,7 +70,7 @@ export default async function OrganizerDetailPage({ params }: Props) {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 hover:text-primary transition-colors"
                   >
-                    🌐 Web sitesi
+                    <FontAwesomeIcon icon={faGlobe} className="w-3.5 h-3.5" aria-hidden="true" /> Web sitesi
                   </a>
                 )}
                 {organizer.email && (
@@ -76,7 +78,7 @@ export default async function OrganizerDetailPage({ params }: Props) {
                     href={`mailto:${organizer.email}`}
                     className="flex items-center gap-1 hover:text-primary transition-colors"
                   >
-                    ✉️ {organizer.email}
+                    <FontAwesomeIcon icon={faEnvelope} className="w-3.5 h-3.5" aria-hidden="true" /> {organizer.email}
                   </a>
                 )}
                 {organizer.phone && (
@@ -108,7 +110,7 @@ export default async function OrganizerDetailPage({ params }: Props) {
           </div>
         ) : (
           <div className="rounded-2xl border border-border bg-surface-raised p-12 text-center">
-            <p className="text-3xl mb-3">🎫</p>
+            <FontAwesomeIcon icon={faTicket} className="w-8 h-8 text-text-disabled mb-3" aria-hidden="true" />
             <p className="text-text-secondary text-sm">Henüz etkinlik bulunmuyor.</p>
           </div>
         )}

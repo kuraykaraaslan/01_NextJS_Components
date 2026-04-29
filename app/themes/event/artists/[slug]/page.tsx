@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/modules/ui/Breadcrumb';
 import { EventCard } from '@/modules/domains/event/EventCard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faLocationDot, faMicrophone, faTicket, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import {
   ARTISTS,
   getArtistBySlug,
@@ -62,15 +64,18 @@ export default async function ArtistDetailPage({ params }: Props) {
               <h1 className="text-2xl font-black text-text-primary">{artist.name}</h1>
               {artist.verified && (
                 <span
-                  className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-fg text-[11px] font-bold shrink-0"
+                  className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-fg shrink-0"
                   title="Doğrulanmış sanatçı"
                 >
-                  ✓
+                  <FontAwesomeIcon icon={faCheck} className="w-3 h-3" aria-hidden="true" />
                 </span>
               )}
             </div>
             {artist.origin && (
-              <p className="text-sm text-text-secondary mt-0.5">📍 {artist.origin}</p>
+              <p className="text-sm text-text-secondary mt-0.5 flex items-center gap-1.5">
+                <FontAwesomeIcon icon={faLocationDot} className="w-3 h-3 shrink-0" aria-hidden="true" />
+                {artist.origin}
+              </p>
             )}
           </div>
         </div>
@@ -103,7 +108,7 @@ export default async function ArtistDetailPage({ params }: Props) {
 
             {events.length === 0 && (
               <div className="rounded-2xl border border-border bg-surface-raised p-8 text-center">
-                <p className="text-2xl mb-2">🎤</p>
+                <FontAwesomeIcon icon={faMicrophone} className="w-8 h-8 text-text-disabled mb-2" aria-hidden="true" />
                 <p className="text-sm text-text-secondary">Yaklaşan etkinlik bulunmuyor.</p>
               </div>
             )}
@@ -134,7 +139,7 @@ export default async function ArtistDetailPage({ params }: Props) {
               <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Bilgiler</p>
               {artist.origin && (
                 <div className="flex items-start gap-2 text-sm">
-                  <span className="text-base leading-none mt-0.5">📍</span>
+                  <FontAwesomeIcon icon={faLocationDot} className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
                   <div>
                     <p className="text-xs text-text-secondary">Köken</p>
                     <p className="font-medium text-text-primary">{artist.origin}</p>
@@ -142,7 +147,7 @@ export default async function ArtistDetailPage({ params }: Props) {
                 </div>
               )}
               <div className="flex items-start gap-2 text-sm">
-                <span className="text-base leading-none mt-0.5">🎫</span>
+                <FontAwesomeIcon icon={faTicket} className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
                 <div>
                   <p className="text-xs text-text-secondary">Etkinlik Sayısı</p>
                   <p className="font-medium text-text-primary">{events.length}</p>
@@ -155,7 +160,7 @@ export default async function ArtistDetailPage({ params }: Props) {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-primary hover:text-primary-hover transition-colors"
                 >
-                  <span>🌐</span>
+                  <FontAwesomeIcon icon={faGlobe} className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>Resmi Web Sitesi</span>
                 </a>
               )}

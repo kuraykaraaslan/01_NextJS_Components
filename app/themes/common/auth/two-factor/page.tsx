@@ -1,6 +1,8 @@
 'use client';
 import { useState, useRef } from 'react';
 import { Button } from '@/modules/ui/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight, faShield } from '@fortawesome/free-solid-svg-icons';
 
 const CODE_LENGTH = 6;
 
@@ -57,7 +59,7 @@ export default function TwoFactorPage() {
           </div>
           <a href="/themes/common/account/profile"
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-fg hover:bg-primary-hover transition-colors">
-            Go to account →
+            Go to account <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />
           </a>
         </div>
       </div>
@@ -69,7 +71,9 @@ export default function TwoFactorPage() {
       <div className="w-full max-w-md space-y-6">
         <div className="rounded-2xl border border-border bg-surface-raised shadow-sm p-8 space-y-6">
           <div className="text-center space-y-1">
-            <span className="flex h-14 w-14 mx-auto items-center justify-center rounded-2xl bg-warning-subtle text-2xl mb-3">🛡️</span>
+            <span className="flex h-14 w-14 mx-auto items-center justify-center rounded-2xl bg-warning-subtle mb-3">
+              <FontAwesomeIcon icon={faShield} className="w-6 h-6 text-warning" aria-hidden="true" />
+            </span>
             <h1 className="text-2xl font-bold text-text-primary">Two-factor authentication</h1>
             <p className="text-sm text-text-secondary leading-relaxed">
               Open your authenticator app and enter the 6-digit code.

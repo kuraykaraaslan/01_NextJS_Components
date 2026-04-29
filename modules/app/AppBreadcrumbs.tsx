@@ -4,6 +4,8 @@ import { Breadcrumb, type BreadcrumbItem } from '@/modules/ui/Breadcrumb';
 import { Tooltip } from '@/modules/ui/Tooltip';
 import { DropdownMenu } from '@/modules/ui/DropdownMenu';
 import { Button } from '@/modules/ui/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faFile, faFolder, faChevronRight, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 type AppBreadcrumbsProps = {
   items?: BreadcrumbItem[];
@@ -22,7 +24,11 @@ export function AppBreadcrumbs({
 }: AppBreadcrumbsProps) {
   const dropdownItems = items.map((item, i) => ({
     label: item.label,
-    icon: i === 0 ? '🏠' : i === items.length - 1 ? '📄' : '📁',
+    icon: i === 0
+      ? <FontAwesomeIcon icon={faHouse} className="w-3 h-3" />
+      : i === items.length - 1
+        ? <FontAwesomeIcon icon={faFile} className="w-3 h-3" />
+        : <FontAwesomeIcon icon={faFolder} className="w-3 h-3" />,
   }));
 
   return (
@@ -63,7 +69,7 @@ export function AppBreadcrumbs({
                       )}
                     </Tooltip>
                     {!isLast && (
-                      <span className="text-text-disabled" aria-hidden="true">›</span>
+                      <FontAwesomeIcon icon={faChevronRight} className="w-2.5 h-2.5 text-text-disabled" aria-hidden="true" />
                     )}
                   </span>
                 );
@@ -77,7 +83,7 @@ export function AppBreadcrumbs({
               <DropdownMenu
                 trigger={
                   <Button variant="ghost" size="xs" aria-label="View full path">
-                    Full path ▾
+                    Full path <FontAwesomeIcon icon={faChevronDown} className="w-2.5 h-2.5 ml-0.5" />
                   </Button>
                 }
                 items={dropdownItems}

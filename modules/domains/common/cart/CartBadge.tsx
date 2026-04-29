@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import type { Cart } from '../CartTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 
 type CartBadgeProps = {
   cart: Cart;
@@ -24,7 +26,7 @@ export function CartBadge({ cart, onClick, className }: CartBadgeProps) {
         className,
       )}
     >
-      <span className="text-lg leading-none" aria-hidden="true">🛒</span>
+      <FontAwesomeIcon icon={faCartShopping} className="w-5 h-5" aria-hidden="true" />
       {totalQty > 0 && (
         <span
           aria-hidden="true"

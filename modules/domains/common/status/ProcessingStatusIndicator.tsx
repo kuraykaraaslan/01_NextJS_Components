@@ -1,12 +1,14 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import type { ProcessingStatus } from '../BaseTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCloudArrowUp, faGear, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-const STATUS_META: Record<ProcessingStatus, { label: string; icon: string; color: string; pulse: boolean }> = {
-  UPLOADING:  { label: 'Uploading',  icon: '⬆',  color: 'text-info',    pulse: true  },
-  PROCESSING: { label: 'Processing', icon: '⚙',  color: 'text-warning', pulse: true  },
-  READY:      { label: 'Ready',      icon: '✓',  color: 'text-success', pulse: false },
-  FAILED:     { label: 'Failed',     icon: '✕',  color: 'text-error',   pulse: false },
+const STATUS_META: Record<ProcessingStatus, { label: string; icon: React.ReactNode; color: string; pulse: boolean }> = {
+  UPLOADING:  { label: 'Uploading',  icon: <FontAwesomeIcon icon={faCloudArrowUp} />, color: 'text-info',    pulse: true  },
+  PROCESSING: { label: 'Processing', icon: <FontAwesomeIcon icon={faGear} />,         color: 'text-warning', pulse: true  },
+  READY:      { label: 'Ready',      icon: <FontAwesomeIcon icon={faCheck} />,         color: 'text-success', pulse: false },
+  FAILED:     { label: 'Failed',     icon: <FontAwesomeIcon icon={faXmark} />,         color: 'text-error',   pulse: false },
 };
 
 type ProcessingStatusIndicatorProps = {

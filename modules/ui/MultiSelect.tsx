@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useEffect, useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 export type MultiSelectOption = { value: string; label: string; icon?: React.ReactNode; disabled?: boolean };
 
@@ -121,13 +123,13 @@ export function MultiSelect({
                   onClick={(e) => remove(v, e)}
                   className="hover:opacity-70 focus-visible:outline-none"
                 >
-                  ✕
+                  <FontAwesomeIcon icon={faXmark} className="w-2.5 h-2.5" />
                 </button>
               </span>
             );
           })
         )}
-        <span aria-hidden="true" className="ml-auto text-text-disabled text-xs">{open ? '▲' : '▼'}</span>
+        <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} className="ml-auto w-3 h-3 text-text-disabled" aria-hidden="true" />
       </div>
 
       {open && (
@@ -188,7 +190,7 @@ export function MultiSelect({
                         checked ? 'bg-primary border-primary text-primary-fg' : 'border-border bg-surface-base'
                       )}
                     >
-                      {checked && '✓'}
+                      {checked && <FontAwesomeIcon icon={faCheck} className="w-2.5 h-2.5" />}
                     </span>
                     {opt.icon && <span className="shrink-0" aria-hidden="true">{opt.icon}</span>}
                     {opt.label}

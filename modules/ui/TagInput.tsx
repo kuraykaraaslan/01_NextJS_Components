@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 export function TagInput({
   id,
@@ -119,7 +121,7 @@ export function TagInput({
                   aria-label={`Remove ${tag}`}
                   className="hover:opacity-70 focus-visible:outline-none rounded-full"
                 >
-                  ✕
+                  <FontAwesomeIcon icon={faXmark} className="w-2.5 h-2.5" />
                 </button>
               )}
             </span>

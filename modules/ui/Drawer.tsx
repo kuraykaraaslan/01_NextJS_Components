@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 export function Drawer({
   open,
@@ -75,7 +77,7 @@ export function Drawer({
             aria-label="Close drawer"
             className="text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
           >
-            ✕
+            <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
           </button>
         </div>
         <div className="flex-1 overflow-y-auto px-4 py-4">{children}</div>

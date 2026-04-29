@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Input } from '@/modules/ui/Input';
 import { Button } from '@/modules/ui/Button';
 import { Form } from '@/modules/app/Form';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faArrowRight, faLock } from '@fortawesome/free-solid-svg-icons';
 
 type FormState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -34,14 +36,16 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center space-y-5">
-          <span className="flex h-16 w-16 mx-auto items-center justify-center rounded-full bg-success-subtle text-3xl">✓</span>
+          <span className="flex h-16 w-16 mx-auto items-center justify-center rounded-full bg-success-subtle">
+            <FontAwesomeIcon icon={faCheck} className="w-8 h-8 text-success" aria-hidden="true" />
+          </span>
           <div className="space-y-1">
             <h1 className="text-2xl font-bold text-text-primary">Password updated</h1>
             <p className="text-sm text-text-secondary">You can now sign in with your new password.</p>
           </div>
           <a href="/themes/common/auth/login"
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-fg hover:bg-primary-hover transition-colors">
-            Go to login →
+            Go to login <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />
           </a>
         </div>
       </div>
@@ -54,7 +58,9 @@ export default function ResetPasswordPage() {
         <div className="rounded-2xl border border-border bg-surface-raised shadow-sm p-8 space-y-6">
           <div className="text-center space-y-1">
             <div className="flex justify-center mb-3">
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-subtle text-2xl">🔐</span>
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-subtle">
+                <FontAwesomeIcon icon={faLock} className="w-6 h-6 text-primary" aria-hidden="true" />
+              </span>
             </div>
             <h1 className="text-2xl font-bold text-text-primary">Set new password</h1>
             <p className="text-sm text-text-secondary">Choose a strong password for your account.</p>

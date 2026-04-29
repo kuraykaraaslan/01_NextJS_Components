@@ -1,14 +1,16 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faTriangleExclamation, faCircleXmark, faCircleInfo, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 type AlertVariant = 'success' | 'warning' | 'error' | 'info';
 
-const variantMap: Record<AlertVariant, { container: string; defaultIcon: string }> = {
-  success: { container: 'bg-success-subtle border-success text-success-fg', defaultIcon: '✓' },
-  warning: { container: 'bg-warning-subtle border-warning text-warning-fg', defaultIcon: '⚠' },
-  error:   { container: 'bg-error-subtle border-error text-error-fg',       defaultIcon: '✕' },
-  info:    { container: 'bg-info-subtle border-info text-info-fg',          defaultIcon: 'ℹ' },
+const variantMap: Record<AlertVariant, { container: string; defaultIcon: React.ReactNode }> = {
+  success: { container: 'bg-success-subtle border-success text-success-fg', defaultIcon: <FontAwesomeIcon icon={faCircleCheck} className="w-4 h-4" /> },
+  warning: { container: 'bg-warning-subtle border-warning text-warning-fg', defaultIcon: <FontAwesomeIcon icon={faTriangleExclamation} className="w-4 h-4" /> },
+  error:   { container: 'bg-error-subtle border-error text-error-fg',       defaultIcon: <FontAwesomeIcon icon={faCircleXmark} className="w-4 h-4" /> },
+  info:    { container: 'bg-info-subtle border-info text-info-fg',          defaultIcon: <FontAwesomeIcon icon={faCircleInfo} className="w-4 h-4" /> },
 };
 
 export type AlertAction = {
@@ -82,7 +84,7 @@ export function AlertBanner({
           onClick={() => setDismissed(true)}
           className="shrink-0 hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
         >
-          ✕
+          <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
         </button>
       )}
     </div>

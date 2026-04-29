@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import type { Artist } from './types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   artist: Artist;
@@ -31,8 +33,8 @@ export function ArtistCard({ artist, eventCount, href, className }: Props) {
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-5xl text-text-disabled">
-            🎤
+          <div className="flex h-full w-full items-center justify-center text-text-disabled">
+            <FontAwesomeIcon icon={faMicrophone} className="w-12 h-12" aria-hidden="true" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -52,10 +54,10 @@ export function ArtistCard({ artist, eventCount, href, className }: Props) {
         {/* verified */}
         {artist.verified && (
           <div
-            className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-fg text-xs font-bold shadow"
+            className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-fg shadow"
             title="Doğrulanmış sanatçı"
           >
-            ✓
+            <FontAwesomeIcon icon={faCheck} className="w-3 h-3" aria-hidden="true" />
           </div>
         )}
 

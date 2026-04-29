@@ -2,6 +2,8 @@
 import { cn } from '@/libs/utils/cn';
 import { useState } from 'react';
 import type { TableColumn } from './Table';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 export type { TableColumn };
 
@@ -146,9 +148,9 @@ export function AdvancedDataTable<T extends Record<string, unknown>>({
                             aria-label={isExpanded ? 'Collapse row' : 'Expand row'}
                             aria-expanded={isExpanded}
                             onClick={() => toggleExpand(i)}
-                            className="text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded text-xs"
+                            className="text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
                           >
-                            {isExpanded ? '▾' : '▸'}
+                            <FontAwesomeIcon icon={isExpanded ? faChevronDown : faChevronRight} className="w-2.5 h-2.5" aria-hidden="true" />
                           </button>
                         </td>
                       )}

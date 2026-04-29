@@ -1,10 +1,13 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
 import { useMemo, Suspense } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { EventCard } from '@/modules/domains/event/EventCard';
 import { ArtistCard } from '@/modules/domains/event/ArtistCard';
 import { VenueCard } from '@/modules/domains/event/VenueCard';
 import { EVENTS, ARTISTS, VENUES, EVENT_ARTISTS, EVENT_VENUE } from '@/app/themes/event/event.data';
+import { Artist } from '@/modules/domains/event/types';
 
 function normalize(s: string) {
   return s.toLocaleLowerCase('tr-TR');
@@ -67,14 +70,14 @@ function SearchResults() {
 
         {!q && (
           <div className="text-center py-16">
-            <p className="text-5xl mb-4">🔍</p>
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="w-12 h-12 text-text-disabled mb-4" aria-hidden="true" />
             <p className="text-text-secondary">Yukarıdaki arama kutusuna bir şeyler yazın.</p>
           </div>
         )}
 
         {q && total === 0 && (
           <div className="text-center py-16">
-            <p className="text-5xl mb-4">😔</p>
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="w-12 h-12 text-text-disabled mb-4" aria-hidden="true" />
             <p className="text-text-primary font-semibold mb-1">Sonuç bulunamadı</p>
             <p className="text-text-secondary text-sm">&ldquo;{q}&rdquo; için eşleşme yok. Farklı anahtar kelimeler deneyin.</p>
           </div>
@@ -101,7 +104,7 @@ function SearchResults() {
               <span className="ml-2 text-sm font-normal text-text-secondary">({results.artists.length})</span>
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {results.artists.map((artist) => {
+              {results.artists.map((artist: Artist) => {
                 const count = EVENTS.filter((e) =>
                   (EVENT_ARTISTS[e.eventId] ?? []).includes(artist.artistId),
                 ).length;

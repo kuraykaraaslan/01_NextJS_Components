@@ -1,5 +1,7 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 type StepState = 'complete' | 'active' | 'error' | 'pending';
 
@@ -33,8 +35,8 @@ const stateStyles: Record<StepState, { circle: string; text: string; line: strin
 };
 
 function StepIcon({ state, index }: { state: StepState; index: number }) {
-  if (state === 'complete') return <span aria-hidden="true">✓</span>;
-  if (state === 'error')    return <span aria-hidden="true">✕</span>;
+  if (state === 'complete') return <FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5" aria-hidden="true" />;
+  if (state === 'error')    return <FontAwesomeIcon icon={faXmark} className="w-3.5 h-3.5" aria-hidden="true" />;
   return <span>{index + 1}</span>;
 }
 

@@ -1,15 +1,22 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faKey, faUser, faEnvelope, faLock, faEnvelopeCircleCheck, faShield,
+  faCartShopping, faLightbulb, faCreditCard, faMagnifyingGlass,
+  faIdCard, faGear, faLocationDot, faBox, faArrowRight,
+} from '@fortawesome/free-solid-svg-icons';
+
 const SECTIONS = [
   {
     id: 'auth',
     title: 'Authentication',
     tag: 'common/auth',
     pages: [
-      { title: 'Login',            description: 'Email + password with OAuth providers and remember-me.',                 href: '/themes/common/auth/login',           icon: '🔑' },
-      { title: 'Register',         description: 'Account creation with password confirmation and OAuth shortcuts.',        href: '/themes/common/auth/register',        icon: '👤' },
-      { title: 'Forgot Password',  description: 'Request a reset link via email.',                                        href: '/themes/common/auth/forgot-password',  icon: '📧' },
-      { title: 'Reset Password',   description: 'Set a new password after clicking the email link.',                      href: '/themes/common/auth/reset-password',   icon: '🔐' },
-      { title: 'Verify Email',     description: '6-digit OTP entry with countdown timer and paste support.',              href: '/themes/common/auth/verify-email',     icon: '✉️' },
-      { title: 'Two-Factor Auth',  description: 'Authenticator-app OTP code entry with recovery options.',               href: '/themes/common/auth/two-factor',       icon: '🛡️' },
+      { title: 'Login',            description: 'Email + password with OAuth providers and remember-me.',                 href: '/themes/common/auth/login',           icon: <FontAwesomeIcon icon={faKey} /> },
+      { title: 'Register',         description: 'Account creation with password confirmation and OAuth shortcuts.',        href: '/themes/common/auth/register',        icon: <FontAwesomeIcon icon={faUser} /> },
+      { title: 'Forgot Password',  description: 'Request a reset link via email.',                                        href: '/themes/common/auth/forgot-password',  icon: <FontAwesomeIcon icon={faEnvelope} /> },
+      { title: 'Reset Password',   description: 'Set a new password after clicking the email link.',                      href: '/themes/common/auth/reset-password',   icon: <FontAwesomeIcon icon={faLock} /> },
+      { title: 'Verify Email',     description: '6-digit OTP entry with countdown timer and paste support.',              href: '/themes/common/auth/verify-email',     icon: <FontAwesomeIcon icon={faEnvelopeCircleCheck} /> },
+      { title: 'Two-Factor Auth',  description: 'Authenticator-app OTP code entry with recovery options.',               href: '/themes/common/auth/two-factor',       icon: <FontAwesomeIcon icon={faShield} /> },
     ],
   },
   {
@@ -17,7 +24,7 @@ const SECTIONS = [
     title: 'Cart',
     tag: 'common/cart',
     pages: [
-      { title: 'Shopping Cart',    description: 'Full cart with quantity controls, remove, coupon, and totals.',          href: '/themes/common/cart',                  icon: '🛒' },
+      { title: 'Shopping Cart',    description: 'Full cart with quantity controls, remove, coupon, and totals.',          href: '/themes/common/cart',                  icon: <FontAwesomeIcon icon={faCartShopping} /> },
     ],
   },
   {
@@ -25,8 +32,8 @@ const SECTIONS = [
     title: 'Payment',
     tag: 'common/payment',
     pages: [
-      { title: 'Payment Components', description: 'Showcase of all payment UI pieces.',                                  href: '/themes/common/payment',               icon: '💡' },
-      { title: 'Checkout',         description: '4-step flow: address → method → card → review.',                        href: '/themes/common/payment/checkout',      icon: '💳' },
+      { title: 'Payment Components', description: 'Showcase of all payment UI pieces.',                                  href: '/themes/common/payment',               icon: <FontAwesomeIcon icon={faLightbulb} /> },
+      { title: 'Checkout',         description: '4-step flow: address → method → card → review.',                        href: '/themes/common/payment/checkout',      icon: <FontAwesomeIcon icon={faCreditCard} /> },
     ],
   },
   {
@@ -34,7 +41,7 @@ const SECTIONS = [
     title: 'Utility',
     tag: 'common/utility',
     pages: [
-      { title: 'Not Found (404)',  description: 'Full-page 404 with gradient icon, action buttons and decorative dots.', href: '/themes/common/not-found', icon: '🔍' },
+      { title: 'Not Found (404)',  description: 'Full-page 404 with gradient icon, action buttons and decorative dots.', href: '/themes/common/not-found', icon: <FontAwesomeIcon icon={faMagnifyingGlass} /> },
     ],
   },
   {
@@ -42,29 +49,29 @@ const SECTIONS = [
     title: 'Account',
     tag: 'common/user · common/address',
     pages: [
-      { title: 'Profile',          description: 'View and edit display name, username, bio, avatar URL.',                href: '/themes/common/account/profile',       icon: '🪪' },
-      { title: 'Settings',         description: 'Theme, language, notification toggles and password change.',            href: '/themes/common/account/settings',      icon: '⚙️' },
-      { title: 'Address Book',     description: 'Manage delivery addresses with full add / edit / delete.',               href: '/themes/common/account/addresses',     icon: '📍' },
-      { title: 'Payment Methods',  description: 'Saved cards: add, remove, set default.',                                href: '/themes/common/account/payment-methods', icon: '💳' },
-      { title: 'Order History',    description: 'Filterable list with inline payment detail and totals summary.',         href: '/themes/common/account/orders',        icon: '📦' },
+      { title: 'Profile',          description: 'View and edit display name, username, bio, avatar URL.',                href: '/themes/common/account/profile',       icon: <FontAwesomeIcon icon={faIdCard} /> },
+      { title: 'Settings',         description: 'Theme, language, notification toggles and password change.',            href: '/themes/common/account/settings',      icon: <FontAwesomeIcon icon={faGear} /> },
+      { title: 'Address Book',     description: 'Manage delivery addresses with full add / edit / delete.',               href: '/themes/common/account/addresses',     icon: <FontAwesomeIcon icon={faLocationDot} /> },
+      { title: 'Payment Methods',  description: 'Saved cards: add, remove, set default.',                                href: '/themes/common/account/payment-methods', icon: <FontAwesomeIcon icon={faCreditCard} /> },
+      { title: 'Order History',    description: 'Filterable list with inline payment detail and totals summary.',         href: '/themes/common/account/orders',        icon: <FontAwesomeIcon icon={faBox} /> },
     ],
   },
 ];
 
-function PageCard({ title, description, href, icon }: { title: string; description: string; href: string; icon: string }) {
+function PageCard({ title, description, href, icon }: { title: string; description: string; href: string; icon: React.ReactNode }) {
   return (
     <a
       href={href}
       className="group flex items-start gap-4 rounded-xl border border-border bg-surface-raised p-4 hover:border-primary hover:shadow-md transition-all"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-subtle text-xl">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-subtle text-primary text-lg">
         {icon}
       </span>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">{title}</p>
         <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">{description}</p>
       </div>
-      <span className="text-text-secondary group-hover:text-primary transition-colors shrink-0 mt-0.5 text-sm" aria-hidden="true">→</span>
+      <FontAwesomeIcon icon={faArrowRight} className="w-4 h-4 text-text-secondary group-hover:text-primary transition-colors shrink-0 mt-0.5" aria-hidden="true" />
     </a>
   );
 }

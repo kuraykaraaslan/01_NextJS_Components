@@ -2,6 +2,8 @@
 import { cn } from '@/libs/utils/cn';
 import { NavDrawer } from '@/modules/app/NavDrawer';
 import { Button } from '@/modules/ui/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 export type AppNavItem = {
   label: string;
@@ -41,7 +43,7 @@ export function AppNav({
         <NavDrawer
           title="Navigation"
           side="left"
-          trigger={<Button variant="ghost" size="sm" iconOnly aria-label="Open navigation menu">☰</Button>}
+          trigger={<Button variant="ghost" size="sm" iconOnly aria-label="Open navigation menu"><FontAwesomeIcon icon={faBars} className="w-4 h-4" aria-hidden="true" /></Button>}
         >
           <nav className="flex flex-col gap-0.5 pt-1" aria-label="Mobile navigation">
             {navItems.map((item) => (

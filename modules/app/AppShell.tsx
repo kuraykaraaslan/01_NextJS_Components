@@ -2,6 +2,8 @@
 import { cn } from '@/libs/utils/cn';
 import { Drawer } from '@/modules/ui/Drawer';
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 type AppShellProps = {
   logo?: React.ReactNode;
@@ -55,7 +57,7 @@ export function AppShell({
                 aria-label="Open sidebar"
                 className="inline-flex lg:hidden items-center justify-center w-9 h-9 rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-overlay transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
               >
-                ☰
+                <FontAwesomeIcon icon={faBars} className="w-4 h-4" aria-hidden="true" />
               </button>
             )}
             <div className="flex min-w-0 flex-1">{topbar}</div>

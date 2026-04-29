@@ -1,6 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 type NotFoundPageProps = {
   title?: string;
@@ -8,7 +10,7 @@ type NotFoundPageProps = {
   homeHref?: string;
   homeLabel?: string;
   backLabel?: string;
-  icon?: string;
+  icon?: React.ReactNode;
   className?: string;
 };
 
@@ -18,7 +20,7 @@ export function NotFoundPage({
   homeHref = '/',
   homeLabel = 'Ana Sayfa',
   backLabel = 'Geri Dön',
-  icon = '🔍',
+  icon = <FontAwesomeIcon icon={faMagnifyingGlass} className="w-8 h-8 text-primary-fg" aria-hidden="true" />,
   className,
 }: NotFoundPageProps) {
   return (
@@ -67,7 +69,7 @@ export function NotFoundPage({
             boxShadow: '0 4px 16px color-mix(in srgb, var(--primary) 30%, transparent)',
           }}
         >
-          <span>←</span>
+          <FontAwesomeIcon icon={faArrowLeft} className="w-3.5 h-3.5" aria-hidden="true" />
           {homeLabel}
         </Link>
 

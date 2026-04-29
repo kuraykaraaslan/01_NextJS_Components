@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 export type NavItem = {
   id: string;
@@ -116,15 +118,14 @@ function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps
                   )}
                 >
                   <span>{group.label}</span>
-                  <span
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
                     className={cn(
-                      'transition-transform duration-200',
+                      'w-3 h-3 transition-transform duration-200',
                       isExpanded ? 'rotate-0' : '-rotate-90'
                     )}
                     aria-hidden="true"
-                  >
-                    ▾
-                  </span>
+                  />
                 </button>
               )}
 

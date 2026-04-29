@@ -1,5 +1,7 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary';
 type BadgeSize = 'sm' | 'md' | 'lg';
@@ -68,7 +70,7 @@ export function Badge({
           onClick={onDismiss}
           className="ml-0.5 leading-none hover:opacity-70 transition-opacity focus-visible:outline-none rounded-full"
         >
-          ✕
+          <FontAwesomeIcon icon={faXmark} className="w-2.5 h-2.5" />
         </button>
       )}
     </span>

@@ -5,14 +5,16 @@ import {
   EVENTS,
   EVENT_CATEGORIES,
 } from '@/app/themes/event/event.data';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMusic, faTrophy, faMasksTheater, faLaptop, faFaceSmile, faStar, faTicket } from '@fortawesome/free-solid-svg-icons';
 
-const CATEGORY_ICONS: Record<string, string> = {
-  'cat-music':      '🎵',
-  'cat-sports':     '⚽',
-  'cat-theater':    '🎭',
-  'cat-conference': '💻',
-  'cat-comedy':     '😄',
-  'cat-festival':   '🎪',
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  'cat-music':      <FontAwesomeIcon icon={faMusic} className="w-6 h-6" aria-hidden="true" />,
+  'cat-sports':     <FontAwesomeIcon icon={faTrophy} className="w-6 h-6" aria-hidden="true" />,
+  'cat-theater':    <FontAwesomeIcon icon={faMasksTheater} className="w-6 h-6" aria-hidden="true" />,
+  'cat-conference': <FontAwesomeIcon icon={faLaptop} className="w-6 h-6" aria-hidden="true" />,
+  'cat-comedy':     <FontAwesomeIcon icon={faFaceSmile} className="w-6 h-6" aria-hidden="true" />,
+  'cat-festival':   <FontAwesomeIcon icon={faStar} className="w-6 h-6" aria-hidden="true" />,
 };
 
 const HERO_EVENTS = EVENTS
@@ -61,7 +63,7 @@ export default function EventThemePage() {
               href={`/themes/event/events?category=${cat.slug}`}
               className="flex flex-col items-center gap-2 rounded-xl border border-border bg-surface-raised p-4 hover:border-primary hover:bg-primary-subtle transition-all text-center group"
             >
-              <span className="text-2xl">{CATEGORY_ICONS[cat.categoryId] ?? '🎫'}</span>
+              <span>{CATEGORY_ICONS[cat.categoryId] ?? <FontAwesomeIcon icon={faTicket} className="w-6 h-6" aria-hidden="true" />}</span>
               <span className="text-xs font-semibold text-text-secondary group-hover:text-primary transition-colors">
                 {cat.title}
               </span>

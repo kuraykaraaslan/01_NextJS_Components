@@ -4,6 +4,8 @@ import { Badge } from '@/modules/ui/Badge';
 import { Button } from '@/modules/ui/Button';
 import { SearchBar } from '@/modules/ui/SearchBar';
 import { SkipLink } from '@/modules/ui/SkipLink';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 const NAV_ITEMS = [
   { label: 'Overview', href: '/domains/blog' },
@@ -76,7 +78,7 @@ export default function BlogDomainLayout({ children }: { children: React.ReactNo
                     side="right"
                     trigger={(
                       <Button variant="outline" size="sm" iconOnly aria-label="Open menu">
-                        ☰
+                        <FontAwesomeIcon icon={faBars} className="w-4 h-4" aria-hidden="true" />
                       </Button>
                     )}
                   >

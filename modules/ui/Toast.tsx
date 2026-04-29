@@ -1,6 +1,8 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faTriangleExclamation, faCircleXmark, faCircleInfo, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useToastStore, getEffectiveDuration, type ToastVariant, type ToastItem } from './Toast.store';
 
 export { useToastStore, toast } from './Toast.store';
@@ -8,52 +10,6 @@ export type { ToastItem, ToastVariant, ToastItemAction } from './Toast.store';
 
 /** @deprecated */
 export type ToastAction = { label: string; onClick: () => void };
-
-// ─── Icons ────────────────────────────────────────────────────────────────────
-
-function IconSuccess() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="size-4 shrink-0">
-      <path fillRule="evenodd" d="M16.704 5.296a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.296-7.29a1 1 0 0 1 1.408 0Z" clipRule="evenodd"/>
-    </svg>
-  );
-}
-function IconWarning() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="size-4 shrink-0">
-      <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd"/>
-    </svg>
-  );
-}
-function IconError() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="size-4 shrink-0">
-      <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clipRule="evenodd"/>
-    </svg>
-  );
-}
-function IconInfo() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="size-4 shrink-0">
-      <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clipRule="evenodd"/>
-    </svg>
-  );
-}
-function IconSpinner() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="size-4 shrink-0 animate-spin">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"/>
-    </svg>
-  );
-}
-function IconClose() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="size-3.5">
-      <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>
-    </svg>
-  );
-}
 
 // ─── Variant config ────────────────────────────────────────────────────────────
 
@@ -64,31 +20,31 @@ const variantMap: Record<ToastVariant, VariantConfig> = {
     container:     'bg-success-subtle border-success',
     iconColor:     'text-success-fg',
     progressColor: 'bg-success',
-    defaultIcon:   <IconSuccess />,
+    defaultIcon:   <FontAwesomeIcon icon={faCircleCheck} className="size-4 shrink-0" />,
   },
   warning: {
     container:     'bg-warning-subtle border-warning',
     iconColor:     'text-warning',
     progressColor: 'bg-warning',
-    defaultIcon:   <IconWarning />,
+    defaultIcon:   <FontAwesomeIcon icon={faTriangleExclamation} className="size-4 shrink-0" />,
   },
   error: {
     container:     'bg-error-subtle border-error',
     iconColor:     'text-error',
     progressColor: 'bg-error',
-    defaultIcon:   <IconError />,
+    defaultIcon:   <FontAwesomeIcon icon={faCircleXmark} className="size-4 shrink-0" />,
   },
   info: {
     container:     'bg-info-subtle border-info',
     iconColor:     'text-info',
     progressColor: 'bg-info',
-    defaultIcon:   <IconInfo />,
+    defaultIcon:   <FontAwesomeIcon icon={faCircleInfo} className="size-4 shrink-0" />,
   },
   loading: {
     container:     'bg-surface-raised border-border',
     iconColor:     'text-text-secondary',
     progressColor: 'bg-primary',
-    defaultIcon:   <IconSpinner />,
+    defaultIcon:   <FontAwesomeIcon icon={faSpinner} className="size-4 shrink-0 animate-spin" />,
   },
 };
 
@@ -211,7 +167,7 @@ function ToastCard({ item, onRemove }: { item: ToastItem; onRemove: () => void }
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
             )}
           >
-            <IconClose />
+            <FontAwesomeIcon icon={faXmark} className="size-3.5" />
           </button>
         )}
       </div>

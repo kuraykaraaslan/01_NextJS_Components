@@ -2,6 +2,8 @@
 import { Button } from '@/modules/ui/Button';
 import { TicketCard } from '@/modules/domains/event/TicketCard';
 import type { EventSectionPricing } from '@/modules/domains/event/types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 const FMT = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
 
@@ -58,8 +60,8 @@ export function CheckoutSuccess({
   return (
     <div className="mx-auto max-w-2xl px-4 sm:px-6 py-12 space-y-6">
       <div className="text-center space-y-3">
-        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-success-subtle text-4xl mx-auto">
-          ✓
+        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-success-subtle mx-auto">
+          <FontAwesomeIcon icon={faCheck} className="w-10 h-10 text-success" aria-hidden="true" />
         </span>
         <h1 className="text-2xl font-black text-text-primary">Ödeme Başarılı!</h1>
         <p className="text-text-secondary">

@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useMemo, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown, faSort } from '@fortawesome/free-solid-svg-icons';
 import { SearchBar } from './SearchBar';
 import { Pagination } from './Pagination';
 import type { TableColumn } from './Table';
@@ -150,9 +152,11 @@ export function DataTable<T extends Record<string, unknown>>({
                     <span className="inline-flex items-center gap-1">
                       {col.header}
                       {col.sortable && (
-                        <span aria-hidden="true" className="text-[10px] leading-none">
-                          {dir === 'asc' ? '▲' : dir === 'desc' ? '▼' : '⇅'}
-                        </span>
+                        <FontAwesomeIcon
+                          icon={dir === 'asc' ? faChevronUp : dir === 'desc' ? faChevronDown : faSort}
+                          className="w-2.5 h-2.5"
+                          aria-hidden="true"
+                        />
                       )}
                     </span>
                   </th>

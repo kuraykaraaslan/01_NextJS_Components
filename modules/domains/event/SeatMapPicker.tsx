@@ -1,6 +1,8 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTableCells, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import type { VenueSection, VenueSeat, EventSectionPricing, SeatStatus } from './types';
 
 export type { SeatStatus };
@@ -462,12 +464,7 @@ function MapHeader() {
   return (
     <div className="flex items-center gap-3 border-b border-border px-4 py-3">
       <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-surface-overlay text-text-secondary">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-          <rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
-          <rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
-          <rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
-          <rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
+        <FontAwesomeIcon icon={faTableCells} className="w-3.5 h-3.5" aria-hidden />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-bold text-text-primary">Koltuk Haritası</p>
@@ -500,9 +497,7 @@ function SectionDetailHeader({
         )}
         aria-label="Haritaya dön"
       >
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <FontAwesomeIcon icon={faChevronLeft} className="w-3.5 h-3.5" aria-hidden />
       </button>
 
       <div className="flex-1 min-w-0">

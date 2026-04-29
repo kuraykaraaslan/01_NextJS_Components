@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 export type TreeNode = {
   id: string;
@@ -55,8 +57,8 @@ function TreeItem({
         )}
       >
         {hasChildren ? (
-          <span aria-hidden="true" className="text-xs text-text-disabled w-3 shrink-0">
-            {expanded ? '▾' : '▸'}
+          <span aria-hidden="true" className="text-text-disabled w-3 shrink-0 flex items-center justify-center">
+            <FontAwesomeIcon icon={expanded ? faChevronDown : faChevronRight} className="w-2.5 h-2.5" />
           </span>
         ) : (
           <span className="w-3 shrink-0" aria-hidden="true" />

@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 export function SearchBar({
   id = 'search',
@@ -36,9 +38,9 @@ export function SearchBar({
     <div className={cn('relative flex items-center', className)}>
       <span
         aria-hidden="true"
-        className="absolute left-3 text-text-disabled pointer-events-none select-none"
+        className="absolute left-3 text-text-disabled pointer-events-none"
       >
-        ⌕
+        <FontAwesomeIcon icon={faMagnifyingGlass} className="w-3.5 h-3.5" />
       </span>
       <input
         id={id}
@@ -64,7 +66,7 @@ export function SearchBar({
           aria-label="Clear search"
           className="absolute right-2 text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
         >
-          ✕
+          <FontAwesomeIcon icon={faXmark} className="w-3 h-3" />
         </button>
       )}
     </div>

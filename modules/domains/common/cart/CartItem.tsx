@@ -3,6 +3,8 @@ import { cn } from '@/libs/utils/cn';
 import { Button } from '@/modules/ui/Button';
 import { PriceDisplay } from '../money/PriceDisplay';
 import type { CartItem as CartItemType } from '../CartTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBagShopping } from '@fortawesome/free-solid-svg-icons';
 
 type CartItemProps = {
   item: CartItemType;
@@ -32,7 +34,7 @@ export function CartItem({
         {item.image ? (
           <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
         ) : (
-          <span className={compact ? 'text-lg' : 'text-2xl'} aria-hidden="true">🛍</span>
+          <FontAwesomeIcon icon={faBagShopping} className={cn('text-text-disabled', compact ? 'w-5 h-5' : 'w-7 h-7')} aria-hidden="true" />
         )}
       </div>
 

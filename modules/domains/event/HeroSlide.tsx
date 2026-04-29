@@ -2,6 +2,8 @@ import { Badge } from '@/modules/ui/Badge';
 import { EventCategoryBadge } from '@/modules/domains/event/EventCategoryBadge';
 import { EventStatusBadge } from '@/modules/domains/event/EventStatusBadge';
 import type { EventWithData } from '@/modules/domains/event/types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationDot, faCalendarDays, faTicket, faFire } from '@fortawesome/free-solid-svg-icons';
 
 const FMT_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 const FMT_TIME = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' });
@@ -58,13 +60,13 @@ export function HeroSlide({ event }: HeroSlideProps) {
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/65">
             <span className="flex items-center gap-1.5">
-              📅 {FMT_DATE.format(event.startAt)} · {FMT_TIME.format(event.startAt)}
+              <FontAwesomeIcon icon={faCalendarDays} className="w-3.5 h-3.5" aria-hidden="true" /> {FMT_DATE.format(event.startAt)} · {FMT_TIME.format(event.startAt)}
             </span>
             <span className="flex items-center gap-1.5">
-              📍 İstanbul
+              <FontAwesomeIcon icon={faLocationDot} className="w-3.5 h-3.5" aria-hidden="true" /> İstanbul
             </span>
             <span className="flex items-center gap-1.5 font-bold text-white">
-              🎫 {priceLabel}
+              <FontAwesomeIcon icon={faTicket} className="w-3.5 h-3.5" aria-hidden="true" /> {priceLabel}
             </span>
           </div>
 
@@ -89,8 +91,8 @@ export function HeroSlide({ event }: HeroSlideProps) {
           </div>
 
           {event.remainingCapacity != null && event.remainingCapacity < 5000 && !isSoldOut && (
-            <p className="text-xs font-medium" style={{ color: '#fbbf24' }}>
-              🔥 Son {event.remainingCapacity.toLocaleString('tr-TR')} bilet!
+            <p className="text-xs font-medium flex items-center gap-1" style={{ color: '#fbbf24' }}>
+              <FontAwesomeIcon icon={faFire} className="w-3 h-3" aria-hidden="true" /> Son {event.remainingCapacity.toLocaleString('tr-TR')} bilet!
             </p>
           )}
         </div>

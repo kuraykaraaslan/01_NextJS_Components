@@ -6,6 +6,8 @@ import { Badge } from '@/modules/ui/Badge';
 import { SearchBar } from '@/modules/ui/SearchBar';
 import { Button } from '@/modules/ui/Button';
 import { type AppSidebarNavGroup, type AppSidebarNavItem } from '@/modules/app/AppSidebar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 type AppDrawerProps = {
   navGroups?: AppSidebarNavGroup[];
@@ -58,7 +60,7 @@ export function AppDrawer({
     <>
       <div role="none" onClick={() => setOpen(true)}>
         {trigger ?? (
-          <Button variant="outline" size="sm" iconLeft={<span>☰</span>}>
+          <Button variant="outline" size="sm" iconLeft={<FontAwesomeIcon icon={faBars} className="w-3.5 h-3.5" aria-hidden="true" />}>
             Open Navigation
           </Button>
         )}

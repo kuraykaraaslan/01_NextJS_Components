@@ -2,6 +2,8 @@
 import { cn } from '@/libs/utils/cn';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/modules/ui/Badge';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 export type AppSidebarNavItem = {
   id: string;
@@ -124,7 +126,7 @@ export function AppSidebar({
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className="p-1.5 rounded text-text-secondary hover:text-text-primary hover:bg-surface-overlay transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
         >
-          <span aria-hidden="true" className={cn('block text-lg transition-transform', isCollapsed ? 'rotate-180' : '')}>‹</span>
+          <FontAwesomeIcon icon={faChevronLeft} className={cn('w-4 h-4 transition-transform', isCollapsed ? 'rotate-180' : '')} aria-hidden="true" />
         </button>
       </div>
 
@@ -148,10 +150,11 @@ export function AppSidebar({
                   )}
                 >
                   <span className="text-[10px] font-semibold uppercase tracking-widest">{group.label}</span>
-                  <span
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
+                    className={cn('w-3 h-3 transition-transform duration-200', expanded ? 'rotate-0' : '-rotate-90')}
                     aria-hidden="true"
-                    className={cn('text-xs transition-transform duration-200', expanded ? 'rotate-0' : '-rotate-90')}
-                  >▾</span>
+                  />
                 </button>
               ) : (
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-text-disabled px-3 mb-1">

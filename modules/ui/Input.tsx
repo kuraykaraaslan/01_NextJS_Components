@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash, faXmark, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 type InputState = 'default' | 'error' | 'success';
 
@@ -140,7 +142,7 @@ export function Input({
             onClick={() => setShowPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none text-sm"
           >
-            {showPassword ? '🙈' : '👁'}
+            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="w-3.5 h-3.5" />
           </button>
         )}
 
@@ -152,7 +154,7 @@ export function Input({
             onClick={onClear}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none"
           >
-            ✕
+            <FontAwesomeIcon icon={faXmark} className="w-3 h-3" />
           </button>
         )}
 
@@ -171,18 +173,18 @@ export function Input({
               aria-label="Increment"
               onClick={increment}
               tabIndex={-1}
-              className="flex-1 px-2 text-[10px] text-text-secondary hover:bg-surface-overlay hover:text-text-primary transition-colors focus-visible:outline-none border-b border-border leading-none"
+              className="flex-1 px-2 text-text-secondary hover:bg-surface-overlay hover:text-text-primary transition-colors focus-visible:outline-none border-b border-border leading-none flex items-center justify-center"
             >
-              ▲
+              <FontAwesomeIcon icon={faChevronUp} className="w-2 h-2" />
             </button>
             <button
               type="button"
               aria-label="Decrement"
               onClick={decrement}
               tabIndex={-1}
-              className="flex-1 px-2 text-[10px] text-text-secondary hover:bg-surface-overlay hover:text-text-primary transition-colors focus-visible:outline-none leading-none"
+              className="flex-1 px-2 text-text-secondary hover:bg-surface-overlay hover:text-text-primary transition-colors focus-visible:outline-none leading-none flex items-center justify-center"
             >
-              ▼
+              <FontAwesomeIcon icon={faChevronDown} className="w-2 h-2" />
             </button>
           </div>
         )}

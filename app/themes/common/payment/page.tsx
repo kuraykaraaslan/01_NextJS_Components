@@ -1,4 +1,6 @@
 'use client';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { CreditCardVisual } from '@/modules/domains/common/payment/CreditCardVisual';
 import { PaymentStatusBadge } from '@/modules/domains/common/payment/PaymentStatusBadge';
 import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSummaryCard';
@@ -36,7 +38,7 @@ export default function PaymentOverviewPage() {
           href="/themes/common/payment/checkout"
           className="inline-flex items-center gap-1 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-fg hover:bg-primary-hover transition-colors"
         >
-          Go to full checkout →
+          Go to full checkout <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />
         </a>
       </div>
 

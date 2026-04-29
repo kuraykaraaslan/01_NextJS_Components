@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Button } from '@/modules/ui/Button';
 import { Stepper, type StepItem } from '@/modules/ui/Stepper';
 import { AlertBanner } from '@/modules/ui/AlertBanner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 export type StepFlowStep = {
   id: string;
@@ -112,7 +114,7 @@ export function StepFlow({
               {completeLabel}
             </Button>
           ) : (
-            <Button variant="primary" onClick={handleNext} iconRight="→">
+            <Button variant="primary" onClick={handleNext} iconRight={<FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />}>
               {nextLabel}
             </Button>
           )}

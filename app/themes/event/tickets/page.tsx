@@ -4,6 +4,8 @@ import { TicketCard } from '@/modules/domains/event/TicketCard';
 import { EmptyState } from '@/modules/ui/EmptyState';
 import { MY_TICKETS } from '@/app/themes/event/event.data';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTableCells, faTableList, faPrint, faShareNodes, faTicket } from '@fortawesome/free-solid-svg-icons';
 
 /* ── print isolation ──────────────────────────────────────
    Injects a @media print rule that hides everything except
@@ -134,12 +136,12 @@ function ViewToggle({
         >
           {opt === 'horizontal' ? (
             <span className="flex items-center gap-1.5">
-              <HorizontalIcon />
+              <FontAwesomeIcon icon={faTableList} className="w-3.5 h-3.5" aria-hidden="true" />
               Yatay
             </span>
           ) : (
             <span className="flex items-center gap-1.5">
-              <VerticalIcon />
+              <FontAwesomeIcon icon={faTableCells} className="w-3.5 h-3.5" aria-hidden="true" />
               Dikey
             </span>
           )}
@@ -149,23 +151,6 @@ function ViewToggle({
   );
 }
 
-function HorizontalIcon() {
-  return (
-    <svg className="w-3.5 h-3.5" viewBox="0 0 14 10" fill="none" aria-hidden="true">
-      <rect x="0" y="1" width="14" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-      <line x1="10" y1="1" x2="10" y2="9" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1.5 1" />
-    </svg>
-  );
-}
-
-function VerticalIcon() {
-  return (
-    <svg className="w-3.5 h-3.5" viewBox="0 0 10 14" fill="none" aria-hidden="true">
-      <rect x="1" y="0" width="8" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-      <line x1="1" y1="10" x2="9" y2="10" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1.5 1" />
-    </svg>
-  );
-}
 
 /* ════════════════════════════════════════════════════════
    Page
@@ -271,7 +256,7 @@ export default function MyTicketsPage() {
         {/* ── ticket list ── */}
         {filtered.length === 0 ? (
           <EmptyState
-            icon="🎫"
+            icon={<FontAwesomeIcon icon={faTicket} className="w-5 h-5" aria-hidden="true" />}
             title="Bilet bulunamadı"
             description="Bu kategoride biletiniz bulunmuyor."
           />
@@ -387,7 +372,7 @@ function TicketActions({ entry, compact }: EntryProps & { compact?: boolean }) {
           title="Bileti yazdır"
           onClick={() => printTicketById(entry.ticket.ticketId)}
         >
-          <PrintIcon className={compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
+          <FontAwesomeIcon icon={faPrint} className={compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} aria-hidden="true" />
           {!compact && 'Yazdır'}
         </button>
       )}
@@ -403,32 +388,10 @@ function TicketActions({ entry, compact }: EntryProps & { compact?: boolean }) {
         )}
         title="Bileti paylaş"
       >
-        <ShareIcon className={compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
+        <FontAwesomeIcon icon={faShareNodes} className={compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} aria-hidden="true" />
         {!compact && 'Paylaş'}
       </a>
     </div>
   );
 }
 
-function PrintIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-      <rect x="3" y="1.5" width="10" height="5" rx="0.8" />
-      <path d="M3 6.5H1.5A.5.5 0 001 7v5a.5.5 0 00.5.5H3" strokeLinecap="round" />
-      <path d="M13 6.5h1.5a.5.5 0 01.5.5v5a.5.5 0 01-.5.5H13" strokeLinecap="round" />
-      <rect x="3" y="9.5" width="10" height="5" rx="0.8" />
-      <circle cx="13" cy="9" r="0.8" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function ShareIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-      <circle cx="12" cy="3" r="1.5" />
-      <circle cx="4" cy="8" r="1.5" />
-      <circle cx="12" cy="13" r="1.5" />
-      <path d="M5.5 7.2L10.5 4M5.5 9l5 3" strokeLinecap="round" />
-    </svg>
-  );
-}

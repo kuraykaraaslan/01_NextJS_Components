@@ -3,6 +3,8 @@ import { use, useState } from 'react';
 import { TicketCard } from '@/modules/domains/event/TicketCard';
 import { getTicketById } from '@/app/themes/event/event.data';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPrint, faLink, faTicket } from '@fortawesome/free-solid-svg-icons';
 
 /* ── print isolation helper ──────────────────────────────
    Injects a <style> that hides everything on the page
@@ -53,7 +55,7 @@ export default function SharedTicketPage({ params }: { params: Promise<{ uuid: s
   if (!entry) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-surface-base px-4">
-        <span className="text-5xl">🎫</span>
+        <FontAwesomeIcon icon={faTicket} className="w-12 h-12 text-text-disabled" aria-hidden="true" />
         <h1 className="text-xl font-bold text-text-primary">Bilet bulunamadı</h1>
         <p className="text-sm text-text-secondary text-center max-w-xs">
           Bu bağlantı geçersiz ya da süresi dolmuş olabilir.
@@ -80,7 +82,7 @@ export default function SharedTicketPage({ params }: { params: Promise<{ uuid: s
             href="/themes/event"
             className="flex items-center gap-2 text-sm font-bold text-text-primary hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
           >
-            <span className="text-xl">🎫</span>
+            <FontAwesomeIcon icon={faTicket} className="w-5 h-5" aria-hidden="true" />
             <span>BiletMaster</span>
           </a>
           <span className="text-xs text-text-secondary">Paylaşılan Bilet</span>
@@ -118,7 +120,7 @@ export default function SharedTicketPage({ params }: { params: Promise<{ uuid: s
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
             )}
           >
-            <PrintIcon className="w-4 h-4" />
+            <FontAwesomeIcon icon={faPrint} className="w-4 h-4" aria-hidden="true" />
             Yazdır
           </button>
 
@@ -130,7 +132,7 @@ export default function SharedTicketPage({ params }: { params: Promise<{ uuid: s
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
             )}
           >
-            <LinkIcon className="w-4 h-4" />
+            <FontAwesomeIcon icon={faLink} className="w-4 h-4" aria-hidden="true" />
             {copied ? 'Kopyalandı!' : 'Bağlantıyı Kopyala'}
           </button>
         </div>
@@ -145,25 +147,3 @@ export default function SharedTicketPage({ params }: { params: Promise<{ uuid: s
   );
 }
 
-/* ── icons ── */
-
-function PrintIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true">
-      <rect x="4" y="2" width="12" height="6" rx="1" />
-      <path d="M4 8H2a1 1 0 00-1 1v6a1 1 0 001 1h2" strokeLinecap="round" />
-      <path d="M16 8h2a1 1 0 011 1v6a1 1 0 01-1 1h-2" strokeLinecap="round" />
-      <rect x="4" y="12" width="12" height="6" rx="1" />
-      <circle cx="16" cy="11" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function LinkIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true">
-      <path d="M8 12a4 4 0 005.66 0l2-2a4 4 0 00-5.66-5.66l-1 1" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 8a4 4 0 00-5.66 0l-2 2a4 4 0 005.66 5.66l1-1" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}

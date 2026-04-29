@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFolderOpen, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 type FileEntry = {
   file: File;
@@ -108,7 +110,7 @@ export function FileInput({
           if (!isDisabled) addFiles(e.dataTransfer.files);
         }}
       >
-        <span className="text-2xl" aria-hidden="true">📁</span>
+        <FontAwesomeIcon icon={faFolderOpen} className="w-8 h-8 text-text-disabled" aria-hidden="true" />
         <p className="text-sm text-text-secondary">
           Drag & drop files here, or{' '}
           <button
@@ -158,7 +160,7 @@ export function FileInput({
                 onClick={() => removeEntry(i)}
                 className="shrink-0 hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
               >
-                ✕
+                <FontAwesomeIcon icon={faXmark} className="w-3 h-3" />
               </button>
             </li>
           ))}

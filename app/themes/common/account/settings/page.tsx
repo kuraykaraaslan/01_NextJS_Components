@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { UserPreferencesForm } from '@/modules/domains/common/user/UserPreferencesForm';
 import { ChangePasswordForm } from '@/modules/domains/common/auth/ChangePasswordForm';
 import { DEMO_USER } from '../../common.data';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import type { UserPreferences, ChangePassword } from '@/modules/domains/common/types';
 
 type SaveState = 'idle' | 'saved' | 'error';
@@ -24,7 +26,10 @@ function Toast({ state }: { state: SaveState }) {
         ? 'bg-success-subtle border border-success text-success-fg'
         : 'bg-error-subtle border border-error text-error'
     }`}>
-      {state === 'saved' ? '✓ Changes saved.' : '✕ Something went wrong.'}
+      {state === 'saved'
+        ? <><FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5 mr-1" aria-hidden="true" /> Changes saved.</>
+        : <><FontAwesomeIcon icon={faXmark} className="w-3.5 h-3.5 mr-1" aria-hidden="true" /> Something went wrong.</>
+      }
     </div>
   );
 }

@@ -10,6 +10,8 @@ import { Button } from '@/modules/ui/Button';
 import { Card } from '@/modules/ui/Card';
 import { useState, type ComponentProps } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell, faChartBar, faCheckCircle, faCog, faCreditCard, faFolder, faGear, faHouse, faUsers } from '@fortawesome/free-solid-svg-icons';
 
 const DEMO_USER: ComponentProps<typeof UserMenu>['user'] = {
   userId: 'demo-1',
@@ -23,18 +25,18 @@ const NAV_GROUPS = [
   {
     label: 'Main',
     items: [
-      { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-      { id: 'analytics', label: 'Analytics',  icon: '📈', badge: 3 },
-      { id: 'projects',  label: 'Projects',   icon: '📁' },
-      { id: 'tasks',     label: 'Tasks',      icon: '✅', badge: 12 },
+      { id: 'dashboard', label: 'Dashboard', icon: <FontAwesomeIcon icon={faHouse} className="w-3 h-3" /> },
+      { id: 'analytics', label: 'Analytics',  icon: <FontAwesomeIcon icon={faChartBar} className="w-3 h-3" />, badge: 3 },
+      { id: 'projects',  label: 'Projects',   icon: <FontAwesomeIcon icon={faFolder} className="w-3 h-3" /> },
+      { id: 'tasks',     label: 'Tasks',      icon: <FontAwesomeIcon icon={faCheckCircle} className="w-3 h-3" />, badge: 12 },
     ],
   },
   {
     label: 'Settings',
     items: [
-      { id: 'team',     label: 'Team',     icon: '👥' },
-      { id: 'billing',  label: 'Billing',  icon: '💳' },
-      { id: 'settings', label: 'Settings', icon: '⚙️' },
+      { id: 'team',     label: 'Team',     icon: <FontAwesomeIcon icon={faUsers} className="w-3 h-3" /> },
+      { id: 'billing',  label: 'Billing',  icon: <FontAwesomeIcon icon={faCreditCard} className="w-3 h-3" /> },
+      { id: 'settings', label: 'Settings', icon: <FontAwesomeIcon icon={faCog} className="w-3 h-3" /> },
     ],
   },
 ];
@@ -175,8 +177,8 @@ function AppTopBarSearchDemo() {
         <AppTopBar>
           <GlobalSearch onSearch={() => {}} onSelect={() => {}} className="flex-1 max-w-sm hidden sm:block" />
           <div className="ml-auto flex items-center gap-1">
-            <Button variant="ghost" size="sm" iconOnly aria-label="Notifications">🔔</Button>
-            <Button variant="ghost" size="sm" iconOnly aria-label="Settings">⚙️</Button>
+            <Button variant="ghost" size="sm" iconOnly aria-label="Notifications"><FontAwesomeIcon icon={faBell} className="w-3 h-3" /></Button>
+            <Button variant="ghost" size="sm" iconOnly aria-label="Settings"><FontAwesomeIcon icon={faGear} className="w-3 h-3" /></Button>
             <UserMenu user={DEMO_USER} />
           </div>
         </AppTopBar>

@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 import { AddressSelector } from '@/modules/domains/common/address/AddressSelector';
 import { AddressForm } from '@/modules/domains/common/address/AddressForm';
@@ -392,7 +394,7 @@ function StepShell({
               : 'bg-surface-overlay text-text-disabled'
           }`}
         >
-          {done ? '✓' : number}
+          {done ? <FontAwesomeIcon icon={faCheck} className="w-3 h-3" aria-hidden="true" /> : number}
         </span>
         <h2
           className={`flex-1 text-sm font-semibold ${
@@ -432,8 +434,8 @@ function SuccessState({ address }: { address?: Address }) {
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10">
       <div className="flex flex-col items-center justify-center py-16 space-y-6 text-center max-w-md mx-auto">
-        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-success-subtle text-4xl">
-          ✓
+        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-success-subtle">
+          <FontAwesomeIcon icon={faCheck} className="w-10 h-10 text-success" aria-hidden="true" />
         </span>
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-text-primary">Payment successful!</h2>

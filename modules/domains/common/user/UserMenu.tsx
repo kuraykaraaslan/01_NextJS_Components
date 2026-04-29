@@ -4,6 +4,8 @@ import { Button } from '@/modules/ui/Button';
 import { DropdownMenu, type DropdownItem } from '@/modules/ui/DropdownMenu';
 import { SafeUser } from '../types';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faUser, faGear, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 export function UserMenu({
   user,
@@ -20,10 +22,10 @@ export function UserMenu({
   const avatar      = user.userProfile?.profilePicture ?? null;
 
   const defaultItems: DropdownItem[] = items ?? [
-    { type: 'item', label: 'Profile',  icon: '👤' },
-    { type: 'item', label: 'Settings', icon: '⚙️' },
+    { type: 'item', label: 'Profile',  icon: <FontAwesomeIcon icon={faUser} className="w-3.5 h-3.5" aria-hidden="true" /> },
+    { type: 'item', label: 'Settings', icon: <FontAwesomeIcon icon={faGear} className="w-3.5 h-3.5" aria-hidden="true" /> },
     { type: 'separator' },
-    { type: 'item', label: 'Sign out', icon: '↩️', danger: true },
+    { type: 'item', label: 'Sign out', icon: <FontAwesomeIcon icon={faArrowRightFromBracket} className="w-3.5 h-3.5" aria-hidden="true" />, danger: true },
   ];
 
   const trigger = (
@@ -40,7 +42,7 @@ export function UserMenu({
           <p className="text-xs text-text-secondary truncate">{user.userRole}</p>
         </div>
       )}
-      <span aria-hidden="true" className="text-text-disabled text-xs hidden sm:block">▾</span>
+      <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 text-text-disabled hidden sm:block" aria-hidden="true" />
     </Button>
   );
 

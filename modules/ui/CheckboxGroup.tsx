@@ -1,5 +1,7 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 type CheckboxOption = { value: string; label: string };
 
@@ -52,7 +54,7 @@ export function CheckboxGroup({
                 data-testid={`checkboxgroup-${value}`}
                 className="sr-only"
               />
-              {isSelected && <span aria-hidden="true" className="text-xs font-bold">✓</span>}
+              {isSelected && <FontAwesomeIcon icon={faCheck} className="w-3 h-3" aria-hidden="true" />}
               <span>{label}</span>
             </label>
           );

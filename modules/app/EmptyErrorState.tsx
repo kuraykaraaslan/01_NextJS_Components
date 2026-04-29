@@ -2,6 +2,8 @@ import { cn } from '@/libs/utils/cn';
 import { AlertBanner } from '@/modules/ui/AlertBanner';
 import { Button } from '@/modules/ui/Button';
 import { EmptyState } from '@/modules/ui/EmptyState';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTriangleExclamation, faMagnifyingGlass, faLock, faArrowLeft, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 
 export function ErrorState({
   title = 'Something went wrong',
@@ -27,11 +29,11 @@ export function ErrorState({
       {onRetry && (
         <div className="flex justify-center">
           <EmptyState
-            icon="⚠"
+            icon={<FontAwesomeIcon icon={faTriangleExclamation} className="w-5 h-5" aria-hidden="true" />}
             title="Unable to load data"
             description="There was a problem loading this content."
             action={
-              <Button variant="outline" size="sm" onClick={onRetry} iconLeft="↺">
+              <Button variant="outline" size="sm" onClick={onRetry} iconLeft={<FontAwesomeIcon icon={faRotateRight} className="w-3.5 h-3.5" aria-hidden="true" />}>
                 {retryLabel}
               </Button>
             }
@@ -57,12 +59,12 @@ export function NotFoundState({
 }) {
   return (
     <EmptyState
-      icon="🔍"
+      icon={<FontAwesomeIcon icon={faMagnifyingGlass} className="w-5 h-5" aria-hidden="true" />}
       title={title}
       description={description}
       action={
         onGoBack ? (
-          <Button variant="outline" size="sm" onClick={onGoBack} iconLeft="←">
+          <Button variant="outline" size="sm" onClick={onGoBack} iconLeft={<FontAwesomeIcon icon={faArrowLeft} className="w-3.5 h-3.5" aria-hidden="true" />}>
             {goBackLabel}
           </Button>
         ) : undefined
@@ -85,7 +87,7 @@ export function NoAccessState({
 }) {
   return (
     <EmptyState
-      icon="🔒"
+      icon={<FontAwesomeIcon icon={faLock} className="w-5 h-5" aria-hidden="true" />}
       title={title}
       description={description}
       action={

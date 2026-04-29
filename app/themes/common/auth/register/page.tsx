@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { RegisterForm } from '@/modules/domains/common/auth/RegisterForm';
 import { OAuthButtons } from '@/modules/domains/common/auth/OAuthButtons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function RegisterPage() {
   const [successEmail, setSuccessEmail] = useState('');
@@ -38,7 +40,7 @@ export default function RegisterPage() {
                 href="/themes/common/auth/login"
                 className="inline-block mt-2 text-sm font-medium text-primary hover:underline"
               >
-                Go to login →
+                Go to login <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />
               </a>
             </div>
           ) : (

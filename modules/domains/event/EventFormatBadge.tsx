@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import type { EventFormat } from './types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationDot, faGlobe, faBolt } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   format: EventFormat;
@@ -8,10 +10,10 @@ type Props = {
   className?: string;
 };
 
-const config: Record<EventFormat, { label: string; icon: string; classes: string }> = {
-  PHYSICAL: { label: 'Fiziksel', icon: '📍', classes: 'bg-primary-subtle text-primary border-primary/20' },
-  ONLINE:   { label: 'Online',   icon: '🌐', classes: 'bg-info-subtle text-info border-info/20' },
-  HYBRID:   { label: 'Hibrit',   icon: '⚡', classes: 'bg-warning-subtle text-warning border-warning/20' },
+const config: Record<EventFormat, { label: string; icon: React.ReactNode; classes: string }> = {
+  PHYSICAL: { label: 'Fiziksel', icon: <FontAwesomeIcon icon={faLocationDot} className="w-3 h-3" aria-hidden="true" />, classes: 'bg-primary-subtle text-primary border-primary/20' },
+  ONLINE:   { label: 'Online',   icon: <FontAwesomeIcon icon={faGlobe} className="w-3 h-3" aria-hidden="true" />,       classes: 'bg-info-subtle text-info border-info/20' },
+  HYBRID:   { label: 'Hibrit',   icon: <FontAwesomeIcon icon={faBolt} className="w-3 h-3" aria-hidden="true" />,        classes: 'bg-warning-subtle text-warning border-warning/20' },
 };
 
 export function EventFormatBadge({ format, size = 'sm', className }: Props) {
@@ -25,7 +27,7 @@ export function EventFormatBadge({ format, size = 'sm', className }: Props) {
         className,
       )}
     >
-      <span>{icon}</span>
+      {icon}
       {label}
     </span>
   );

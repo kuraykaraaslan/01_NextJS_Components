@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import type { GeoPoint } from '../LocationTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 type GeoPointDisplayProps = {
   point: GeoPoint;
@@ -23,7 +25,7 @@ export function GeoPointDisplay({
 
   return (
     <div className={cn('inline-flex items-center gap-2 text-sm', className)}>
-      <span className="text-text-disabled shrink-0" aria-hidden="true">📍</span>
+      <FontAwesomeIcon icon={faLocationDot} className="w-3.5 h-3.5 text-text-disabled shrink-0" aria-hidden="true" />
       <div className="min-w-0">
         {label && <p className="text-xs text-text-secondary mb-0.5">{label}</p>}
         <p className="font-mono text-text-primary tabular-nums">

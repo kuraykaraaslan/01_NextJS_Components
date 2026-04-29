@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { Button } from '@/modules/ui/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock } from '@fortawesome/free-solid-svg-icons';
 
 type SessionExpiredBannerProps = {
   onSignIn?: () => void;
@@ -23,7 +25,7 @@ export function SessionExpiredBanner({
       )}
     >
       <div className="flex items-start gap-3 min-w-0">
-        <span className="text-lg shrink-0 mt-0.5" aria-hidden="true">⏱</span>
+        <FontAwesomeIcon icon={faClock} className="w-5 h-5 text-warning shrink-0 mt-0.5" aria-hidden="true" />
         <div className="min-w-0">
           <p className="text-sm font-semibold text-text-primary">Session expired</p>
           <p className="text-sm text-text-secondary mt-0.5">{message}</p>

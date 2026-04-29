@@ -5,6 +5,8 @@ import { SearchBar } from '@/modules/ui/SearchBar';
 import { Badge } from '@/modules/ui/Badge';
 import { Button } from '@/modules/ui/Button';
 import { AlertBanner } from '@/modules/ui/AlertBanner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faFolder, faUsers, faGear, faChartBar, faPlus, faEnvelope, faFileExport, faLock, faClock } from '@fortawesome/free-solid-svg-icons';
 
 export type CommandItem = {
   icon?: React.ReactNode;
@@ -15,18 +17,18 @@ export type CommandItem = {
 };
 
 const DEFAULT_COMMANDS: CommandItem[] = [
-  { icon: '🏠', label: 'Go to Dashboard',  shortcut: 'G D', category: 'Navigation' },
-  { icon: '📁', label: 'Go to Projects',   shortcut: 'G P', category: 'Navigation' },
-  { icon: '👥', label: 'Go to Team',       shortcut: 'G T', category: 'Navigation' },
-  { icon: '⚙️', label: 'Go to Settings',   shortcut: 'G S', category: 'Navigation' },
-  { icon: '📊', label: 'Go to Analytics',  shortcut: 'G A', category: 'Navigation' },
-  { icon: '➕', label: 'New Project',      shortcut: '⌘N',  category: 'Actions' },
-  { icon: '📧', label: 'Send Invite',      shortcut: '⌘I',  category: 'Actions' },
-  { icon: '📤', label: 'Export Data',      shortcut: '⌘E',  category: 'Actions' },
-  { icon: '🔒', label: 'Lock Screen',      shortcut: '⌘L',  category: 'Actions' },
-  { icon: '🕐', label: 'Project Alpha',    category: 'Recent' },
-  { icon: '🕑', label: 'Q3 Report',        category: 'Recent' },
-  { icon: '🕒', label: 'Design Review',    category: 'Recent' },
+  { icon: <FontAwesomeIcon icon={faHouse} className="w-3.5 h-3.5" aria-hidden="true" />,      label: 'Go to Dashboard',  shortcut: 'G D', category: 'Navigation' },
+  { icon: <FontAwesomeIcon icon={faFolder} className="w-3.5 h-3.5" aria-hidden="true" />,     label: 'Go to Projects',   shortcut: 'G P', category: 'Navigation' },
+  { icon: <FontAwesomeIcon icon={faUsers} className="w-3.5 h-3.5" aria-hidden="true" />,      label: 'Go to Team',       shortcut: 'G T', category: 'Navigation' },
+  { icon: <FontAwesomeIcon icon={faGear} className="w-3.5 h-3.5" aria-hidden="true" />,       label: 'Go to Settings',   shortcut: 'G S', category: 'Navigation' },
+  { icon: <FontAwesomeIcon icon={faChartBar} className="w-3.5 h-3.5" aria-hidden="true" />,   label: 'Go to Analytics',  shortcut: 'G A', category: 'Navigation' },
+  { icon: <FontAwesomeIcon icon={faPlus} className="w-3.5 h-3.5" aria-hidden="true" />,       label: 'New Project',      shortcut: '⌘N',  category: 'Actions' },
+  { icon: <FontAwesomeIcon icon={faEnvelope} className="w-3.5 h-3.5" aria-hidden="true" />,   label: 'Send Invite',      shortcut: '⌘I',  category: 'Actions' },
+  { icon: <FontAwesomeIcon icon={faFileExport} className="w-3.5 h-3.5" aria-hidden="true" />, label: 'Export Data',      shortcut: '⌘E',  category: 'Actions' },
+  { icon: <FontAwesomeIcon icon={faLock} className="w-3.5 h-3.5" aria-hidden="true" />,       label: 'Lock Screen',      shortcut: '⌘L',  category: 'Actions' },
+  { icon: <FontAwesomeIcon icon={faClock} className="w-3.5 h-3.5" aria-hidden="true" />,      label: 'Project Alpha',    category: 'Recent' },
+  { icon: <FontAwesomeIcon icon={faClock} className="w-3.5 h-3.5" aria-hidden="true" />,      label: 'Q3 Report',        category: 'Recent' },
+  { icon: <FontAwesomeIcon icon={faClock} className="w-3.5 h-3.5" aria-hidden="true" />,      label: 'Design Review',    category: 'Recent' },
 ];
 
 type AppCommandBarProps = {

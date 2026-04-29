@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/modules/ui/Breadcrumb';
 import { EventCard } from '@/modules/domains/event/EventCard';
 import { ArtistCard } from '@/modules/domains/event/ArtistCard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationDot, faTicket, faCalendarDays, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import {
   VENUES,
   getVenueBySlug,
@@ -55,12 +57,12 @@ export default async function VenueDetailPage({ params }: Props) {
 
         {/* identity block */}
         <div className="flex items-end gap-5">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-surface-raised border border-border shadow-xl text-3xl shrink-0">
-            🏟
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-surface-raised border border-border shadow-xl shrink-0">
+            <FontAwesomeIcon icon={faBuilding} className="w-8 h-8 text-text-disabled" aria-hidden="true" />
           </div>
           <div className="pb-1">
             <h1 className="text-2xl font-black text-text-primary">{venue.name}</h1>
-            <p className="text-sm text-text-secondary mt-0.5">📍 {venue.address}</p>
+            <p className="text-sm text-text-secondary mt-0.5 flex items-center gap-1.5"><FontAwesomeIcon icon={faLocationDot} className="w-3 h-3 shrink-0" aria-hidden="true" /> {venue.address}</p>
           </div>
         </div>
 
@@ -83,7 +85,7 @@ export default async function VenueDetailPage({ params }: Props) {
                 </div>
               ) : (
                 <div className="rounded-2xl border border-border bg-surface-raised p-8 text-center">
-                  <p className="text-2xl mb-2">🗓</p>
+                  <FontAwesomeIcon icon={faCalendarDays} className="w-6 h-6 text-text-disabled mb-2" aria-hidden="true" />
                   <p className="text-sm text-text-secondary">Yaklaşan etkinlik bulunmuyor.</p>
                 </div>
               )}
@@ -111,11 +113,11 @@ export default async function VenueDetailPage({ params }: Props) {
             {/* map placeholder */}
             <div className="rounded-2xl border border-border bg-surface-raised overflow-hidden">
               <div
-                className="h-36 flex items-center justify-center text-3xl"
+                className="h-36 flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg,#e0f2fe,#ddd6fe)' }}
                 aria-hidden="true"
               >
-                🗺
+                <FontAwesomeIcon icon={faLocationDot} className="w-8 h-8 text-primary/50" aria-hidden="true" />
               </div>
               <div className="p-4 space-y-1">
                 <p className="text-xs font-semibold text-text-primary">{venue.name}</p>
@@ -132,14 +134,14 @@ export default async function VenueDetailPage({ params }: Props) {
             <div className="rounded-2xl border border-border bg-surface-raised p-5 space-y-3">
               <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Bilgiler</p>
               <div className="flex items-start gap-2 text-sm">
-                <span className="text-base leading-none mt-0.5">📍</span>
+                <FontAwesomeIcon icon={faLocationDot} className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
                 <div>
                   <p className="text-xs text-text-secondary">Şehir</p>
                   <p className="font-medium text-text-primary">{venue.city}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2 text-sm">
-                <span className="text-base leading-none mt-0.5">🎫</span>
+                <FontAwesomeIcon icon={faTicket} className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
                 <div>
                   <p className="text-xs text-text-secondary">Etkinlik Sayısı</p>
                   <p className="font-medium text-text-primary">{events.length}</p>

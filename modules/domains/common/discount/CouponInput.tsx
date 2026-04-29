@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Input } from '@/modules/ui/Input';
 import { Button } from '@/modules/ui/Button';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 type CouponState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -50,7 +52,7 @@ export function CouponInput({ onApply, onRemove, appliedCode, className }: Coupo
     return (
       <div className={cn('flex items-center justify-between gap-3 rounded-lg bg-success-subtle border border-success px-4 py-2.5', className)}>
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-success-fg text-sm" aria-hidden="true">✓</span>
+          <FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5 text-success-fg" aria-hidden="true" />
           <span className="text-sm font-medium text-success-fg truncate">
             <span className="font-mono">{appliedCode}</span> applied
           </span>

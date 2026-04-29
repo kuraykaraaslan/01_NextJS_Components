@@ -1,4 +1,6 @@
 'use client';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 export type CheckoutStep = 'tickets' | 'buyer' | 'payment' | 'confirm';
 
@@ -31,7 +33,7 @@ export function StepIndicator({ current }: StepIndicatorProps) {
                       : 'bg-surface-overlay text-text-disabled border border-border'
                 }`}
               >
-                {done ? '✓' : i + 1}
+                {done ? <FontAwesomeIcon icon={faCheck} className="w-3 h-3" aria-hidden="true" /> : i + 1}
               </div>
               <span className={`text-[10px] font-medium whitespace-nowrap ${active ? 'text-primary' : done ? 'text-text-secondary' : 'text-text-disabled'}`}>
                 {step.label}

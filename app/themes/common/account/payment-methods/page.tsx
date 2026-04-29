@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { SavedCardSelector } from '@/modules/domains/common/payment/SavedCardSelector';
 import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm';
 import { Button } from '@/modules/ui/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { SAVED_CARDS } from '../../common.data';
 import type { SavedCard, CreditCardInput } from '@/modules/domains/common/PaymentTypes';
 
@@ -49,7 +51,7 @@ export default function PaymentMethodsPage() {
 
       {savedMsg && (
         <div className="rounded-lg bg-success-subtle border border-success px-4 py-2.5 text-sm text-success-fg font-medium">
-          ✓ {savedMsg}
+          <FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5 mr-1" aria-hidden="true" /> {savedMsg}
         </div>
       )}
 

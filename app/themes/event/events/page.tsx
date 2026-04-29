@@ -8,6 +8,8 @@ import { EventCard } from '@/modules/domains/event/EventCard';
 import { EventCategoryBadge } from '@/modules/domains/event/EventCategoryBadge';
 import { EVENTS, EVENT_CATEGORIES } from '@/app/themes/event/event.data';
 import type { EventFormat, EventStatus } from '@/modules/domains/event/types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTicket } from '@fortawesome/free-solid-svg-icons';
 
 const FORMAT_OPTIONS = [
   { value: '', label: 'Tüm Formatlar' },
@@ -164,7 +166,7 @@ export default function EventsListingPage() {
       {/* grid */}
       {filtered.length === 0 ? (
         <EmptyState
-          icon="🎫"
+          icon={<FontAwesomeIcon icon={faTicket} className="w-5 h-5" aria-hidden="true" />}
           title="Etkinlik bulunamadı"
           description="Arama veya filtre kriterlerinize uygun etkinlik yok."
           action={

@@ -3,13 +3,15 @@ import { usePathname } from 'next/navigation';
 import { UserMenu } from '@/modules/domains/common/user/UserMenu';
 import { DEMO_USER } from '../common.data';
 import { cn } from '@/libs/utils/cn';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faGear, faLocationDot, faCreditCard, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 
 const NAV = [
-  { label: 'Profile',         href: '/themes/common/account/profile',         icon: '👤' },
-  { label: 'Settings',        href: '/themes/common/account/settings',         icon: '⚙️' },
-  { label: 'Addresses',       href: '/themes/common/account/addresses',        icon: '📍' },
-  { label: 'Payment Methods', href: '/themes/common/account/payment-methods',  icon: '💳' },
-  { label: 'Order History',   href: '/themes/common/account/orders',           icon: '📦' },
+  { label: 'Profile',         href: '/themes/common/account/profile',         icon: <FontAwesomeIcon icon={faUser} className="w-4 h-4" /> },
+  { label: 'Settings',        href: '/themes/common/account/settings',         icon: <FontAwesomeIcon icon={faGear} className="w-4 h-4" /> },
+  { label: 'Addresses',       href: '/themes/common/account/addresses',        icon: <FontAwesomeIcon icon={faLocationDot} className="w-4 h-4" /> },
+  { label: 'Payment Methods', href: '/themes/common/account/payment-methods',  icon: <FontAwesomeIcon icon={faCreditCard} className="w-4 h-4" /> },
+  { label: 'Order History',   href: '/themes/common/account/orders',           icon: <FontAwesomeIcon icon={faBoxOpen} className="w-4 h-4" /> },
 ];
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {

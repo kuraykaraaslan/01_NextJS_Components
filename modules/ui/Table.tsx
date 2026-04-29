@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown, faSort } from '@fortawesome/free-solid-svg-icons';
 
 export type TableColumn<T> = {
   key: keyof T | string;
@@ -94,9 +96,11 @@ export function Table<T extends Record<string, unknown>>({
                   <span className="inline-flex items-center gap-1">
                     {col.header}
                     {col.sortable && (
-                      <span aria-hidden="true" className="text-[10px] leading-none">
-                        {dir === 'asc' ? '▲' : dir === 'desc' ? '▼' : '⇅'}
-                      </span>
+                      <FontAwesomeIcon
+                        icon={dir === 'asc' ? faChevronUp : dir === 'desc' ? faChevronDown : faSort}
+                        className="w-2.5 h-2.5"
+                        aria-hidden="true"
+                      />
                     )}
                   </span>
                 </th>

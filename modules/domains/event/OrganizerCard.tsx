@@ -1,6 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import type { Organizer } from './types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faGlobe, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   organizer: Organizer;
@@ -34,10 +36,10 @@ export function OrganizerCard({ organizer, className }: Props) {
             </span>
             {organizer.verified && (
               <span
-                className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-fg text-[10px] font-bold shrink-0"
+                className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-fg shrink-0"
                 title="Doğrulanmış organizatör"
               >
-                ✓
+                <FontAwesomeIcon icon={faCheck} className="w-2.5 h-2.5" aria-hidden="true" />
               </span>
             )}
           </div>
@@ -55,12 +57,12 @@ export function OrganizerCard({ organizer, className }: Props) {
               rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
             >
-              🌐 Web sitesi
+              <FontAwesomeIcon icon={faGlobe} className="w-3.5 h-3.5 inline mr-1" aria-hidden="true" />Web sitesi
             </a>
           )}
           {organizer.email && (
             <a href={`mailto:${organizer.email}`} className="hover:text-primary transition-colors">
-              ✉️ {organizer.email}
+              <FontAwesomeIcon icon={faEnvelope} className="w-3.5 h-3.5 inline mr-1" aria-hidden="true" />{organizer.email}
             </a>
           )}
         </div>
