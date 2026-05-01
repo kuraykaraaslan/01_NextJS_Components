@@ -119,7 +119,7 @@ export function AppSidebar({
         className
       )}
     >
-      <div className={cn('hidden lg:flex items-center px-2 py-2 border-b border-border', effectiveCollapsed ? 'justify-center' : 'justify-end')}>
+      <div className={cn('hidden lg:flex items-center px-2 py-2 border-b border-border shrink-0', effectiveCollapsed ? 'justify-center' : 'justify-end')}>
         <button
           type="button"
           onClick={() => setCollapsed(!isCollapsed)}
@@ -130,7 +130,7 @@ export function AppSidebar({
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-4 sidebar-scrollbar-hover" aria-label="Sidebar navigation">
+      <nav className="flex-1 min-h-0 overflow-y-auto px-2 py-3 space-y-4 sidebar-scrollbar-hover" aria-label="Sidebar navigation">
         {groups.map((group, gi) => {
           const groupKey = group.label ?? String(gi);
           const expanded = isGroupExpanded(group);

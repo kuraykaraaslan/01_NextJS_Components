@@ -3,6 +3,9 @@
     "allow": [
       "Bash(curl -s http://localhost:3000)",
       "Bash(grep -n \"// ─── \\\\|^  {$\\\\|^    {$\" /home/kuray/01_NextJS_Components/modules/showcase/data/showcase.data.tsx)"
+    ],
+    "additionalDirectories": [
+      "/home/kuray/02_EJS_Components/src/types"
     ]
   }
 }

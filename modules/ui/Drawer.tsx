@@ -80,7 +80,7 @@ export function Drawer({
             <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto px-4 py-4">{children}</div>
+        <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">{children}</div>
         {footer && (
           <div className="px-4 py-4 border-t border-border shrink-0 flex justify-end gap-2">
             {footer}
