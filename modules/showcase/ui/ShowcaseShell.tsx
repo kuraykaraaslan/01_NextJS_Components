@@ -110,11 +110,10 @@ function VariantBlock({ variant }: { variant: ShowcaseVariant }) {
   );
 }
 
-export function ShowcaseShell() {
+export function ShowcaseShell({ selectedId = 'button' }: { selectedId?: string }) {
   const data = buildShowcaseData();
   const dataMap = Object.fromEntries(data.map((c) => [c.id, c]));
 
-  const [selectedId, setSelectedId] = useState('button');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const selected = dataMap[selectedId];
 
@@ -126,7 +125,7 @@ export function ShowcaseShell() {
       items: group.items.map((item) => ({
         id: item.id,
         label: item.title,
-        href: item.href,
+        href: item.href ?? `/${item.id}`,
         icon: (
           <span className="flex items-center justify-center w-6 h-6 rounded text-[11px] font-bold bg-surface-sunken text-text-secondary">
             {item.abbr}
@@ -151,7 +150,6 @@ export function ShowcaseShell() {
         <AppSidebar
           navGroups={navGroups}
           activeId={selectedId}
-          onSelect={setSelectedId}
           collapsed={sidebarCollapsed}
           onCollapsedChange={setSidebarCollapsed}
           footer={({ collapsed }) => (
