@@ -71,6 +71,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'content-score-bar',   title: 'ContentScoreBar',    category: 'Organism', abbr: 'Cs' },
       { id: 'page-header',         title: 'PageHeader',         category: 'Organism', abbr: 'Ph' },
       { id: 'slider',              title: 'Slider',             category: 'Molecule', abbr: 'Sl' },
+      { id: 'video-player',        title: 'VideoPlayer',        category: 'Molecule', abbr: 'Vp' },
     ],
   },
   {

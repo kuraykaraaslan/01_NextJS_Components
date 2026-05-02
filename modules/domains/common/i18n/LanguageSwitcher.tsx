@@ -7,7 +7,7 @@ import { Button } from '@/modules/ui/Button';
 import {
   AVAILABLE_LANGUAGES,
   DEFAULT_LANGUAGE,
-  LANG_NAMES,
+  getLanguageName,
   LANG_FLAGS,
   type AppLanguage,
 } from '../I18nTypes';
@@ -51,7 +51,7 @@ export function LanguageSwitcher({
 
   const items: DropdownItem[] = languages.map((lang) => ({
     type: 'item',
-    label: LANG_NAMES[lang],
+    label: getLanguageName(lang),
     icon: getFlag(lang) as any, // DropdownMenu string beklediği için cast ediyoruz
     onClick: () => {
       setInternal(lang);
@@ -67,7 +67,7 @@ export function LanguageSwitcher({
           <span className="w-4 flex items-center justify-center shrink-0" aria-hidden="true">
             {getFlag(current)}
           </span>
-          <span>{LANG_NAMES[current]}</span>
+          <span>{getLanguageName(current)}</span>
           <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 text-text-disabled" />
         </Button>
       }
