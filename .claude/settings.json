@@ -5,7 +5,12 @@
       "Bash(grep -n \"// ─── \\\\|^  {$\\\\|^    {$\" /home/kuray/01_NextJS_Components/modules/showcase/data/showcase.data.tsx)"
     ],
     "additionalDirectories": [
-      "/home/kuray/02_EJS_Components/src/types"
+      "/home/kuray/02_EJS_Components/src/types",
+      "/home/kuray/02_EJS_Components/modules/ui",
+      "/home/kuray/02_EJS_Components/src/data/sections",
+      "/home/kuray/02_EJS_Components/src/data",
+      "/home/kuray/02_EJS_Components/public/css",
+      "/home/kuray/02_EJS_Components/views/showcase/partials"
     ]
   }
 }
