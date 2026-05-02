@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { DetailHeader } from '@/modules/app/DetailHeader';
+import { ErrorState, NotFoundState } from '@/modules/app/EmptyErrorState';
+import { LoadingState } from '@/modules/app/LoadingState';
 import { SplashScreen } from '@/modules/app/SplashScreen';
 import { Button } from '@/modules/ui/Button';
 import type { ShowcaseComponent } from '../showcase.types';
@@ -108,6 +110,138 @@ import { DetailHeader } from '@/modules/app/DetailHeader';
       ],
     },
     {
+      id: 'error-state',
+      title: 'ErrorState',
+      category: 'App',
+      abbr: 'Er',
+      description: 'Hata durumu: uyarı banner\'ı + merkezi boş durum kombinasyonu. onRetry ile yeniden deneme aksiyonu.',
+      filePath: 'modules/app/EmptyErrorState.tsx',
+      sourceCode: `'use client';
+import { ErrorState } from '@/modules/app/EmptyErrorState';
+
+<ErrorState
+  title="Something went wrong"
+  message="Failed to load user data."
+/>
+
+// Retry aksiyonu ile:
+<ErrorState
+  title="Database connection failed"
+  message="Could not connect. Please try again."
+  onRetry={handleRetry}
+  retryLabel="Try again"
+/>`,
+      variants: [
+        {
+          title: 'Default',
+          layout: 'stack' as const,
+          preview: <ErrorStateDefaultDemo />,
+          code: `<ErrorState
+  title="Something went wrong"
+  message="Failed to load user data. Please check your connection."
+/>`,
+        },
+        {
+          title: 'With retry',
+          layout: 'stack' as const,
+          preview: <ErrorStateRetryDemo />,
+          code: `<ErrorState
+  title="Database connection failed"
+  message="Could not connect to the database. Please try again."
+  onRetry={handleRetry}
+  retryLabel="Try again"
+/>`,
+        },
+      ],
+    },
+    {
+      id: 'not-found-state',
+      title: 'NotFoundState',
+      category: 'App',
+      abbr: 'Ns',
+      description: 'Kayıt bulunamadı / içerik yok durumu. onGoBack ile geri dön aksiyonu.',
+      filePath: 'modules/app/EmptyErrorState.tsx',
+      sourceCode: `'use client';
+import { NotFoundState } from '@/modules/app/EmptyErrorState';
+
+<NotFoundState />
+
+// Özel başlık + geri dön butonu ile:
+<NotFoundState
+  title="User not found"
+  description="This user account doesn't exist or may have been deleted."
+  onGoBack={() => router.back()}
+  goBackLabel="Back to users"
+/>`,
+      variants: [
+        {
+          title: 'Default',
+          layout: 'stack' as const,
+          preview: <NotFoundStateDefaultDemo />,
+          code: `<NotFoundState />`,
+        },
+        {
+          title: 'With back link',
+          layout: 'stack' as const,
+          preview: <NotFoundStateBackDemo />,
+          code: `<NotFoundState
+  title="User not found"
+  description="This user account doesn't exist or may have been deleted."
+  onGoBack={() => router.back()}
+  goBackLabel="Back to users"
+/>`,
+        },
+      ],
+    },
+    {
+      id: 'loading-state',
+      title: 'LoadingState',
+      category: 'App',
+      abbr: 'Lo',
+      description: 'İskelet yükleme animasyonları. spinner / table / cards / list / detail / form variant\'ları.',
+      filePath: 'modules/app/LoadingState.tsx',
+      sourceCode: `'use client';
+import { LoadingState } from '@/modules/app/LoadingState';
+
+<LoadingState variant="spinner" />
+<LoadingState variant="table"  rows={5} cols={4} />
+<LoadingState variant="cards"  cards={3} />
+<LoadingState variant="list"   rows={4} />
+<LoadingState variant="form"   rows={3} />`,
+      variants: [
+        {
+          title: 'Spinner',
+          layout: 'stack' as const,
+          preview: <LoadingStateSpinnerDemo />,
+          code: `<LoadingState variant="spinner" />`,
+        },
+        {
+          title: 'Table skeleton',
+          layout: 'stack' as const,
+          preview: <LoadingStateTableDemo />,
+          code: `<LoadingState variant="table" rows={5} cols={4} />`,
+        },
+        {
+          title: 'Cards skeleton',
+          layout: 'stack' as const,
+          preview: <LoadingStateCardsDemo />,
+          code: `<LoadingState variant="cards" cards={3} />`,
+        },
+        {
+          title: 'List skeleton',
+          layout: 'stack' as const,
+          preview: <LoadingStateListDemo />,
+          code: `<LoadingState variant="list" rows={4} />`,
+        },
+        {
+          title: 'Form skeleton',
+          layout: 'stack' as const,
+          preview: <LoadingStateFormDemo />,
+          code: `<LoadingState variant="form" rows={3} />`,
+        },
+      ],
+    },
+    {
       id: 'splash-screen',
       title: 'SplashScreen',
       category: 'App',
@@ -157,6 +291,87 @@ import { SplashScreen } from '@/modules/app/SplashScreen';
       ],
     },
   ];
+}
+
+function ErrorStateDefaultDemo() {
+  return (
+    <div className="w-full max-w-lg p-4">
+      <ErrorState
+        title="Something went wrong"
+        message="Failed to load user data. Please check your connection."
+      />
+    </div>
+  );
+}
+
+function ErrorStateRetryDemo() {
+  return (
+    <div className="w-full max-w-lg p-4">
+      <ErrorState
+        title="Database connection failed"
+        message="Could not connect to the database. Please try again."
+        onRetry={() => {}}
+        retryLabel="Try again"
+      />
+    </div>
+  );
+}
+
+function NotFoundStateDefaultDemo() {
+  return (
+    <div className="w-full p-4">
+      <NotFoundState />
+    </div>
+  );
+}
+
+function NotFoundStateBackDemo() {
+  return (
+    <div className="w-full p-4">
+      <NotFoundState
+        title="User not found"
+        description="This user account doesn't exist or may have been deleted."
+        onGoBack={() => {}}
+        goBackLabel="Back to users"
+      />
+    </div>
+  );
+}
+
+function LoadingStateSpinnerDemo() {
+  return <LoadingState variant="spinner" />;
+}
+
+function LoadingStateTableDemo() {
+  return (
+    <div className="w-full p-4">
+      <LoadingState variant="table" rows={5} cols={4} />
+    </div>
+  );
+}
+
+function LoadingStateCardsDemo() {
+  return (
+    <div className="w-full p-4">
+      <LoadingState variant="cards" cards={3} />
+    </div>
+  );
+}
+
+function LoadingStateListDemo() {
+  return (
+    <div className="w-full max-w-lg p-4">
+      <LoadingState variant="list" rows={4} />
+    </div>
+  );
+}
+
+function LoadingStateFormDemo() {
+  return (
+    <div className="w-full max-w-md p-4">
+      <LoadingState variant="form" rows={3} />
+    </div>
+  );
 }
 
 function SplashProgressDemo() {

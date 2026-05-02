@@ -7,6 +7,7 @@ import { buildAppPatternsData } from './sections/app-patterns.showcase';
 import { buildCommonDomainData } from './sections/domain-common.showcase';
 import { buildBlogDomainData } from './sections/domain-blog.showcase';
 import { buildEventDomainData } from './sections/domain-event.showcase';
+import { buildMapData } from './sections/ui-molecule-map.showcase';
 
 export function buildShowcaseData() {
   return [
@@ -17,5 +18,6 @@ export function buildShowcaseData() {
     ...buildCommonDomainData(),
     ...buildBlogDomainData(),
     ...buildEventDomainData(),
+    ...buildMapData(),
   ];
 }

@@ -37,6 +37,7 @@ import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSumm
 import { CreditCardVisual } from '@/modules/domains/common/payment/CreditCardVisual';
 import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm';
 import { SavedCardSelector } from '@/modules/domains/common/payment/SavedCardSelector';
+import { NotFoundPage } from '@/modules/app/NotFoundPage';
 import type { PaymentMethod, SavedCard } from '@/modules/domains/common/PaymentTypes';
 import type { AppLanguage } from '@/modules/domains/common/I18nTypes';
 import type { ShowcaseComponent } from '../showcase.types';
@@ -1233,6 +1234,28 @@ import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSumm
         { title: 'Empty state', layout: 'stack' as const, preview: <SavedCardSelectorEmptyDemo />, code: `<SavedCardSelector cards={[]} onSelect={handleSelect} onAddNew={() => setShowForm(true)} />` },
       ],
     },
+    {
+      id: 'common-not-found-page',
+      title: 'NotFoundPage',
+      category: 'Domain',
+      abbr: 'NF',
+      description: 'Full-page 404 screen with a gradient "404" heading, icon slot, title, description, and home/back action buttons.',
+      filePath: 'modules/app/NotFoundPage.tsx',
+      sourceCode: `'use client';
+import { NotFoundPage } from '@/modules/app/NotFoundPage';
+
+<NotFoundPage
+  title="Page Not Found"
+  description="The page you are looking for does not exist."
+  homeHref="/"
+  homeLabel="Go Home"
+  backLabel="Go Back"
+/>`,
+      variants: [
+        { title: 'Default (Turkish)', layout: 'stack' as const, preview: <NotFoundPageDefaultDemo />, code: `<NotFoundPage homeHref="/" />` },
+        { title: 'Custom copy', layout: 'stack' as const, preview: <NotFoundPageCustomDemo />, code: `<NotFoundPage title="Resource Not Found" description="The item you are looking for has been removed." homeLabel="Go Home" backLabel="Go Back" homeHref="/" />` },
+      ],
+    },
   ];
 }
 
@@ -1471,6 +1494,38 @@ function CreditCardFormErrorDemo() {
     <div className="w-full max-w-sm mx-auto p-4 bg-surface-raised border border-border rounded-lg">
       <h2 className="text-base font-semibold text-text-primary mb-4">Add Payment Card</h2>
       <CreditCardForm error="Card declined. Please try a different card." onSubmit={async () => {}} />
+    </div>
+  );
+}
+
+/* ─── NotFoundPage demos ─── */
+
+function NotFoundPageDefaultDemo() {
+  return (
+    <div className="w-full overflow-hidden rounded-lg border border-border" style={{ height: 340 }}>
+      <div className="scale-[0.55] origin-top-left" style={{ width: '182%', height: '182%' }}>
+        <NotFoundPage
+          className="min-h-0 py-10"
+          homeHref="#"
+        />
+      </div>
+    </div>
+  );
+}
+
+function NotFoundPageCustomDemo() {
+  return (
+    <div className="w-full overflow-hidden rounded-lg border border-border" style={{ height: 340 }}>
+      <div className="scale-[0.55] origin-top-left" style={{ width: '182%', height: '182%' }}>
+        <NotFoundPage
+          className="min-h-0 py-10"
+          title="Resource Not Found"
+          description="The item you are looking for has been removed or does not exist."
+          homeLabel="Go Home"
+          backLabel="Go Back"
+          homeHref="#"
+        />
+      </div>
     </div>
   );
 }

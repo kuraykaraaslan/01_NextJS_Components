@@ -2,10 +2,10 @@
 import { UserMenu } from '@/modules/domains/common/user/UserMenu';
 import { GlobalSearch, type SearchResult } from '@/modules/app/GlobalSearch';
 import { AppCommandBar, type CommandItem } from '@/modules/app/AppCommandBar';
-import { Badge } from '@/modules/ui/Badge';
-import { Button } from '@/modules/ui/Button';
 import { useState } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faUsers, faCreditCard, faReceipt, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const DEMO_USER = {
   userId: 'demo-1',
@@ -16,11 +16,11 @@ const DEMO_USER = {
 };
 
 const SEARCH_RESULTS: SearchResult[] = [
-  { id: 'dash',        label: 'Dashboard',     description: 'Overview page',               icon: '🏠', category: 'Pages'    },
-  { id: 'users',       label: 'Users',          description: 'Manage team members',         icon: '👥', category: 'Pages'    },
-  { id: 'billing',     label: 'Billing',        description: 'Invoices and plans',          icon: '💳', category: 'Settings' },
-  { id: 'audit',       label: 'Audit Logs',     description: 'Security and activity logs',  icon: '🧾', category: 'Settings' },
-  { id: 'new-project', label: 'Create Project', description: 'Quick action',                icon: '➕', category: 'Actions'  },
+  { id: 'dash',        label: 'Dashboard',     description: 'Overview page',               icon: <FontAwesomeIcon icon={faHouse}       className="w-3.5 h-3.5" />, category: 'Pages'    },
+  { id: 'users',       label: 'Users',          description: 'Manage team members',         icon: <FontAwesomeIcon icon={faUsers}       className="w-3.5 h-3.5" />, category: 'Pages'    },
+  { id: 'billing',     label: 'Billing',        description: 'Invoices and plans',          icon: <FontAwesomeIcon icon={faCreditCard}  className="w-3.5 h-3.5" />, category: 'Settings' },
+  { id: 'audit',       label: 'Audit Logs',     description: 'Security and activity logs',  icon: <FontAwesomeIcon icon={faReceipt}     className="w-3.5 h-3.5" />, category: 'Settings' },
+  { id: 'new-project', label: 'Create Project', description: 'Quick action',                icon: <FontAwesomeIcon icon={faPlus}        className="w-3.5 h-3.5" />, category: 'Actions'  },
 ];
 
 function UserMenuDefaultDemo() {

@@ -72,6 +72,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'page-header',         title: 'PageHeader',         category: 'Organism', abbr: 'Ph' },
       { id: 'slider',              title: 'Slider',             category: 'Molecule', abbr: 'Sl' },
       { id: 'video-player',        title: 'VideoPlayer',        category: 'Molecule', abbr: 'Vp' },
+      { id: 'map-view',            title: 'MapView',            category: 'Molecule', abbr: 'Mp' },
     ],
   },
   {
@@ -115,6 +116,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'common-credit-card-visual',         title: 'CreditCardVisual',            category: 'Domain', abbr: 'CV' },
       { id: 'common-credit-card-form',           title: 'CreditCardForm',              category: 'Domain', abbr: 'CF' },
       { id: 'common-saved-card-selector',        title: 'SavedCardSelector',           category: 'Domain', abbr: 'SC' },
+      { id: 'common-not-found-page',             title: 'NotFoundPage',                category: 'Domain', abbr: 'NF' },
     ],
   },
   {
@@ -168,6 +170,9 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'form',                title: 'Form',              category: 'App', abbr: 'Fm' },
       { id: 'detail-header',      title: 'DetailHeader',      category: 'App', abbr: 'DH' },
       { id: 'filter-bar',         title: 'FilterBar',         category: 'App', abbr: 'FB' },
+      { id: 'error-state',        title: 'ErrorState',        category: 'App', abbr: 'Er' },
+      { id: 'not-found-state',    title: 'NotFoundState',     category: 'App', abbr: 'Ns' },
+      { id: 'loading-state',      title: 'LoadingState',      category: 'App', abbr: 'Lo' },
       { id: 'splash-screen',      title: 'SplashScreen',      category: 'App', abbr: 'SS' },
     ],
   },
