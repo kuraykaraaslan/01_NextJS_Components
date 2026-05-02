@@ -77,7 +77,7 @@ export function AppShell({
             side="left"
             className="w-72"
           >
-            <div className="-mx-4 -my-4 h-[calc(100%+2rem)]">{sidebar}</div>
+            <div className="-mx-4 -my-4 h-[calc(100%+2rem)] flex flex-col">{sidebar}</div>
           </Drawer>
         </div>
       )}

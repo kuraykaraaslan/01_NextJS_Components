@@ -1,5 +1,5 @@
 'use client';
-import { use, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AppShell } from '@/modules/app/AppShell';
 import { AppSidebar } from '@/modules/app/AppSidebar';
 import { AppTopBar } from '@/modules/app/AppTopBar';
@@ -8,7 +8,6 @@ import { CopyButton } from './CopyButton';
 import { cn } from '@/libs/utils/cn';
 import { buildShowcaseData, type ShowcaseVariant } from '@/modules/showcase/data/showcase.data';
 import SHOWCASE_NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
-import { LanguageSwitcher } from '@/modules/domains/common/i18n/LanguageSwitcher';
 import { ThemeSwitcher } from '@/modules/app/ThemeSwitcher';
 import { UserMenu } from '@/modules/domains/common/user/UserMenu';
 import { GithubButton } from './GithubButton';
@@ -123,6 +122,7 @@ export function ShowcaseShell() {
     SHOWCASE_NAV_GROUPS.map((group) => ({
       label: group.label,
       collapsible: group.collapsible,
+      defaultExpanded: true,
       items: group.items.map((item) => ({
         id: item.id,
         label: item.title,
