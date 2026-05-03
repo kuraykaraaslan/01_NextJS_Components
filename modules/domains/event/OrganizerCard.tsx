@@ -11,7 +11,7 @@ type Props = {
 };
 
 export function OrganizerCard({ organizer, className }: Props) {
-  const href = `/themes/event/organizers/${organizer.slug}`;
+  const href = `/theme/event/organizers/${organizer.slug}`;
   return (
     <div className={cn('rounded-xl border border-border bg-surface-raised p-4', className)}>
       <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">Organizatör</p>

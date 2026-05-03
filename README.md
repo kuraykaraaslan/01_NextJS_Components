@@ -76,9 +76,9 @@ Each layer provides building blocks for the next one. The goal is to keep busine
 
 Existing theme examples are grouped under app/themes.
 
-- app/themes/blog
-- app/themes/common
-- app/themes/event
+- app/theme/blog
+- app/theme/common
+- app/theme/event
 
 This structure enables different product experiences on top of the same component foundation.
 

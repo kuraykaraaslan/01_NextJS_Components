@@ -72,7 +72,7 @@ export function HeroSlide({ event }: HeroSlideProps) {
 
           <div className="flex flex-wrap gap-3 pt-1">
             <a
-              href={`/themes/event/events/${event.slug}/checkout`}
+              href={`/theme/event/events/${event.slug}/checkout`}
               className="inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-bold text-white transition-all"
               style={{
                 background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
@@ -82,7 +82,7 @@ export function HeroSlide({ event }: HeroSlideProps) {
               Bilet Al
             </a>
             <a
-              href={`/themes/event/events/${event.slug}`}
+              href={`/theme/event/events/${event.slug}`}
               className="inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition-colors"
               style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)' }}
             >

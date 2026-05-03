@@ -200,10 +200,10 @@ const NAV_GROUPS: NavGroup[] = [
     collapsible: true,
     sectionStart: 'Themes',
     items: [
-      { id: 'common',   title: 'Common Theme',  category: 'Theme', abbr: 'CT', href: '/themes/common' },
-      { id: 'blog',     title: 'Blog Theme',    category: 'Theme', abbr: 'BT', href: '/themes/blog' },
-      { id: 'event',    title: 'Event Theme',   category: 'Theme', abbr: 'ET', href: '/themes/event' },
-      { id: 'api-doc',  title: 'API Doc Theme', category: 'Theme', abbr: 'AD', href: '/themes/api-doc' },
+      { id: 'common',   title: 'Common Theme',  category: 'Theme', abbr: 'CT', href: '/theme/common' },
+      { id: 'blog',     title: 'Blog Theme',    category: 'Theme', abbr: 'BT', href: '/theme/blog' },
+      { id: 'event',    title: 'Event Theme',   category: 'Theme', abbr: 'ET', href: '/theme/event' },
+      { id: 'api-doc',  title: 'API Doc Theme', category: 'Theme', abbr: 'AD', href: '/theme/api-doc' },
     ],
   }
 ];

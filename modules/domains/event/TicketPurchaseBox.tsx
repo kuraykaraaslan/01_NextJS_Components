@@ -62,7 +62,7 @@ export function TicketPurchaseBox({
 
         {canBuy ? (
           <a
-            href={`/themes/event/events/${eventSlug}/checkout`}
+            href={`/theme/event/events/${eventSlug}/checkout`}
             className="flex w-full items-center justify-center rounded-md bg-primary text-primary-fg hover:bg-primary-hover px-5 py-2.5 text-base font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
           >
             Bilet Satın Al

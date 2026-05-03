@@ -1,7 +1,7 @@
 'use client';
 import { use, useState } from 'react';
 import { TicketCard } from '@/modules/domains/event/TicketCard';
-import { getTicketById } from '@/app/themes/event/event.data';
+import { getTicketById } from '@/app/theme/event/event.data';
 import { cn } from '@/libs/utils/cn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPrint, faLink, faTicket } from '@fortawesome/free-solid-svg-icons';
@@ -61,7 +61,7 @@ export default function SharedTicketPage({ params }: { params: Promise<{ uuid: s
           Bu bağlantı geçersiz ya da süresi dolmuş olabilir.
         </p>
         <a
-          href="/themes/event"
+          href="/theme/event"
           className="mt-2 px-5 py-2.5 rounded-lg bg-primary text-primary-fg text-sm font-semibold hover:bg-primary-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
         >
           Etkinliklere Göz At
@@ -79,7 +79,7 @@ export default function SharedTicketPage({ params }: { params: Promise<{ uuid: s
       <header className="border-b border-border bg-surface-raised print:hidden">
         <div className="mx-auto max-w-2xl px-4 h-14 flex items-center justify-between">
           <a
-            href="/themes/event"
+            href="/theme/event"
             className="flex items-center gap-2 text-sm font-bold text-text-primary hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
           >
             <FontAwesomeIcon icon={faTicket} className="w-5 h-5" aria-hidden="true" />

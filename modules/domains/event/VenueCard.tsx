@@ -12,7 +12,7 @@ type Props = {
 };
 
 export function VenueCard({ venue, eventCount, href, className }: Props) {
-  const url = href ?? `/themes/event/venues/${venue.slug}`;
+  const url = href ?? `/theme/event/venues/${venue.slug}`;
 
   return (
     <a

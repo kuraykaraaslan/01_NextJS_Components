@@ -17,7 +17,7 @@ const FMT_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'shor
 const FMT_TIME = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
 export function EventCard({ event, href, className }: Props) {
-  const url = href ?? `/themes/event/events/${event.slug}`;
+  const url = href ?? `/theme/event/events/${event.slug}`;
 
   const priceLabel = event.minPrice != null
     ? event.minPrice === 0

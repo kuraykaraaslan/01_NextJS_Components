@@ -12,7 +12,7 @@ type Props = {
 };
 
 export function ArtistCard({ artist, eventCount, href, className }: Props) {
-  const url = href ?? `/themes/event/artists/${artist.slug}`;
+  const url = href ?? `/theme/event/artists/${artist.slug}`;
 
   return (
     <a
