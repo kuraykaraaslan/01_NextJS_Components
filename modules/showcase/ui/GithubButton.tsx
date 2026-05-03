@@ -8,7 +8,7 @@ export function GithubButton() {
     }
 
     return (
-        <Button variant="outline" onClick={onClick} iconLeft={<FontAwesomeIcon icon={faGithub} />} fullWidth>
+        <Button variant="outline" size="sm" onClick={onClick} iconLeft={<FontAwesomeIcon icon={faGithub} />}>
         </Button>
     );
 }

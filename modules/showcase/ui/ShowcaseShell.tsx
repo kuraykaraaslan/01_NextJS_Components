@@ -11,6 +11,9 @@ import SHOWCASE_NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
 import { ThemeSwitcher } from '@/modules/app/ThemeSwitcher';
 import { UserMenu } from '@/modules/domains/common/user/UserMenu';
 import { GithubButton } from './GithubButton';
+import { HomePanel } from './HomePanel';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
 
 const categoryStyles: Record<string, string> = {
   Atom:     'bg-info-subtle text-info-fg',
@@ -110,15 +113,27 @@ function VariantBlock({ variant }: { variant: ShowcaseVariant }) {
   );
 }
 
-export function ShowcaseShell({ selectedId = 'button' }: { selectedId?: string }) {
+export function ShowcaseShell({ selectedId }: { selectedId?: string | null }) {
   const data = buildShowcaseData();
   const dataMap = Object.fromEntries(data.map((c) => [c.id, c]));
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const selected = dataMap[selectedId];
+  const isHome = !selectedId;
+  const selected = selectedId ? dataMap[selectedId] : null;
 
-  const navGroups = useMemo(() =>
-    SHOWCASE_NAV_GROUPS.map((group) => ({
+  const navGroups = useMemo(() => [
+    {
+      label: undefined,
+      collapsible: false,
+      defaultExpanded: true,
+      items: [{
+        id: 'home',
+        label: 'Home',
+        href: '/',
+        icon: <FontAwesomeIcon icon={faHouse} className="w-3.5 h-3.5" aria-hidden="true" />,
+      }],
+    },
+    ...SHOWCASE_NAV_GROUPS.map((group) => ({
       label: group.label,
       collapsible: group.collapsible,
       defaultExpanded: true,
@@ -133,8 +148,7 @@ export function ShowcaseShell({ selectedId = 'button' }: { selectedId?: string }
         ),
       })),
     })),
-    []
-  );
+  ], []);
 
   return (
     <AppShell
@@ -149,7 +163,7 @@ export function ShowcaseShell({ selectedId = 'button' }: { selectedId?: string }
       sidebar={
         <AppSidebar
           navGroups={navGroups}
-          activeId={selectedId}
+          activeId={isHome ? 'home' : (selectedId ?? undefined)}
           collapsed={sidebarCollapsed}
           onCollapsedChange={setSidebarCollapsed}
           footer={({ collapsed }) => (
@@ -176,9 +190,11 @@ export function ShowcaseShell({ selectedId = 'button' }: { selectedId?: string }
         </AppTopBar>
       }
     >
-      {!selected ? (
+      {isHome ? (
+        <HomePanel />
+      ) : !selected ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <p className="text-4xl mb-4">🚧</p>
+          <FontAwesomeIcon icon={faHouse} className="text-4xl text-text-disabled mb-4" aria-hidden="true" />
           <h2 className="text-xl font-semibold text-text-primary mb-1">Showcase coming soon</h2>
           <p className="text-sm text-text-secondary">No preview has been added for this component yet.</p>
         </div>

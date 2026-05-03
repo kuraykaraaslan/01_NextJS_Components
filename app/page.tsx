@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import { ShowcaseShell } from '@/modules/showcase/ui/ShowcaseShell';
 
 export default function Page() {
-  redirect('/button');
+  return <ShowcaseShell selectedId={null} />;
 }
