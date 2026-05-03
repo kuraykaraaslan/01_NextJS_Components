@@ -4,7 +4,7 @@ export const runtime = "edge";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const title = searchParams.get("title") || "KUI";
+  const title = searchParams.get("title") || "KUIreact";
 
   return new ImageResponse(
     (

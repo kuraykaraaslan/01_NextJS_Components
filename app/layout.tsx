@@ -20,10 +20,10 @@ const geistMono = Geist_Mono({
    SITE CONFIG (PRODUCT POSITIONING)
 ========================================================= */
 
-const SITE_NAME = "KUI";
-const SITE_TITLE = "KUI — Composable UI System for Real Products";
+const SITE_NAME = "KUIreact";
+const SITE_TITLE = "KUIreact — Composable UI System for Real Products";
 const SITE_DESCRIPTION =
-  "KUI is a production-ready UI system built with Next.js. A composable design system and storefront-ready component architecture for real-world applications.";
+  "KUIreact is a production-ready UI system built with Next.js. A composable design system and storefront-ready component architecture for real-world applications.";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   "https://next-js-components.kuray.dev";
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 
   title: {
     default: SITE_TITLE,
-    template: "%s | KUI",
+    template: "%s | KUIreact",
   },
 
   description: SITE_DESCRIPTION,
@@ -90,10 +90,10 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     images: [
       {
-        url: `${SITE_URL}/api/og?title=KUI`,
+        url: `${SITE_URL}/api/og?title=KUIreact`,
         width: 1200,
         height: 630,
-        alt: "KUI Preview",
+        alt: "KUIreact Preview",
       },
     ],
     type: "website",
@@ -103,7 +103,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/api/og?title=KUI`],
+    images: [`${SITE_URL}/api/og?title=KUIreact`],
   },
 
   robots: {
