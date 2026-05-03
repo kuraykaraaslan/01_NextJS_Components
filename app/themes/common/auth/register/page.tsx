@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { BrandLogo } from '@/modules/ui/BrandLogo';
 import { RegisterForm } from '@/modules/domains/common/auth/RegisterForm';
 import { OAuthButtons } from '@/modules/domains/common/auth/OAuthButtons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,9 +21,7 @@ export default function RegisterPage() {
           {/* Header */}
           <div className="text-center space-y-1">
             <div className="flex justify-center mb-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-fg text-lg font-bold shadow-sm">
-                C
-              </span>
+              <BrandLogo>C</BrandLogo>
             </div>
             <h1 className="text-2xl font-bold text-text-primary">Create an account</h1>
             <p className="text-sm text-text-secondary">Join us — it only takes a minute</p>
@@ -48,7 +47,7 @@ export default function RegisterPage() {
               {/* OAuth */}
               <OAuthButtons
                 providers={['GOOGLE', 'GITHUB', 'DISCORD']}
-                onProvider={async (p) => { await new Promise((r) => setTimeout(r, 800)); }}
+                onProvider={async (_p) => { await new Promise((r) => setTimeout(r, 800)); }}
               />
 
               <div className="flex items-center gap-3">

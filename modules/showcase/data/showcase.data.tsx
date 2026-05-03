@@ -8,6 +8,7 @@ import { buildCommonDomainData } from './sections/domain-common.showcase';
 import { buildBlogDomainData } from './sections/domain-blog.showcase';
 import { buildEventDomainData } from './sections/domain-event.showcase';
 import { buildMapData } from './sections/ui-molecule-map.showcase';
+import { buildApiDocDomainData } from './sections/domain-api-doc.showcase';
 
 export function buildShowcaseData() {
   return [
@@ -19,5 +20,6 @@ export function buildShowcaseData() {
     ...buildBlogDomainData(),
     ...buildEventDomainData(),
     ...buildMapData(),
+    ...buildApiDocDomainData(),
   ];
 }

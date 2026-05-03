@@ -206,13 +206,11 @@ export function DataTable<T extends Record<string, unknown>>({
             ? 'No results'
             : `Showing ${start}–${end} of ${sorted.length}${search ? ` (filtered from ${rows.length})` : ''}`}
         </p>
-        {totalPages > 1 && (
-          <Pagination
-            page={safePage}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
-        )}
+        <Pagination
+          page={safePage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );

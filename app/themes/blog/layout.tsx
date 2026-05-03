@@ -1,3 +1,4 @@
+import { BrandLogo } from '@/modules/ui/BrandLogo';
 import { AppFooter } from '@/modules/app/AppFooter';
 import { NavDrawer } from '@/modules/app/NavDrawer';
 import { Badge } from '@/modules/ui/Badge';
@@ -40,9 +41,7 @@ export default function BlogDomainLayout({ children }: { children: React.ReactNo
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="flex items-center gap-4 py-4">
               <a href="/domains/blog" className="group inline-flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-fg text-base font-semibold shadow-sm">
-                  K
-                </span>
+                <BrandLogo className="h-11 w-11 text-base font-semibold">K</BrandLogo>
                 <div className="leading-tight">
                   <div className="flex items-center gap-2">
                     <span className="text-base font-semibold text-text-primary">Kuray Blog</span>

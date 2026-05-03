@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { BrandLogo } from '@/modules/ui/BrandLogo';
 import { Breadcrumb } from '@/modules/ui/Breadcrumb';
 import { EventCard } from '@/modules/domains/event/EventCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -43,9 +44,9 @@ export default async function OrganizerDetailPage({ params }: Props) {
                 className="h-20 w-20 rounded-2xl object-cover border border-border shadow-lg shrink-0"
               />
             ) : (
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-primary-fg text-3xl font-black shadow-lg shrink-0">
+              <BrandLogo size="xl" className="font-black shadow-lg shrink-0">
                 {organizer.name[0]}
-              </div>
+              </BrandLogo>
             )}
             <div>
               <div className="flex items-center gap-2 flex-wrap">

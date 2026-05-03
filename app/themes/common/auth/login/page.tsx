@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { BrandLogo } from '@/modules/ui/BrandLogo';
 import { LoginForm } from '@/modules/domains/common/auth/LoginForm';
 import { OAuthButtons } from '@/modules/domains/common/auth/OAuthButtons';
 import { SessionExpiredBanner } from '@/modules/domains/common/auth/SessionExpiredBanner';
@@ -26,9 +27,7 @@ export default function LoginPage() {
           {/* Header */}
           <div className="text-center space-y-1">
             <div className="flex justify-center mb-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-fg text-lg font-bold shadow-sm">
-                C
-              </span>
+              <BrandLogo>C</BrandLogo>
             </div>
             <h1 className="text-2xl font-bold text-text-primary">Welcome back</h1>
             <p className="text-sm text-text-secondary">Sign in to your account to continue</p>
@@ -44,7 +43,7 @@ export default function LoginPage() {
               {/* OAuth */}
               <OAuthButtons
                 providers={['GOOGLE', 'GITHUB']}
-                onProvider={async (p) => { await new Promise((r) => setTimeout(r, 800)); }}
+                onProvider={async (_p) => { await new Promise((r) => setTimeout(r, 800)); }}
               />
 
               <div className="flex items-center gap-3">

@@ -155,6 +155,25 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'Domain — API Doc',
+    collapsible: true,
+    sectionStart: 'Domain — API Doc',
+    items: [
+      { id: 'api-doc-status-code-badge',    title: 'StatusCodeBadge',    category: 'Domain', abbr: 'SC' },
+      { id: 'api-doc-http-method-badge',    title: 'HttpMethodBadge',    category: 'Domain', abbr: 'HM' },
+      { id: 'api-doc-security-badge',       title: 'SecurityBadge',      category: 'Domain', abbr: 'SB' },
+      { id: 'api-doc-security-scheme-badge',title: 'SecuritySchemeBadge',category: 'Domain', abbr: 'SS' },
+      { id: 'api-doc-schema-viewer',        title: 'SchemaViewer',       category: 'Domain', abbr: 'SV' },
+      { id: 'api-doc-parameter-table',      title: 'ParameterTable',     category: 'Domain', abbr: 'PT' },
+      { id: 'api-doc-response-card',        title: 'ResponseCard',       category: 'Domain', abbr: 'RC' },
+      { id: 'api-doc-code-sample-panel',    title: 'CodeSamplePanel',    category: 'Domain', abbr: 'CP' },
+      { id: 'api-doc-endpoint-row',         title: 'EndpointRow',        category: 'Domain', abbr: 'ER' },
+      { id: 'api-doc-server-selector',      title: 'ServerSelector',     category: 'Domain', abbr: 'SE' },
+      { id: 'api-doc-api-tag-section',      title: 'ApiTagSection',      category: 'Domain', abbr: 'TS' },
+      { id: 'api-doc-operation-panel',      title: 'OperationPanel',     category: 'Domain', abbr: 'OP' },
+    ],
+  },
+  {
     label: 'App Concepts',
     collapsible: true,
     sectionStart: 'App Concepts',
@@ -181,9 +200,10 @@ const NAV_GROUPS: NavGroup[] = [
     collapsible: true,
     sectionStart: 'Themes',
     items: [
-      { id: 'common', title: 'Common Theme', category: 'Theme', abbr: 'CT' , href: '/themes/common' },
-      { id: 'blog',   title: 'Blog Theme',   category: 'Theme', abbr: 'BT' , href: '/themes/blog' },
-      { id: 'event',  title: 'Event Theme',  category: 'Theme', abbr: 'ET' , href: '/themes/event' },
+      { id: 'common',   title: 'Common Theme',  category: 'Theme', abbr: 'CT', href: '/themes/common' },
+      { id: 'blog',     title: 'Blog Theme',    category: 'Theme', abbr: 'BT', href: '/themes/blog' },
+      { id: 'event',    title: 'Event Theme',   category: 'Theme', abbr: 'ET', href: '/themes/event' },
+      { id: 'api-doc',  title: 'API Doc Theme', category: 'Theme', abbr: 'AD', href: '/themes/api-doc' },
     ],
   }
 ];

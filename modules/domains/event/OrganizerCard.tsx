@@ -3,6 +3,7 @@ import { cn } from '@/libs/utils/cn';
 import type { Organizer } from './types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faGlobe, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { BrandLogo } from '@/modules/ui/BrandLogo';
 
 type Props = {
   organizer: Organizer;
@@ -25,9 +26,9 @@ export function OrganizerCard({ organizer, className }: Props) {
             className="h-12 w-12 rounded-xl object-cover border border-border shrink-0"
           />
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-fg text-lg font-bold shrink-0">
+          <BrandLogo className="rounded-xl shrink-0 shadow-none">
             {organizer.name[0]}
-          </div>
+          </BrandLogo>
         )}
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">

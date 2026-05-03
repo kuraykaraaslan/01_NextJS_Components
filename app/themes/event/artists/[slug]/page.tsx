@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { BrandLogo } from '@/modules/ui/BrandLogo';
 import { Breadcrumb } from '@/modules/ui/Breadcrumb';
 import { EventCard } from '@/modules/domains/event/EventCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -55,9 +56,9 @@ export default async function ArtistDetailPage({ params }: Props) {
               className="h-24 w-24 rounded-2xl object-cover border-4 border-surface-base shadow-xl shrink-0"
             />
           ) : (
-            <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-primary text-primary-fg text-4xl font-black border-4 border-surface-base shadow-xl shrink-0">
+            <BrandLogo size="2xl" className="font-black border-4 border-surface-base shadow-xl shrink-0">
               {artist.name[0]}
-            </div>
+            </BrandLogo>
           )}
           <div className="pb-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
