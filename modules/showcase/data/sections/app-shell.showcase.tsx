@@ -3,14 +3,21 @@ import { AppShell } from '@/modules/app/AppShell';
 import { AppSidebar } from '@/modules/app/AppSidebar';
 import { AppTopBar } from '@/modules/app/AppTopBar';
 import { UserMenu } from '@/modules/domains/common/user/UserMenu';
+import { NotificationMenu } from '@/modules/domains/common/notification/NotificationMenu';
 import { GlobalSearch } from '@/modules/app/GlobalSearch';
 import { Avatar } from '@/modules/ui/Avatar';
-import { Badge } from '@/modules/ui/Badge';
 import { Button } from '@/modules/ui/Button';
 import { useState, type ComponentProps } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faChartBar, faCog, faGear, faHouse, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faCog, faGear, faHouse, faUsers } from '@fortawesome/free-solid-svg-icons';
+
+const DEMO_NOTIFICATIONS = [
+  { id: 'n1', title: 'New comment on your post', description: 'Jane replied to your article "Getting started with Next.js".', timestamp: '2 min ago', read: false, variant: 'info' as const },
+  { id: 'n2', title: 'Payment received', description: 'Invoice #1042 has been paid ($153.96).', timestamp: '1 hr ago', read: false, variant: 'success' as const },
+  { id: 'n3', title: 'Storage limit at 90%', description: 'You are using 9 GB of your 10 GB plan.', timestamp: '3 hr ago', read: false, variant: 'warning' as const },
+  { id: 'n4', title: 'Deployment complete', description: 'v2.4.1 deployed to production successfully.', timestamp: 'Yesterday', read: true, variant: 'success' as const },
+];
 
 const DEMO_USER: ComponentProps<typeof UserMenu>['user'] = {
   userId: 'demo-1',
@@ -38,6 +45,17 @@ const NAV_GROUPS = [
     ],
   },
 ];
+
+function NotificationMenuDemo() {
+  const [items, setItems] = useState(DEMO_NOTIFICATIONS);
+  return (
+    <NotificationMenu
+      items={items}
+      onMarkAllRead={() => setItems((prev) => prev.map((n) => ({ ...n, read: true })))}
+      onViewAll={() => {}}
+    />
+  );
+}
 
 function AppShellFullDemo() {
   const [activeId, setActiveId] = useState('dashboard');
@@ -73,9 +91,7 @@ function AppShellFullDemo() {
           <AppTopBar>
             <GlobalSearch onSearch={() => {}} onSelect={() => {}} className="flex-1 max-w-sm hidden sm:block" />
             <div className="ml-auto flex items-center gap-1">
-              <Button variant="ghost" size="sm" iconOnly aria-label="Notifications">
-                <FontAwesomeIcon icon={faBell} className="w-3 h-3" />
-              </Button>
+              <NotificationMenuDemo />
               <UserMenu user={DEMO_USER} />
             </div>
           </AppTopBar>
@@ -166,7 +182,7 @@ function AppTopBarSearchDemo() {
         <AppTopBar>
           <GlobalSearch onSearch={() => {}} onSelect={() => {}} className="flex-1 max-w-sm hidden sm:block" />
           <div className="ml-auto flex items-center gap-1">
-            <Button variant="ghost" size="sm" iconOnly aria-label="Notifications"><FontAwesomeIcon icon={faBell} className="w-3 h-3" /></Button>
+            <NotificationMenuDemo />
             <Button variant="ghost" size="sm" iconOnly aria-label="Settings"><FontAwesomeIcon icon={faGear} className="w-3 h-3" /></Button>
             <UserMenu user={DEMO_USER} />
           </div>

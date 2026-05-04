@@ -118,6 +118,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'common-saved-card-selector',        title: 'SavedCardSelector',           category: 'Domain', abbr: 'SC' },
       { id: 'common-not-found-page',             title: 'NotFoundPage',                category: 'Domain', abbr: 'NF' },
       { id: 'common-chat-box',                   title: 'ChatBox',                     category: 'Domain', abbr: 'CB' },
+      { id: 'common-notification-menu',          title: 'NotificationMenu',            category: 'Domain', abbr: 'NM' },
     ],
   },
   {

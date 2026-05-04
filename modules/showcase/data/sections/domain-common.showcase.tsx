@@ -39,6 +39,7 @@ import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm'
 import { SavedCardSelector } from '@/modules/domains/common/payment/SavedCardSelector';
 import { NotFoundPage } from '@/modules/app/NotFoundPage';
 import { ChatBox } from '@/modules/domains/common/chat/ChatBox';
+import { NotificationMenu, type NotificationItem } from '@/modules/domains/common/notification/NotificationMenu';
 import type { PaymentMethod, SavedCard } from '@/modules/domains/common/PaymentTypes';
 import type { AppLanguage } from '@/modules/domains/common/I18nTypes';
 import type { ShowcaseComponent } from '../showcase.types';
@@ -1299,6 +1300,45 @@ import { ChatBox } from '@/modules/domains/common/chat/ChatBox';
         },
       ],
     },
+    {
+      id: 'common-notification-menu',
+      title: 'NotificationMenu',
+      category: 'Domain',
+      abbr: 'NM',
+      description: 'Bell icon button with unread count badge. Opens a dropdown panel showing notification items grouped by read/unread state with variant color dots, timestamps, and mark-all-read / view-all actions.',
+      filePath: 'modules/domains/common/notification/NotificationMenu.tsx',
+      sourceCode: `'use client';
+import { NotificationMenu } from '@/modules/domains/common/notification/NotificationMenu';
+
+const [items, setItems] = useState(initialNotifications);
+
+<NotificationMenu
+  items={items}
+  onMarkAllRead={() => setItems((prev) => prev.map((n) => ({ ...n, read: true })))}
+  onViewAll={() => router.push('/notifications')}
+/>`,
+      variants: [
+        {
+          title: 'With unread notifications',
+          preview: <NotificationMenuWithItemsDemo />,
+          code: `<NotificationMenu
+  items={[
+    { id: 'n1', title: 'New comment on your post', description: 'Jane replied to your article.', timestamp: '2 min ago', read: false, variant: 'info' },
+    { id: 'n2', title: 'Payment received', description: 'Invoice #1042 paid ($153.96).', timestamp: '1 hr ago', read: false, variant: 'success' },
+    { id: 'n3', title: 'Storage limit at 90%', timestamp: '3 hr ago', read: false, variant: 'warning' },
+    { id: 'n4', title: 'Deployment complete', timestamp: 'Yesterday', read: true, variant: 'success' },
+  ]}
+  onMarkAllRead={handleMarkAllRead}
+  onViewAll={() => router.push('/notifications')}
+/>`,
+        },
+        {
+          title: 'Empty state',
+          preview: <NotificationMenuEmptyDemo />,
+          code: `<NotificationMenu items={[]} onViewAll={() => router.push('/notifications')} />`,
+        },
+      ],
+    },
   ];
 }
 
@@ -1634,6 +1674,36 @@ function ChatBoxEmptyDemo() {
         subtitle="Ask us anything"
         className="absolute bottom-4 right-4"
       />
+    </div>
+  );
+}
+
+/* ─── NotificationMenu demos ─── */
+
+const DEMO_NOTIFICATION_ITEMS: NotificationItem[] = [
+  { id: 'n1', title: 'New comment on your post', description: 'Jane replied to your article "Getting started with Next.js".', timestamp: '2 min ago', read: false, variant: 'info' },
+  { id: 'n2', title: 'Payment received', description: 'Invoice #1042 has been paid ($153.96).', timestamp: '1 hr ago', read: false, variant: 'success' },
+  { id: 'n3', title: 'Storage limit at 90%', description: 'You are using 9 GB of your 10 GB plan.', timestamp: '3 hr ago', read: false, variant: 'warning' },
+  { id: 'n4', title: 'Deployment complete', description: 'v2.4.1 deployed to production successfully.', timestamp: 'Yesterday', read: true, variant: 'success' },
+];
+
+function NotificationMenuWithItemsDemo() {
+  const [items, setItems] = useState(DEMO_NOTIFICATION_ITEMS);
+  return (
+    <div className="flex items-start justify-center pt-4 pb-72">
+      <NotificationMenu
+        items={items}
+        onMarkAllRead={() => setItems((prev) => prev.map((n) => ({ ...n, read: true })))}
+        onViewAll={() => {}}
+      />
+    </div>
+  );
+}
+
+function NotificationMenuEmptyDemo() {
+  return (
+    <div className="flex items-start justify-center pt-4 pb-52">
+      <NotificationMenu items={[]} onViewAll={() => {}} />
     </div>
   );
 }
