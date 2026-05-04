@@ -38,6 +38,7 @@ import { CreditCardVisual } from '@/modules/domains/common/payment/CreditCardVis
 import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm';
 import { SavedCardSelector } from '@/modules/domains/common/payment/SavedCardSelector';
 import { NotFoundPage } from '@/modules/app/NotFoundPage';
+import { ChatBox } from '@/modules/domains/common/chat/ChatBox';
 import type { PaymentMethod, SavedCard } from '@/modules/domains/common/PaymentTypes';
 import type { AppLanguage } from '@/modules/domains/common/I18nTypes';
 import type { ShowcaseComponent } from '../showcase.types';
@@ -1256,6 +1257,48 @@ import { NotFoundPage } from '@/modules/app/NotFoundPage';
         { title: 'Custom copy', layout: 'stack' as const, preview: <NotFoundPageCustomDemo />, code: `<NotFoundPage title="Resource Not Found" description="The item you are looking for has been removed." homeLabel="Go Home" backLabel="Go Back" homeHref="/" />` },
       ],
     },
+    {
+      id: 'common-chat-box',
+      title: 'ChatBox',
+      category: 'Domain',
+      abbr: 'CB',
+      description: 'Floating chat widget that anchors to the bottom-right of the screen. Includes a FAB toggle, collapsible panel, scrollable message list with typing indicator, and an auto-growing textarea input.',
+      filePath: 'modules/domains/common/chat/ChatBox.tsx',
+      sourceCode: `'use client';
+import { ChatBox } from '@/modules/domains/common/chat/ChatBox';
+
+// Renders fixed at bottom-right of the page
+<ChatBox
+  title="Support Chat"
+  subtitle="We typically reply in a few minutes"
+  placeholder="Type a message…"
+  onSend={async (text) => {
+    // return agent reply string
+    return 'Thanks for reaching out!';
+  }}
+/>`,
+      variants: [
+        {
+          title: 'With initial messages',
+          layout: 'stack' as const,
+          preview: <ChatBoxDefaultDemo />,
+          code: `<ChatBox
+  title="Support Chat"
+  subtitle="We typically reply in a few minutes"
+  initialMessages={[
+    { id: 'm1', role: 'agent', text: 'Hi there! How can I help you today?' },
+    { id: 'm2', role: 'user', text: 'I have a question about my order.' },
+  ]}
+/>`,
+        },
+        {
+          title: 'Empty / initial state',
+          layout: 'stack' as const,
+          preview: <ChatBoxEmptyDemo />,
+          code: `<ChatBox title="Sales Chat" subtitle="Ask us anything" />`,
+        },
+      ],
+    },
   ];
 }
 
@@ -1557,6 +1600,40 @@ function SavedCardSelectorEmptyDemo() {
   return (
     <div className="w-full max-w-sm mx-auto p-4">
       <SavedCardSelector cards={[]} onSelect={() => {}} onAddNew={() => {}} />
+    </div>
+  );
+}
+
+/* ─── ChatBox demos ─── */
+
+function ChatBoxDefaultDemo() {
+  return (
+    <div className="relative w-full overflow-hidden rounded-lg border border-border bg-surface-raised" style={{ height: 520 }}>
+      <div className="absolute inset-0 flex items-end justify-end p-2 pointer-events-none opacity-30 select-none">
+        <span className="text-xs text-text-secondary italic">Live preview — fixed position on real pages</span>
+      </div>
+      <ChatBox
+        title="Support Chat"
+        subtitle="We typically reply in a few minutes"
+        initialMessages={[
+          { id: 'm1', role: 'agent', text: 'Hi there! How can I help you today?', timestamp: '09:00' },
+          { id: 'm2', role: 'user', text: 'I have a question about my order.', timestamp: '09:01' },
+          { id: 'm3', role: 'agent', text: 'Sure! Please share your order number and I\'ll look it up for you.', timestamp: '09:01' },
+        ]}
+        className="absolute bottom-4 right-4"
+      />
+    </div>
+  );
+}
+
+function ChatBoxEmptyDemo() {
+  return (
+    <div className="relative w-full overflow-hidden rounded-lg border border-border bg-surface-raised" style={{ height: 400 }}>
+      <ChatBox
+        title="Sales Chat"
+        subtitle="Ask us anything"
+        className="absolute bottom-4 right-4"
+      />
     </div>
   );
 }

@@ -117,6 +117,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'common-credit-card-form',           title: 'CreditCardForm',              category: 'Domain', abbr: 'CF' },
       { id: 'common-saved-card-selector',        title: 'SavedCardSelector',           category: 'Domain', abbr: 'SC' },
       { id: 'common-not-found-page',             title: 'NotFoundPage',                category: 'Domain', abbr: 'NF' },
+      { id: 'common-chat-box',                   title: 'ChatBox',                     category: 'Domain', abbr: 'CB' },
     ],
   },
   {
