@@ -40,6 +40,7 @@ import { SavedCardSelector } from '@/modules/domains/common/payment/SavedCardSel
 import { NotFoundPage } from '@/modules/app/NotFoundPage';
 import { ChatBox } from '@/modules/domains/common/chat/ChatBox';
 import { NotificationMenu, type NotificationItem } from '@/modules/domains/common/notification/NotificationMenu';
+import { SubscriptionPlanCard, type SubscriptionPlan } from '@/modules/domains/common/subscription/SubscriptionPlanCard';
 import type { PaymentMethod, SavedCard } from '@/modules/domains/common/PaymentTypes';
 import type { AppLanguage } from '@/modules/domains/common/I18nTypes';
 import type { ShowcaseComponent } from '../showcase.types';
@@ -1339,6 +1340,48 @@ const [items, setItems] = useState(initialNotifications);
         },
       ],
     },
+    {
+      id: 'common-subscription-plan-card',
+      title: 'SubscriptionPlanCard',
+      category: 'Domain',
+      abbr: 'SP',
+      description: 'Subscription plan card displaying name, price with currency formatting, billing interval, and feature list with checkmarks. Highlights the popular and current plans. Accepts onSelect callback for plan switching.',
+      filePath: 'modules/domains/common/subscription/SubscriptionPlanCard.tsx',
+      sourceCode: `'use client';
+import { SubscriptionPlanCard } from '@/modules/domains/common/subscription/SubscriptionPlanCard';
+
+<SubscriptionPlanCard
+  plan={{
+    planId: 'pro',
+    name: 'Pro',
+    price: 1900,
+    currency: 'USD',
+    interval: 'MONTHLY',
+    features: ['Unlimited projects', '10 team members', 'Priority support'],
+    isPopular: true,
+  }}
+  onSelect={(planId) => handleUpgrade(planId)}
+/>`,
+      variants: [
+        {
+          title: 'Plan grid',
+          layout: 'stack' as const,
+          preview: <SubscriptionPlanGridDemo />,
+          code: `<div className="grid grid-cols-3 gap-4">
+  <SubscriptionPlanCard plan={freePlan} onSelect={handleSelect} />
+  <SubscriptionPlanCard plan={proPlan} isCurrent onSelect={handleSelect} />
+  <SubscriptionPlanCard plan={enterprisePlan} onSelect={handleSelect} />
+</div>`,
+        },
+        {
+          title: 'Single card states',
+          layout: 'stack' as const,
+          preview: <SubscriptionPlanStatesDemo />,
+          code: `<SubscriptionPlanCard plan={plan} isCurrent />
+<SubscriptionPlanCard plan={{ ...plan, isPopular: true }} onSelect={handleSelect} />`,
+        },
+      ],
+    },
   ];
 }
 
@@ -1704,6 +1747,65 @@ function NotificationMenuEmptyDemo() {
   return (
     <div className="flex items-start justify-center pt-4 pb-52">
       <NotificationMenu items={[]} onViewAll={() => {}} />
+    </div>
+  );
+}
+
+
+/* ─── SubscriptionPlanCard demos ─── */
+
+const DEMO_PLANS: SubscriptionPlan[] = [
+  {
+    planId: 'free',
+    name: 'Free',
+    description: 'Perfect for getting started',
+    price: 0,
+    currency: 'USD',
+    interval: 'MONTHLY',
+    features: ['1 project', '2 team members', 'Community support'],
+  },
+  {
+    planId: 'pro',
+    name: 'Pro',
+    description: 'Best for growing teams',
+    price: 1900,
+    currency: 'USD',
+    interval: 'MONTHLY',
+    features: ['Unlimited projects', '10 team members', 'Priority support', 'Advanced analytics'],
+    isPopular: true,
+  },
+  {
+    planId: 'enterprise',
+    name: 'Enterprise',
+    description: 'For large organizations',
+    price: 9900,
+    currency: 'USD',
+    interval: 'MONTHLY',
+    features: ['Unlimited everything', 'Dedicated support', 'SLA guarantee', 'Custom integrations', 'SSO'],
+  },
+];
+
+function SubscriptionPlanGridDemo() {
+  const [current] = useState('pro');
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6">
+      {DEMO_PLANS.map((plan) => (
+        <SubscriptionPlanCard
+          key={plan.planId}
+          plan={plan}
+          isCurrent={plan.planId === current}
+          onSelect={() => {}}
+        />
+      ))}
+    </div>
+  );
+}
+
+function SubscriptionPlanStatesDemo() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6">
+      <SubscriptionPlanCard plan={DEMO_PLANS[1]} isCurrent onSelect={() => {}} />
+      <SubscriptionPlanCard plan={{ ...DEMO_PLANS[2], isPopular: false }} onSelect={() => {}} />
     </div>
   );
 }
