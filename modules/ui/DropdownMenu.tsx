@@ -51,7 +51,7 @@ export function DropdownMenu({
         <div
           role="menu"
           className={cn(
-            'absolute z-50 mt-1 min-w-[10rem] rounded-lg border border-border bg-surface-raised shadow-lg py-1',
+            'absolute z-[60] mt-1 min-w-[10rem] rounded-lg border border-border bg-surface-raised shadow-lg py-1',
             align === 'right' ? 'right-0' : 'left-0'
           )}
         >

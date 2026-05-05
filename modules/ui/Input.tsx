@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faXmark, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
@@ -22,7 +22,7 @@ type InputProps = {
   className?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
-export function Input({
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input({
   id,
   label,
   hint,
@@ -44,7 +44,7 @@ export function Input({
   min,
   max,
   ...props
-}: InputProps) {
+}, ref) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
   const isNumber   = type === 'number';
@@ -118,6 +118,7 @@ export function Input({
         )}
 
         <input
+          ref={ref}
           id={id}
           type={resolvedType}
           required={required}
@@ -210,4 +211,4 @@ export function Input({
       </div>
     </div>
   );
-}
+});

@@ -1,7 +1,19 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
+import { forwardRef } from 'react';
 
-export function Textarea({
+type TextareaProps = {
+  id: string;
+  label: string;
+  hint?: string;
+  error?: string;
+  disabled?: boolean;
+  required?: boolean;
+  rows?: number;
+  className?: string;
+} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'id' | 'rows'>;
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea({
   id,
   label,
   hint,
@@ -11,16 +23,7 @@ export function Textarea({
   rows = 4,
   className,
   ...props
-}: {
-  id: string;
-  label: string;
-  hint?: string;
-  error?: string;
-  disabled?: boolean;
-  required?: boolean;
-  rows?: number;
-  className?: string;
-} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'id' | 'rows'>) {
+}, ref) {
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
@@ -37,6 +40,7 @@ export function Textarea({
         )}
       </label>
       <textarea
+        ref={ref}
         id={id}
         rows={rows}
         disabled={disabled}
@@ -61,4 +65,4 @@ export function Textarea({
       )}
     </div>
   );
-}
+});

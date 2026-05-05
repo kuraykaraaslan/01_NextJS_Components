@@ -22,10 +22,13 @@ const layers = [
   { num: '5', path: 'app/theme/',        desc: 'Full-page multi-product demos',                color: 'bg-error-subtle text-error-fg' },
 ];
 
-const themes = [
-  { label: 'News Site',       href: '/theme/news',   desc: 'Editorial content publishing' },
-  { label: 'E-commerce Shop', href: '/theme/shop',   desc: 'Product catalog & checkout' },
-  { label: 'Vehicle Rental',  href: '/theme/rental', desc: 'Moovy — mobility booking UI' },
+const themes: { label: string; href?: string; desc: string; soon?: boolean }[] = [
+  { label: 'Blog',            href: '/theme/blog',   desc: 'Editorial content publishing' },
+  { label: 'Event Platform',  href: '/theme/event',  desc: 'Events, tickets & venue management' },
+  { label: 'E-commerce Shop', desc: 'Product catalog & checkout',    soon: true },
+  { label: 'News Site',       desc: 'Breaking news & article feeds',  soon: true },
+  { label: 'Vehicle Rental',  desc: 'Moovy — mobility booking UI',   soon: true },
+  { label: 'SaaS Dashboard',  desc: 'Metrics, billing & team admin', soon: true },
 ];
 
 export function HomePanel() {
@@ -145,21 +148,35 @@ export function HomePanel() {
           Live Themes
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {themes.map((t) => (
-            <a
-              key={t.href}
-              href={t.href}
-              className={cn(
-                'group flex flex-col gap-1 rounded-lg border border-border bg-surface-base px-4 py-3 transition-colors',
-                'hover:border-primary hover:bg-primary-subtle',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
-              )}
-            >
-              <span className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors">{t.label}</span>
-              <span className="text-xs text-text-secondary">{t.desc}</span>
-              <span className="text-[10px] font-mono text-text-disabled mt-0.5">{t.href}</span>
-            </a>
-          ))}
+          {themes.map((t) =>
+            t.soon ? (
+              <div
+                key={t.label}
+                className="flex flex-col gap-1 rounded-lg border border-border bg-surface-overlay px-4 py-3 opacity-60 cursor-not-allowed"
+                aria-disabled="true"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-text-secondary">{t.label}</span>
+                  <span className="text-[10px] font-medium bg-surface-sunken text-text-disabled rounded px-1.5 py-0.5">Soon</span>
+                </div>
+                <span className="text-xs text-text-secondary">{t.desc}</span>
+              </div>
+            ) : (
+              <a
+                key={t.href}
+                href={t.href}
+                className={cn(
+                  'group flex flex-col gap-1 rounded-lg border border-border bg-surface-base px-4 py-3 transition-colors',
+                  'hover:border-primary hover:bg-primary-subtle',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
+                )}
+              >
+                <span className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors">{t.label}</span>
+                <span className="text-xs text-text-secondary">{t.desc}</span>
+                <span className="text-[10px] font-mono text-text-disabled mt-0.5">{t.href}</span>
+              </a>
+            )
+          )}
         </div>
       </div>
 

@@ -206,7 +206,7 @@ export function ToastProvider({ position = 'top-right' }: { position?: ToastPosi
   return (
     <div
       className={cn(
-        'fixed z-50 flex flex-col gap-2 pointer-events-none',
+        'fixed z-[90] flex flex-col gap-2 pointer-events-none',
         positionMap[position],
       )}
     >

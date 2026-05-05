@@ -1,8 +1,11 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function Modal({
   open,
@@ -14,7 +17,9 @@ export function Modal({
   size = 'md',
   fullscreen = false,
   scrollable = false,
+  closeOnBackdropClick = true,
   className,
+  ref,
 }: {
   open: boolean;
   onClose: () => void;
@@ -25,12 +30,15 @@ export function Modal({
   size?: 'sm' | 'md' | 'lg';
   fullscreen?: boolean;
   scrollable?: boolean;
+  closeOnBackdropClick?: boolean;
   className?: string;
+  ref?: React.Ref<HTMLDivElement>;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = 'modal-title';
   const descId = description ? 'modal-desc' : undefined;
 
+  // Restore focus to the previously focused element on close
   useEffect(() => {
     if (!open) return;
     const prev = document.activeElement as HTMLElement | null;
@@ -38,14 +46,44 @@ export function Modal({
     return () => prev?.focus();
   }, [open]);
 
+  // Focus trap + Escape key
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      const panel = panelRef.current;
+      if (!panel) return;
+
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    [onClose]
+  );
+
   useEffect(() => {
     if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
-    }
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, handleKeyDown]);
 
   if (!open) return null;
 
@@ -54,7 +92,7 @@ export function Modal({
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex p-4',
+        'fixed inset-0 z-[100] flex p-4',
         fullscreen ? 'items-stretch justify-stretch' : 'items-center justify-center'
       )}
       aria-modal="true"
@@ -64,14 +102,19 @@ export function Modal({
     >
       <div
         className="absolute inset-0 bg-black/50"
-        onClick={onClose}
+        onClick={closeOnBackdropClick ? onClose : undefined}
         aria-hidden="true"
       />
       <div
-        ref={panelRef}
+        ref={(node) => {
+          // Support both internal ref and forwarded ref (React 19 ref prop)
+          (panelRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+          if (typeof ref === 'function') ref(node);
+          else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        }}
         tabIndex={-1}
         className={cn(
-          'relative z-10 w-full border border-border bg-surface-raised shadow-xl flex flex-col',
+          'relative z-[101] w-full border border-border bg-surface-raised shadow-xl flex flex-col',
           'focus-visible:outline-none',
           fullscreen ? 'rounded-none max-w-none max-h-none h-full' : cn('rounded-xl', sizeClass),
           className
@@ -90,7 +133,7 @@ export function Modal({
             aria-label="Close dialog"
             className="shrink-0 text-text-disabled hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
           >
-            <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
+            <FontAwesomeIcon icon={faXmark} className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
         {children && (

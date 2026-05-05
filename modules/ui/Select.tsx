@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown, faCheck } from '@fortawesome/free-solid-svg-icons';
 
@@ -164,7 +164,7 @@ function CustomSelect({
   );
 }
 
-export function Select({ id, label, options, placeholder, hint, error, disabled, required, searchable, className, ...props }: NativeProps) {
+export const Select = forwardRef<HTMLSelectElement, NativeProps>(function Select({ id, label, options, placeholder, hint, error, disabled, required, searchable, className, ...props }, ref) {
   const hasIcons = options.some((o) => o.icon);
 
   if (hasIcons || searchable) {
@@ -197,6 +197,7 @@ export function Select({ id, label, options, placeholder, hint, error, disabled,
         )}
       </label>
       <select
+        ref={ref}
         id={id}
         disabled={disabled}
         required={required}
@@ -221,4 +222,4 @@ export function Select({ id, label, options, placeholder, hint, error, disabled,
       {error && <p id={errorId} className="text-xs text-error" role="alert">{error}</p>}
     </div>
   );
-}
+});

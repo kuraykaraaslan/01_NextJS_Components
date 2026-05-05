@@ -1,79 +1,39 @@
 'use client';
-import { createContext, useCallback, useContext, useId, useState } from 'react';
-import { Toast, ToastRegion, type ToastAction } from '@/modules/ui/Toast';
+import { ToastProvider, toast, type ToastPosition } from '@/modules/ui/Toast';
 
-type NotifVariant = 'success' | 'error' | 'warning' | 'info';
-type NotifPosition = 'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left' | 'bottom-center';
+// ─── Re-export toast helper so callers can import from here ───────────────────
 
-type Notification = {
-  id: string;
-  variant: NotifVariant;
-  message: string;
-  duration?: number;
-  action?: ToastAction;
-};
+export { toast };
 
-type NotifyFn = (message: string, opts?: { duration?: number; action?: ToastAction }) => void;
+// ─── Imperative helpers (named variants) ──────────────────────────────────────
 
-type NotificationCtx = {
-  success: NotifyFn;
-  error:   NotifyFn;
-  warning: NotifyFn;
-  info:    NotifyFn;
-  dismiss: (id: string) => void;
-};
+export const notify = {
+  success: (message: string, opts?: Parameters<typeof toast.success>[1]) =>
+    toast.success(message, opts),
+  error: (message: string, opts?: Parameters<typeof toast.error>[1]) =>
+    toast.error(message, opts),
+  warning: (message: string, opts?: Parameters<typeof toast.warning>[1]) =>
+    toast.warning(message, opts),
+  info: (message: string, opts?: Parameters<typeof toast.info>[1]) =>
+    toast.info(message, opts),
+  loading: (message: string, opts?: Parameters<typeof toast.loading>[1]) =>
+    toast.loading(message, opts),
+  dismiss: (id: string) => toast.dismiss(id),
+} as const;
 
-const Ctx = createContext<NotificationCtx | null>(null);
+// ─── Provider ─────────────────────────────────────────────────────────────────
 
 export function NotificationProvider({
   children,
   position = 'top-right',
-  maxStack = 5,
 }: {
   children: React.ReactNode;
-  position?: NotifPosition;
-  maxStack?: number;
+  position?: ToastPosition;
 }) {
-  const [queue, setQueue] = useState<Notification[]>([]);
-
-  const add = useCallback((variant: NotifVariant, message: string, opts?: { duration?: number; action?: ToastAction }) => {
-    const id = `notif-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    setQueue((q) => [{ id, variant, message, ...opts }, ...q].slice(0, maxStack));
-  }, [maxStack]);
-
-  const dismiss = useCallback((id: string) => {
-    setQueue((q) => q.filter((n) => n.id !== id));
-  }, []);
-
-  const ctx: NotificationCtx = {
-    success: (m, o) => add('success', m, o),
-    error:   (m, o) => add('error',   m, o),
-    warning: (m, o) => add('warning', m, o),
-    info:    (m, o) => add('info',    m, o),
-    dismiss,
-  };
-
   return (
-    <Ctx.Provider value={ctx}>
+    <>
       {children}
-      <ToastRegion position={position}>
-        {queue.map((n) => (
-          <Toast
-            key={n.id}
-            variant={n.variant}
-            message={n.message}
-            duration={n.duration}
-            action={n.action}
-            onDismiss={() => dismiss(n.id)}
-          />
-        ))}
-      </ToastRegion>
-    </Ctx.Provider>
+      <ToastProvider position={position} />
+    </>
   );
-}
-
-export function useNotifications(): NotificationCtx {
-  const ctx = useContext(Ctx);
-  if (!ctx) throw new Error('useNotifications must be used inside <NotificationProvider>');
-  return ctx;
 }

@@ -40,7 +40,9 @@ type ButtonProps = {
   fullWidth?: boolean;
   selected?: boolean;
   'data-testid'?: string;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+  ref?: React.Ref<HTMLButtonElement>;
+  type?: 'button' | 'submit' | 'reset';
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'>;
 
 export function Button({
   children,
@@ -54,12 +56,15 @@ export function Button({
   fullWidth = false,
   selected = false,
   'data-testid': testId,
+  ref,
+  type = 'button',
   className,
   ...props
 }: ButtonProps) {
   return (
     <button
-      type="button"
+      ref={ref}
+      type={type}
       disabled={disabled || loading}
       aria-busy={loading}
       aria-pressed={selected ? true : undefined}

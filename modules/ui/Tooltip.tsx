@@ -80,7 +80,7 @@ export function Tooltip({
         id={id}
         role="tooltip"
         className={cn(
-          'absolute z-50 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-medium shadow-md',
+          'absolute z-[80] whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-medium shadow-md',
           'transition-opacity duration-150 pointer-events-none',
           themeMap[theme],
           placementClass[placement],

@@ -56,7 +56,7 @@ export function Popover({
           role="dialog"
           tabIndex={-1}
           className={cn(
-            'absolute z-30 min-w-[12rem] rounded-lg border border-border bg-surface-raised shadow-xl',
+            'absolute z-[70] min-w-[12rem] rounded-lg border border-border bg-surface-raised shadow-xl',
             'focus-visible:outline-none',
             placementClasses[placement],
             className
