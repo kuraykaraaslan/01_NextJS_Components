@@ -161,7 +161,7 @@ export function TabGroup({ tabs, defaultTab, label = 'Tabs', className }) {
   }
   return (
     <div className={cn('w-full', className)}>
-      <div role="tablist" aria-label={label} className="flex border-b border-border">
+      <div role="tablist" aria-label={label} className="flex border-b border-border pb-3">
         {tabs.map((tab, i) => (
           <button key={tab.id} role="tab" id={\`tab-btn-\${tab.id}\`} aria-selected={tab.id === active} aria-controls={\`tabpanel-\${tab.id}\`} tabIndex={tab.id === active ? 0 : -1}
             onClick={() => setActive(tab.id)} onKeyDown={(e) => handleKeyDown(e, i)}
