@@ -120,6 +120,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'common-chat-box',                   title: 'ChatBox',                     category: 'Domain', abbr: 'CB' },
       { id: 'common-notification-menu',          title: 'NotificationMenu',            category: 'Domain', abbr: 'NM' },
       { id: 'common-subscription-plan-card',     title: 'SubscriptionPlanCard',        category: 'Domain', abbr: 'SP' },
+      { id: 'common-charts',                     title: 'Charts',                      category: 'Domain', abbr: 'Ch' },
     ],
   },
   {

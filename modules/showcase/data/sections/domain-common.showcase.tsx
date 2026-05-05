@@ -41,6 +41,13 @@ import { NotFoundPage } from '@/modules/app/NotFoundPage';
 import { ChatBox } from '@/modules/domains/common/chat/ChatBox';
 import { NotificationMenu, type NotificationItem } from '@/modules/domains/common/notification/NotificationMenu';
 import { SubscriptionPlanCard, type SubscriptionPlan } from '@/modules/domains/common/subscription/SubscriptionPlanCard';
+import {
+  RevenueBarChart,
+  UserActivityLineChart,
+  SalesByCategoryDoughnut,
+  ProductComparisonRadar,
+  RegionalSalesPolar,
+} from '@/modules/domains/common/charts/Charts';
 import type { PaymentMethod, SavedCard } from '@/modules/domains/common/PaymentTypes';
 import type { AppLanguage } from '@/modules/domains/common/I18nTypes';
 import type { ShowcaseComponent } from '../showcase.types';
@@ -1379,6 +1386,60 @@ import { SubscriptionPlanCard } from '@/modules/domains/common/subscription/Subs
           preview: <SubscriptionPlanStatesDemo />,
           code: `<SubscriptionPlanCard plan={plan} isCurrent />
 <SubscriptionPlanCard plan={{ ...plan, isPopular: true }} onSelect={handleSelect} />`,
+        },
+      ],
+    },
+    /* ─── Charts ─── */
+    {
+      id: 'common-charts',
+      title: 'Charts',
+      category: 'Domain',
+      abbr: 'Ch',
+      description: 'react-chartjs-2 chart components wrapped in Cards: Bar, Line, Doughnut, Radar, and Polar Area.',
+      filePath: 'modules/domains/common/charts/Charts.tsx',
+      sourceCode: `import {
+  RevenueBarChart,
+  UserActivityLineChart,
+  SalesByCategoryDoughnut,
+  ProductComparisonRadar,
+  RegionalSalesPolar,
+} from '@/modules/domains/common/charts/Charts';
+
+<RevenueBarChart />
+<UserActivityLineChart />
+<SalesByCategoryDoughnut />
+<ProductComparisonRadar />
+<RegionalSalesPolar />`,
+      variants: [
+        {
+          title: 'Bar — Revenue vs Expenses',
+          layout: 'stack' as const,
+          preview: <RevenueBarChart />,
+          code: `<RevenueBarChart />`,
+        },
+        {
+          title: 'Line — User Activity',
+          layout: 'stack' as const,
+          preview: <UserActivityLineChart />,
+          code: `<UserActivityLineChart />`,
+        },
+        {
+          title: 'Doughnut — Sales by Category',
+          layout: 'stack' as const,
+          preview: <SalesByCategoryDoughnut />,
+          code: `<SalesByCategoryDoughnut />`,
+        },
+        {
+          title: 'Radar — Product Comparison',
+          layout: 'stack' as const,
+          preview: <ProductComparisonRadar />,
+          code: `<ProductComparisonRadar />`,
+        },
+        {
+          title: 'Polar Area — Regional Sales',
+          layout: 'stack' as const,
+          preview: <RegionalSalesPolar />,
+          code: `<RegionalSalesPolar />`,
         },
       ],
     },
