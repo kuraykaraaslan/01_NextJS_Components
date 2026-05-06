@@ -77,6 +77,34 @@ export function Checkbox({ id, label, hint, error, disabled, className, ...props
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'label',    label: 'Label',    type: 'text',    default: 'I agree to the Terms of Service' },
+          { key: 'checked',  label: 'Checked',  type: 'boolean', default: false },
+          { key: 'hint',     label: 'Hint',     type: 'text',    default: '' },
+          { key: 'error',    label: 'Error',    type: 'text',    default: '' },
+          { key: 'disabled', label: 'Disabled', type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <Checkbox
+            id="pg-checkbox"
+            label={p.label as string}
+            checked={p.checked as boolean}
+            hint={p.hint as string || undefined}
+            error={p.error as string || undefined}
+            disabled={p.disabled as boolean}
+            onChange={() => {}}
+          />
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [`label="${p.label}"`];
+          if (p.checked)  attrs.push('checked');
+          if (p.hint)     attrs.push(`hint="${p.hint}"`);
+          if (p.error)    attrs.push(`error="${p.error}"`);
+          if (p.disabled) attrs.push('disabled');
+          return `<Checkbox id="accept" ${attrs.join(' ')} onChange={handleChange} />`;
+        },
+      },
       variants: [
         { title: 'Default', preview: <Checkbox id="sc-cb-default" label="I agree to the Terms of Service" />, code: `<Checkbox id="accept" label="I agree to the Terms of Service" />` },
         { title: 'With hint', preview: <Checkbox id="sc-cb-hint" label="Subscribe to newsletter" hint="We send weekly updates, no spam." />, code: `<Checkbox id="newsletter" label="Subscribe to newsletter" hint="We send weekly updates, no spam." />` },
@@ -215,6 +243,34 @@ export function Toggle({ id, label, description, checked, onChange, disabled, si
     </label>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'label',       label: 'Label',       type: 'text',    default: 'Enable notifications' },
+          { key: 'checked',     label: 'Checked',     type: 'boolean', default: false },
+          { key: 'size',        label: 'Size',        type: 'select',  options: ['sm', 'md', 'lg'] as const, default: 'md' },
+          { key: 'description', label: 'Description', type: 'text',    default: '' },
+          { key: 'disabled',    label: 'Disabled',    type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <Toggle
+            id="pg-toggle"
+            label={p.label as string}
+            checked={p.checked as boolean}
+            size={p.size as any}
+            description={p.description as string || undefined}
+            disabled={p.disabled as boolean}
+            onChange={() => {}}
+          />
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [`label="${p.label}"`];
+          if (p.size !== 'md')  attrs.push(`size="${p.size}"`);
+          if (p.checked)        attrs.push('checked');
+          if (p.description)    attrs.push(`description="${p.description}"`);
+          if (p.disabled)       attrs.push('disabled');
+          return `<Toggle id="toggle" ${attrs.join(' ')} onChange={setChecked} />`;
+        },
+      },
       variants: [
         {
           title: 'Sizes',
@@ -360,6 +416,41 @@ export function Select({ id, label, options, placeholder, hint, error, disabled,
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'label',    label: 'Label',    type: 'text',    default: 'Role' },
+          { key: 'hint',     label: 'Hint',     type: 'text',    default: '' },
+          { key: 'error',    label: 'Error',    type: 'text',    default: '' },
+          { key: 'required', label: 'Required', type: 'boolean', default: false },
+          { key: 'disabled', label: 'Disabled', type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <div className="w-full max-w-xs">
+            <Select
+              id="pg-select"
+              label={p.label as string}
+              hint={p.hint as string || undefined}
+              error={p.error as string || undefined}
+              required={p.required as boolean}
+              disabled={p.disabled as boolean}
+              options={[
+                { value: 'admin',  label: 'Admin'  },
+                { value: 'editor', label: 'Editor' },
+                { value: 'viewer', label: 'Viewer' },
+                { value: 'guest',  label: 'Guest'  },
+              ]}
+            />
+          </div>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [`label="${p.label}"`];
+          if (p.hint)     attrs.push(`hint="${p.hint}"`);
+          if (p.error)    attrs.push(`error="${p.error}"`);
+          if (p.required) attrs.push('required');
+          if (p.disabled) attrs.push('disabled');
+          return `<Select id="role" ${attrs.join(' ')}\n  options={[{ value: 'admin', label: 'Admin' }, ...]}\n/>`;
+        },
+      },
       variants: [
         {
           title: 'Controlled',

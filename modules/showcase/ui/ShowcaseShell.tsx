@@ -5,6 +5,7 @@ import { AppSidebar } from '@/modules/app/AppSidebar';
 import { AppTopBar } from '@/modules/app/AppTopBar';
 import { Widget } from './Widget';
 import { CopyButton } from './CopyButton';
+import { PropsEditor } from './PropsEditor';
 import { cn } from '@/libs/utils/cn';
 import { buildShowcaseData, type ShowcaseVariant } from '@/modules/showcase/data/showcase.data';
 import SHOWCASE_NAV_GROUPS from '@/modules/showcase/data/showcase.menu';
@@ -216,6 +217,10 @@ export function ShowcaseShell({ selectedId }: { selectedId?: string | null }) {
             </div>
             <p className="text-sm text-text-secondary max-w-2xl">{selected.description}</p>
           </div>
+
+          {selected.playground && (
+            <PropsEditor {...selected.playground} />
+          )}
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
             {selected.variants.map((variant: any) => (

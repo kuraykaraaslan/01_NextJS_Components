@@ -2,6 +2,9 @@
 import { Button } from '@/modules/ui/Button';
 import type { ShowcaseComponent } from '../showcase.types';
 
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
+type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
 function ButtonLoadingDemo() {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -64,6 +67,40 @@ export function Button({ children, variant = 'primary', size = 'md', disabled, l
     </button>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'variant', label: 'Variant', type: 'select', options: ['primary', 'secondary', 'ghost', 'danger', 'outline'] as const, default: 'primary' },
+          { key: 'size',    label: 'Size',    type: 'select', options: ['xs', 'sm', 'md', 'lg', 'xl'] as const,                    default: 'md' },
+          { key: 'label',   label: 'Label',   type: 'text',    default: 'Click me' },
+          { key: 'disabled', label: 'Disabled', type: 'boolean', default: false },
+          { key: 'loading',  label: 'Loading',  type: 'boolean', default: false },
+          { key: 'fullWidth', label: 'Full Width', type: 'boolean', default: false },
+          { key: 'selected',  label: 'Selected',  type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <Button
+            variant={p.variant as ButtonVariant}
+            size={p.size as ButtonSize}
+            disabled={p.disabled as boolean}
+            loading={p.loading as boolean}
+            fullWidth={p.fullWidth as boolean}
+            selected={p.selected as boolean}
+          >
+            {p.label as string}
+          </Button>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [];
+          if (p.variant !== 'primary')  attrs.push(`variant="${p.variant}"`);
+          if (p.size !== 'md')          attrs.push(`size="${p.size}"`);
+          if (p.disabled)               attrs.push('disabled');
+          if (p.loading)                attrs.push('loading');
+          if (p.fullWidth)              attrs.push('fullWidth');
+          if (p.selected)               attrs.push('selected');
+          const a = attrs.length ? ' ' + attrs.join(' ') : '';
+          return `<Button${a}>${p.label}</Button>`;
+        },
+      },
       variants: [
         { title: 'Primary', preview: <Button variant="primary">Primary</Button>, code: `<Button variant="primary">Primary</Button>` },
         { title: 'Secondary', preview: <Button variant="secondary">Secondary</Button>, code: `<Button variant="secondary">Secondary</Button>` },

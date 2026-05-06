@@ -48,6 +48,17 @@ export function SkeletonCard({ className }) {
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'lines', label: 'Lines', type: 'number', min: 1, max: 8, step: 1, default: 3 },
+        ],
+        render: (p) => (
+          <div className="w-full max-w-xs">
+            <SkeletonText lines={p.lines as number} />
+          </div>
+        ),
+        generateCode: (p) => `<SkeletonText lines={${p.lines}} />`,
+      },
       variants: [
         {
           title: 'Lines',

@@ -44,6 +44,27 @@ export function Badge({ children, variant = 'neutral', className }) {
     </span>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'variant', label: 'Variant', type: 'select', options: ['success', 'error', 'warning', 'info', 'neutral', 'primary'] as const, default: 'primary' },
+          { key: 'size',    label: 'Size',    type: 'select', options: ['sm', 'md', 'lg'] as const, default: 'md' },
+          { key: 'label',   label: 'Label',   type: 'text',    default: 'Frontend' },
+          { key: 'dot',     label: 'Dot',     type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <Badge variant={p.variant as any} size={p.size as any} dot={p.dot as boolean}>
+            {p.label as string}
+          </Badge>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [];
+          if (p.variant !== 'primary') attrs.push(`variant="${p.variant}"`);
+          if (p.size !== 'md')         attrs.push(`size="${p.size}"`);
+          if (p.dot)                   attrs.push('dot');
+          const a = attrs.length ? ' ' + attrs.join(' ') : '';
+          return `<Badge${a}>${p.label}</Badge>`;
+        },
+      },
       variants: [
         { title: 'Success', preview: <Badge variant="success">Active</Badge>, code: `<Badge variant="success">Active</Badge>` },
         { title: 'Error', preview: <Badge variant="error">Inactive</Badge>, code: `<Badge variant="error">Inactive</Badge>` },

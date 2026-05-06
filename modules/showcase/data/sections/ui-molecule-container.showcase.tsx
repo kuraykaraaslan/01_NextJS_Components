@@ -53,6 +53,38 @@ export function Card({ title, subtitle, headerRight, footer, children, variant =
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'variant',   label: 'Variant',   type: 'select',  options: ['raised', 'flat', 'outline'] as const, default: 'raised' },
+          { key: 'title',     label: 'Title',     type: 'text',    default: 'User profile' },
+          { key: 'subtitle',  label: 'Subtitle',  type: 'text',    default: 'Manage your account details' },
+          { key: 'hoverable', label: 'Hoverable', type: 'boolean', default: false },
+          { key: 'loading',   label: 'Loading',   type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <div className="w-full max-w-sm">
+            <Card
+              variant={p.variant as any}
+              title={p.title as string}
+              subtitle={p.subtitle as string}
+              hoverable={p.hoverable as boolean}
+              loading={p.loading as boolean}
+            >
+              <p className="text-sm text-text-secondary">Card body content goes here.</p>
+            </Card>
+          </div>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [];
+          if (p.variant !== 'raised') attrs.push(`variant="${p.variant}"`);
+          if (p.title)                attrs.push(`title="${p.title}"`);
+          if (p.subtitle)             attrs.push(`subtitle="${p.subtitle}"`);
+          if (p.hoverable)            attrs.push('hoverable');
+          if (p.loading)              attrs.push('loading');
+          const a = attrs.length ? '\n  ' + attrs.join('\n  ') + '\n' : '';
+          return p.loading ? `<Card${a}/>` : `<Card${a}>\n  <p>Card body content.</p>\n</Card>`;
+        },
+      },
       variants: [
         {
           title: 'Raised',
@@ -163,6 +195,30 @@ export function PageHeader({ title, subtitle, badge, actions, className }) {
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'title',       label: 'Title',        type: 'text',    default: 'Users' },
+          { key: 'subtitle',    label: 'Subtitle',     type: 'text',    default: 'Manage your team members and their permissions.' },
+          { key: 'showActions', label: 'Show actions', type: 'boolean', default: true },
+        ],
+        render: (p) => (
+          <div className="w-full">
+            <PageHeader
+              title={p.title as string}
+              subtitle={p.subtitle as string}
+              actions={p.showActions ? [
+                { label: 'Export', variant: 'outline' as const },
+                { label: '+ Invite user', variant: 'primary' as const },
+              ] : []}
+            />
+          </div>
+        ),
+        generateCode: (p) => {
+          const lines = [`title="${p.title}"`, `subtitle="${p.subtitle}"`];
+          if (p.showActions) lines.push(`actions={[{ label: 'Export', variant: 'outline' }, { label: '+ Invite user', variant: 'primary' }]}`);
+          return `<PageHeader\n  ${lines.join('\n  ')}\n/>`;
+        },
+      },
       variants: [
         {
           title: 'With actions',

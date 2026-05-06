@@ -2,6 +2,7 @@
 import { cn } from '@/libs/utils/cn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import type { PolymorphicProps } from '@/libs/utils/polymorphic';
 
 type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary';
 type BadgeSize = 'sm' | 'md' | 'lg';
@@ -30,15 +31,7 @@ const dotColorMap: Record<BadgeVariant, string> = {
   primary: 'bg-primary',
 };
 
-export function Badge({
-  children,
-  variant = 'neutral',
-  size = 'md',
-  dot = false,
-  dismissible = false,
-  onDismiss,
-  className,
-}: {
+type BadgeOwnProps = {
   children: React.ReactNode;
   variant?: BadgeVariant;
   size?: BadgeSize;
@@ -46,15 +39,30 @@ export function Badge({
   dismissible?: boolean;
   onDismiss?: () => void;
   className?: string;
-}) {
+};
+
+export function Badge<C extends React.ElementType = 'span'>({
+  as,
+  children,
+  variant = 'neutral',
+  size = 'md',
+  dot = false,
+  dismissible = false,
+  onDismiss,
+  className,
+  ...rest
+}: PolymorphicProps<C, BadgeOwnProps>) {
+  const Tag = (as ?? 'span') as React.ElementType;
+
   return (
-    <span
+    <Tag
       className={cn(
         'inline-flex items-center gap-1 rounded-full font-medium',
         variantMap[variant],
         sizeMap[size],
         className
       )}
+      {...rest}
     >
       {dot && (
         <span
@@ -73,6 +81,6 @@ export function Badge({
           <FontAwesomeIcon icon={faXmark} className="w-2.5 h-2.5" />
         </button>
       )}
-    </span>
+    </Tag>
   );
 }

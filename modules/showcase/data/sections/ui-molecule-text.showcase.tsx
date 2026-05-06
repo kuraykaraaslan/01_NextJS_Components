@@ -51,6 +51,40 @@ export function Input({ id, label, hint, error, required, className, ...props })
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'label',       label: 'Label',       type: 'text',   default: 'Email' },
+          { key: 'type',        label: 'Type',        type: 'select', options: ['text', 'email', 'password', 'number', 'search'] as const, default: 'email' },
+          { key: 'placeholder', label: 'Placeholder', type: 'text',   default: 'you@example.com' },
+          { key: 'hint',        label: 'Hint',        type: 'text',   default: '' },
+          { key: 'error',       label: 'Error',       type: 'text',   default: '' },
+          { key: 'required',    label: 'Required',    type: 'boolean', default: false },
+          { key: 'disabled',    label: 'Disabled',    type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <div className="w-full max-w-xs">
+            <Input
+              id="pg-input"
+              label={p.label as string}
+              type={p.type as string}
+              placeholder={p.placeholder as string}
+              hint={p.hint as string || undefined}
+              error={p.error as string || undefined}
+              required={p.required as boolean}
+              disabled={p.disabled as boolean}
+            />
+          </div>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [`label="${p.label}"`, `type="${p.type}"`];
+          if (p.placeholder) attrs.push(`placeholder="${p.placeholder}"`);
+          if (p.hint)        attrs.push(`hint="${p.hint}"`);
+          if (p.error)       attrs.push(`error="${p.error}"`);
+          if (p.required)    attrs.push('required');
+          if (p.disabled)    attrs.push('disabled');
+          return `<Input id="field" ${attrs.join(' ')} />`;
+        },
+      },
       variants: [
         {
           title: 'Default',
@@ -213,6 +247,38 @@ export function Textarea({ id, label, hint, error, disabled, required, rows = 4,
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'label',       label: 'Label',       type: 'text',   default: 'Message' },
+          { key: 'placeholder', label: 'Placeholder', type: 'text',   default: 'Write your message…' },
+          { key: 'rows',        label: 'Rows',        type: 'number', min: 2, max: 10, step: 1, default: 3 },
+          { key: 'hint',        label: 'Hint',        type: 'text',   default: '' },
+          { key: 'error',       label: 'Error',       type: 'text',   default: '' },
+          { key: 'disabled',    label: 'Disabled',    type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <div className="w-full max-w-xs">
+            <Textarea
+              id="pg-textarea"
+              label={p.label as string}
+              placeholder={p.placeholder as string}
+              rows={p.rows as number}
+              hint={p.hint as string || undefined}
+              error={p.error as string || undefined}
+              disabled={p.disabled as boolean}
+            />
+          </div>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [`label="${p.label}"`];
+          if (p.placeholder)  attrs.push(`placeholder="${p.placeholder}"`);
+          if (p.rows !== 3)   attrs.push(`rows={${p.rows}}`);
+          if (p.hint)         attrs.push(`hint="${p.hint}"`);
+          if (p.error)        attrs.push(`error="${p.error}"`);
+          if (p.disabled)     attrs.push('disabled');
+          return `<Textarea id="message" ${attrs.join(' ')} />`;
+        },
+      },
       variants: [
         {
           title: 'Default',
@@ -282,6 +348,26 @@ export function SearchBar({ id = 'search', placeholder = 'Search…', value, onC
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'placeholder', label: 'Placeholder', type: 'text', default: 'Search components…' },
+          { key: 'value',       label: 'Value',       type: 'text', default: '' },
+        ],
+        render: (p) => (
+          <div className="w-full max-w-xs">
+            <SearchBar
+              placeholder={p.placeholder as string}
+              value={p.value as string}
+              onChange={() => {}}
+            />
+          </div>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [`placeholder="${p.placeholder}"`];
+          if (p.value) attrs.push(`value="${p.value}"`);
+          return `<SearchBar ${attrs.join(' ')} onChange={handleChange} />`;
+        },
+      },
       variants: [
         {
           title: 'Default',

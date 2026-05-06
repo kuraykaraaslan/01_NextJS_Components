@@ -4,12 +4,16 @@ import { cn } from '@/libs/utils/cn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
+export type ComponentStatus = 'stable' | 'beta' | 'deprecated';
+
 export type NavItem = {
   id: string;
   title: string;
   category: string;
   abbr: string;
   href?: string;
+  status?: ComponentStatus;
+  since?: string;
 };
 
 export type NavGroup = {
@@ -156,7 +160,22 @@ function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps
                         </span>
                         {!collapsed && (
                           <>
-                            <span className="flex-1 truncate">{item.title}</span>
+                            <span className={cn('flex-1 truncate', item.status === 'deprecated' && 'line-through opacity-60')}>
+                              {item.title}
+                            </span>
+                            {item.status && item.status !== 'stable' && (
+                              <span
+                                className={cn(
+                                  'text-[9px] font-bold px-1 py-0.5 rounded uppercase tracking-wide shrink-0',
+                                  item.status === 'beta'
+                                    ? 'bg-warning-subtle text-warning-fg'
+                                    : 'bg-error-subtle text-error-fg'
+                                )}
+                                aria-label={item.status}
+                              >
+                                {item.status === 'beta' ? 'β' : 'dep'}
+                              </span>
+                            )}
                             <span
                               className={cn(
                                 'text-xs px-1.5 py-0.5 rounded-full font-medium shrink-0',

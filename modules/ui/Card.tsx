@@ -1,18 +1,8 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 
-export function Card({
-  title,
-  subtitle,
-  headerRight,
-  footer,
-  children,
-  variant = 'raised',
-  onClick,
-  hoverable,
-  loading = false,
-  className,
-}: {
+type CardProps = {
+  as?: React.ElementType;
   title?: string;
   subtitle?: string;
   headerRight?: React.ReactNode;
@@ -23,15 +13,32 @@ export function Card({
   hoverable?: boolean;
   loading?: boolean;
   className?: string;
-}) {
+} & Record<string, unknown>;
+
+export function Card({
+  as,
+  title,
+  subtitle,
+  headerRight,
+  footer,
+  children,
+  variant = 'raised',
+  onClick,
+  hoverable,
+  loading = false,
+  className,
+  ...rest
+}: CardProps) {
   const isInteractive = !!onClick;
   const isHoverable   = hoverable || isInteractive;
 
-  const Tag = isInteractive ? 'button' : 'div';
+  // `as` overrides the auto-detected tag; fallback: button when interactive, div otherwise
+  const Tag = as ?? (isInteractive ? 'button' : 'div');
+  const isButton = Tag === 'button';
 
   return (
     <Tag
-      type={isInteractive ? 'button' : undefined}
+      {...(isButton && { type: 'button' })}
       onClick={onClick}
       className={cn(
         'rounded-xl border border-border overflow-hidden text-left',
@@ -43,6 +50,7 @@ export function Card({
         loading && 'pointer-events-none',
         className
       )}
+      {...rest}
     >
       {loading ? (
         <div className="px-6 py-4 space-y-3 animate-pulse">

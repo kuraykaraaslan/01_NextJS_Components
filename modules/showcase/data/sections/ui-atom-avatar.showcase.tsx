@@ -48,6 +48,26 @@ export function Avatar({ src, name, size = 'md', className }) {
     </span>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'name',   label: 'Name',   type: 'text',   default: 'Jane Doe' },
+          { key: 'size',   label: 'Size',   type: 'select', options: ['xs', 'sm', 'md', 'lg', 'xl'] as const, default: 'md' },
+          { key: 'status', label: 'Status', type: 'select', options: ['none', 'online', 'away', 'busy', 'offline'] as const, default: 'none' },
+        ],
+        render: (p) => (
+          <Avatar
+            name={p.name as string}
+            size={p.size as any}
+            status={p.status !== 'none' ? (p.status as any) : undefined}
+          />
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [`name="${p.name}"`];
+          if (p.size !== 'md')       attrs.push(`size="${p.size}"`);
+          if (p.status !== 'none')   attrs.push(`status="${p.status}"`);
+          return `<Avatar ${attrs.join(' ')} />`;
+        },
+      },
       variants: [
         {
           title: 'Initials (sizes)',

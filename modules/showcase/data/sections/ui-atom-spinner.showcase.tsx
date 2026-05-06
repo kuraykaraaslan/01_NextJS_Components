@@ -27,6 +27,13 @@ export function Spinner({ size = 'md', className }) {
     </>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'size', label: 'Size', type: 'select', options: ['xs', 'sm', 'md', 'lg', 'xl'] as const, default: 'md' },
+        ],
+        render: (p) => <Spinner size={p.size as any} />,
+        generateCode: (p) => `<Spinner size="${p.size}" />`,
+      },
       variants: [
         {
           title: 'Sizes',

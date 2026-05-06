@@ -125,6 +125,32 @@ export function AlertBanner({ variant = 'info', title, message, dismissible = fa
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'variant',     label: 'Variant',     type: 'select',  options: ['info', 'success', 'warning', 'error'] as const, default: 'info' },
+          { key: 'title',       label: 'Title',       type: 'text',    default: 'System update' },
+          { key: 'message',     label: 'Message',     type: 'text',    default: 'A new version is available. Please refresh the page.' },
+          { key: 'dismissible', label: 'Dismissible', type: 'boolean', default: true },
+        ],
+        render: (p) => (
+          <div className="w-full max-w-md">
+            <AlertBanner
+              variant={p.variant as any}
+              title={p.title as string || undefined}
+              message={p.message as string}
+              dismissible={p.dismissible as boolean}
+            />
+          </div>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [];
+          if (p.variant !== 'info') attrs.push(`variant="${p.variant}"`);
+          if (p.title)              attrs.push(`title="${p.title}"`);
+          attrs.push(`message="${p.message}"`);
+          if (p.dismissible)        attrs.push('dismissible');
+          return `<AlertBanner\n  ${attrs.join('\n  ')}\n/>`;
+        },
+      },
       variants: [
         { title: 'Info', preview: <AlertBanner variant="info" title="System update" message="A new version is available. Please refresh the page." dismissible />, code: `<AlertBanner variant="info" title="System update" message="A new version is available." dismissible />` },
         { title: 'Success', preview: <AlertBanner variant="success" message="Profile updated successfully." dismissible />, code: `<AlertBanner variant="success" message="Profile updated successfully." dismissible />` },
@@ -238,6 +264,27 @@ export function EmptyState({ icon, title, description, action, className }) {
     </div>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'icon',        label: 'Icon',        type: 'text',    default: '📁' },
+          { key: 'title',       label: 'Title',       type: 'text',    default: 'No projects yet' },
+          { key: 'description', label: 'Description', type: 'text',    default: 'Create your first project to get started.' },
+          { key: 'showAction',  label: 'Show action', type: 'boolean', default: true },
+        ],
+        render: (p) => (
+          <EmptyState
+            icon={p.icon as string}
+            title={p.title as string}
+            description={p.description as string}
+            action={p.showAction ? <Button variant="primary" size="sm">New project</Button> : undefined}
+          />
+        ),
+        generateCode: (p) => {
+          const attrs = [`icon="${p.icon}"`, `title="${p.title}"`, `description="${p.description}"`];
+          if (p.showAction) attrs.push(`action={<Button variant="primary" size="sm">New project</Button>}`);
+          return `<EmptyState\n  ${attrs.join('\n  ')}\n/>`;
+        },
+      },
       variants: [
         {
           title: 'With action',

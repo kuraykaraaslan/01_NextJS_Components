@@ -1,5 +1,6 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
+import type { PolymorphicProps } from '@/libs/utils/polymorphic';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -28,45 +29,44 @@ const iconOnlySizeClasses: Record<ButtonSize, string> = {
   xl: 'p-3 text-lg',
 };
 
-type ButtonProps = {
+type ButtonOwnProps = {
   children?: React.ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
-  disabled?: boolean;
   loading?: boolean;
   iconLeft?: React.ReactNode;
   iconRight?: React.ReactNode;
   iconOnly?: boolean;
   fullWidth?: boolean;
   selected?: boolean;
-  'data-testid'?: string;
-  ref?: React.Ref<HTMLButtonElement>;
   type?: 'button' | 'submit' | 'reset';
-} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'>;
+  'data-testid'?: string;
+  className?: string;
+};
 
-export function Button({
+export function Button<C extends React.ElementType = 'button'>({
+  as,
   children,
   variant = 'primary',
   size = 'md',
-  disabled,
   loading,
   iconLeft,
   iconRight,
   iconOnly = false,
   fullWidth = false,
   selected = false,
-  'data-testid': testId,
-  ref,
   type = 'button',
+  'data-testid': testId,
   className,
-  ...props
-}: ButtonProps) {
+  ...rest
+}: PolymorphicProps<C, ButtonOwnProps>) {
+  const Tag = (as ?? 'button') as React.ElementType;
+  const isNativeButton = Tag === 'button';
+
   return (
-    <button
-      ref={ref}
-      type={type}
-      disabled={disabled || loading}
-      aria-busy={loading}
+    <Tag
+      {...(isNativeButton && { type })}
+      aria-busy={loading || undefined}
       aria-pressed={selected ? true : undefined}
       data-testid={testId}
       className={cn(
@@ -79,12 +79,12 @@ export function Button({
         selected && 'ring-2 ring-border-focus',
         className
       )}
-      {...props}
+      {...rest}
     >
       {loading && <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full shrink-0" aria-hidden="true" />}
       {!loading && iconLeft && <span aria-hidden="true" className="shrink-0">{iconLeft}</span>}
       {children}
       {!loading && iconRight && <span aria-hidden="true" className="shrink-0">{iconRight}</span>}
-    </button>
+    </Tag>
   );
 }

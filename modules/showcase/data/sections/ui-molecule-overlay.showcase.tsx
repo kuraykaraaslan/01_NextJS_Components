@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/modules/ui/Button';
-import { Badge } from '@/modules/ui/Badge';
 import { Modal } from '@/modules/ui/Modal';
 import { Drawer } from '@/modules/ui/Drawer';
 import { Tooltip } from '@/modules/ui/Tooltip';
@@ -240,6 +239,31 @@ export function Tooltip({ content, placement = 'top', children, className }) {
     </span>
   );
 }`,
+      playground: {
+        controls: [
+          { key: 'content',   label: 'Content',   type: 'text',   default: 'Helpful tooltip text' },
+          { key: 'placement', label: 'Placement', type: 'select', options: ['top', 'bottom', 'left', 'right'] as const, default: 'top' },
+          { key: 'theme',     label: 'Theme',     type: 'select', options: ['default', 'dark', 'light'] as const, default: 'default' },
+          { key: 'arrow',     label: 'Arrow',     type: 'boolean', default: false },
+        ],
+        render: (p) => (
+          <Tooltip
+            content={p.content as string}
+            placement={p.placement as any}
+            theme={p.theme as any}
+            arrow={p.arrow as boolean}
+          >
+            <Button variant="outline" size="sm">Hover me</Button>
+          </Tooltip>
+        ),
+        generateCode: (p) => {
+          const attrs: string[] = [`content="${p.content}"`];
+          if (p.placement !== 'top')    attrs.push(`placement="${p.placement}"`);
+          if (p.theme !== 'default')    attrs.push(`theme="${p.theme}"`);
+          if (p.arrow)                  attrs.push('arrow');
+          return `<Tooltip ${attrs.join(' ')}>\n  <Button variant="outline">Hover me</Button>\n</Tooltip>`;
+        },
+      },
       variants: [
         {
           title: 'Placements',
