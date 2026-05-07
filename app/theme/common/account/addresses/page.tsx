@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { AddressSelector } from '@/modules/domains/common/address/AddressSelector';
 import { AddressForm } from '@/modules/domains/common/address/AddressForm';
 import { Button } from '@/modules/ui/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { InlineAlert } from '@/modules/app/InlineAlert';
 import { SAVED_ADDRESSES } from '../../common.data';
 import type { Address } from '@/modules/domains/common/AddressTypes';
 
@@ -48,11 +47,7 @@ export default function AddressesPage() {
         )}
       </div>
 
-      {savedMsg && (
-        <div className="rounded-lg bg-success-subtle border border-success px-4 py-2.5 text-sm text-success-fg font-medium">
-          <FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5 mr-1" aria-hidden="true" /> {savedMsg}
-        </div>
-      )}
+      {savedMsg && <InlineAlert message={savedMsg} />}
 
       {mode.kind === 'list' ? (
         <AddressSelector

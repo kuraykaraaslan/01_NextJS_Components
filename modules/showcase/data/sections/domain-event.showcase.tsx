@@ -1,5 +1,15 @@
 'use client';
 import type { ShowcaseComponent } from '../showcase.types';
+import { CityPicker } from '@/modules/domains/event/CityPicker';
+import { NavDropdown, NavDropdownHeader, NavTriggerButton } from '@/modules/domains/event/NavDropdown';
+import { NavThemeSwitcher } from '@/modules/domains/event/NavThemeSwitcher';
+import { NavLanguageSwitcher } from '@/modules/domains/event/NavLanguageSwitcher';
+import { useNavPopover } from '@/modules/domains/event/useNavPopover';
+import { EventOrderStatusBadge } from '@/modules/domains/event/EventOrderStatusBadge';
+import { TicketRowMeta, TicketRowActions } from '@/modules/domains/event/TicketRowMeta';
+
+const MOCK_VALID_ENTRY = { event: { title: 'Rock Festival 2026' }, ticket: { ticketId: 'TK-001', status: 'VALID' } };
+const MOCK_USED_ENTRY  = { event: { title: 'Jazz Night' },         ticket: { ticketId: 'TK-002', status: 'USED'  } };
 import { EventStatusBadge } from '@/modules/domains/event/EventStatusBadge';
 import { EventFormatBadge } from '@/modules/domains/event/EventFormatBadge';
 import { EventCategoryBadge } from '@/modules/domains/event/EventCategoryBadge';
@@ -16,6 +26,50 @@ import { SeatMapPicker, buildSectionTree } from '@/modules/domains/event/SeatMap
 import type { EventWithData, EventSectionPricing, Organizer, IssuedTicket, VenueSection, VenueSeat } from '@/modules/domains/event/types';
 import type { SeatInfo, SectionNode, SectionMapShape } from '@/modules/domains/event/SeatMapPicker';
 import { useState } from 'react';
+
+/* ─── dark nav wrapper ─── */
+
+function DarkNavWrap({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="inline-flex items-center gap-4 px-4 py-3 rounded-xl"
+      style={{ background: '#111d2e', border: '1px solid rgba(255,255,255,0.08)' }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function NavDropdownDemo() {
+  const { open, setOpen, ref } = useNavPopover();
+  return (
+    <div ref={ref} className="relative">
+      <NavTriggerButton onClick={() => setOpen((p) => !p)} expanded={open}>
+        Options
+      </NavTriggerButton>
+      {open && (
+        <NavDropdown>
+          <NavDropdownHeader>Choose one</NavDropdownHeader>
+          <ul className="py-1 w-40">
+            {['Option A', 'Option B', 'Option C'].map((item) => (
+              <li key={item}>
+                <button
+                  className="w-full text-left px-3 py-2 text-sm transition-colors"
+                  style={{ color: 'rgba(255,255,255,0.6)' }}
+                  onClick={() => setOpen(false)}
+                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                >
+                  {item}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </NavDropdown>
+      )}
+    </div>
+  );
+}
 
 /* ─── interactive wrappers ─── */
 
@@ -860,6 +914,277 @@ const slides = events.map((e) => <HeroSlide key={e.eventId} event={e} />);
             </div>
           ),
           code: `<HeroSlide event={event} />`,
+        },
+      ],
+    },
+
+    /* ── Nav bileşenleri ── */
+
+    {
+      id: 'event-nav-dropdown',
+      title: 'NavDropdown',
+      category: 'Domain',
+      abbr: 'NdD',
+      description: 'Event koyu nav barı için dropdown bileşen ailesi: NavDropdown kapsayıcı, NavDropdownHeader başlık, NavTriggerButton tetikleyici. useNavPopover hook\'u ile kullanılır.',
+      filePath: 'modules/domains/event/NavDropdown.tsx',
+      sourceCode: `import { NavDropdown, NavDropdownHeader, NavTriggerButton } from '@/modules/domains/event/NavDropdown';
+import { useNavPopover } from '@/modules/domains/event/useNavPopover';
+
+function MyPicker() {
+  const { open, setOpen, ref } = useNavPopover();
+  return (
+    <div ref={ref} className="relative">
+      <NavTriggerButton onClick={() => setOpen(p => !p)} expanded={open}>
+        Select city
+      </NavTriggerButton>
+      {open && (
+        <NavDropdown>
+          <NavDropdownHeader>Choose</NavDropdownHeader>
+          <ul>{...}</ul>
+        </NavDropdown>
+      )}
+    </div>
+  );
+}`,
+      variants: [
+        {
+          title: 'Dropdown açık/kapalı',
+          layout: 'stack' as const,
+          preview: (
+            <DarkNavWrap>
+              <NavDropdownDemo />
+            </DarkNavWrap>
+          ),
+          code: `const { open, setOpen, ref } = useNavPopover();
+
+<div ref={ref} className="relative">
+  <NavTriggerButton onClick={() => setOpen(p => !p)} expanded={open}>
+    Options
+  </NavTriggerButton>
+  {open && (
+    <NavDropdown>
+      <NavDropdownHeader>Choose one</NavDropdownHeader>
+      <ul>{...}</ul>
+    </NavDropdown>
+  )}
+</div>`,
+        },
+      ],
+    },
+
+    {
+      id: 'event-city-picker',
+      title: 'CityPicker',
+      category: 'Domain',
+      abbr: 'CiP',
+      description: 'Event nav barı için şehir seçici dropdown; varsayılan Türkiye şehirleri, props ile özelleştirilebilir.',
+      filePath: 'modules/domains/event/CityPicker.tsx',
+      sourceCode: `import { CityPicker } from '@/modules/domains/event/CityPicker';
+
+// Varsayılan şehirler
+<CityPicker />
+
+// Özelleştirme
+<CityPicker
+  cities={[
+    { id: 'berlin', label: 'Berlin', count: 42 },
+    { id: 'munich', label: 'Munich', count: 18 },
+  ]}
+  allCitiesHref="/cities"
+/>`,
+      variants: [
+        {
+          title: 'Varsayılan',
+          layout: 'stack' as const,
+          preview: (
+            <DarkNavWrap>
+              <CityPicker />
+            </DarkNavWrap>
+          ),
+          code: `<CityPicker />`,
+        },
+        {
+          title: 'Özel şehir listesi',
+          layout: 'stack' as const,
+          preview: (
+            <DarkNavWrap>
+              <CityPicker
+                cities={[
+                  { id: 'berlin', label: 'Berlin', count: 42 },
+                  { id: 'munich', label: 'Munich', count: 18 },
+                  { id: 'hamburg', label: 'Hamburg', count: 11 },
+                ]}
+              />
+            </DarkNavWrap>
+          ),
+          code: `<CityPicker cities={customCities} allCitiesHref="/cities" />`,
+        },
+      ],
+    },
+
+    {
+      id: 'event-nav-language-switcher',
+      title: 'NavLanguageSwitcher',
+      category: 'Domain',
+      abbr: 'NLS',
+      description: 'Event koyu nav barına özel dil seçici; bayrak emojileri ve seçili işareti. Mevcut LanguageSwitcher\'dan bağımsız koyu tema variant\'ı.',
+      filePath: 'modules/domains/event/NavLanguageSwitcher.tsx',
+      sourceCode: `import { NavLanguageSwitcher } from '@/modules/domains/event/NavLanguageSwitcher';
+
+// Varsayılan diller (TR, EN, DE, FR, AR, RU)
+<NavLanguageSwitcher />
+
+// Kontrollü mod
+<NavLanguageSwitcher
+  value={lang}
+  onChange={(id) => setLang(id)}
+/>`,
+      variants: [
+        {
+          title: 'Nav içinde',
+          layout: 'stack' as const,
+          preview: (
+            <DarkNavWrap>
+              <NavLanguageSwitcher />
+            </DarkNavWrap>
+          ),
+          code: `<NavLanguageSwitcher />`,
+        },
+      ],
+    },
+
+    {
+      id: 'event-nav-theme-switcher',
+      title: 'NavThemeSwitcher',
+      category: 'Domain',
+      abbr: 'NTS',
+      description: 'Event koyu nav barına özel tema değiştirici (Açık / Koyu / Sistem); localStorage\'a yazar ve html.dark class\'ını yönetir.',
+      filePath: 'modules/domains/event/NavThemeSwitcher.tsx',
+      sourceCode: `import { NavThemeSwitcher } from '@/modules/domains/event/NavThemeSwitcher';
+
+// Koyu nav barı içinde kullanım
+<NavThemeSwitcher />`,
+      variants: [
+        {
+          title: 'Nav içinde',
+          layout: 'stack' as const,
+          preview: (
+            <DarkNavWrap>
+              <NavThemeSwitcher />
+            </DarkNavWrap>
+          ),
+          code: `<NavThemeSwitcher />`,
+        },
+        {
+          title: 'Birlikte kullanım',
+          layout: 'stack' as const,
+          preview: (
+            <DarkNavWrap>
+              <NavThemeSwitcher />
+              <span className="h-3 w-px" style={{ background: 'rgba(255,255,255,0.12)' }} />
+              <NavLanguageSwitcher />
+              <span className="h-3 w-px" style={{ background: 'rgba(255,255,255,0.12)' }} />
+              <CityPicker />
+            </DarkNavWrap>
+          ),
+          code: `// Tipik event nav bar üst çubuğu:
+<NavThemeSwitcher />
+<TopBarDivider />
+<NavLanguageSwitcher />
+<TopBarDivider />
+<CityPicker />`,
+        },
+      ],
+    },
+
+    {
+      id: 'event-order-status-badge',
+      title: 'EventOrderStatusBadge',
+      category: 'Domain',
+      abbr: 'OB',
+      description: 'Sipariş durumu rozeti; PAID / REFUNDED / CANCELLED renk şeması, iki boyut seçeneği.',
+      filePath: 'modules/domains/event/EventOrderStatusBadge.tsx',
+      sourceCode: `import { EventOrderStatusBadge } from '@/modules/domains/event/EventOrderStatusBadge';
+
+<EventOrderStatusBadge status="PAID" />
+<EventOrderStatusBadge status="REFUNDED" size="md" />
+<EventOrderStatusBadge status="CANCELLED" />`,
+      variants: [
+        {
+          title: 'All statuses — sm',
+          layout: 'stack' as const,
+          preview: (
+            <div className="flex items-center gap-2">
+              <EventOrderStatusBadge status="PAID" />
+              <EventOrderStatusBadge status="REFUNDED" />
+              <EventOrderStatusBadge status="CANCELLED" />
+            </div>
+          ),
+          code: `<EventOrderStatusBadge status="PAID" />
+<EventOrderStatusBadge status="REFUNDED" />
+<EventOrderStatusBadge status="CANCELLED" />`,
+        },
+        {
+          title: 'Size md (detail view)',
+          layout: 'stack' as const,
+          preview: (
+            <div className="flex items-center gap-2">
+              <EventOrderStatusBadge status="PAID"      size="md" />
+              <EventOrderStatusBadge status="REFUNDED"  size="md" />
+              <EventOrderStatusBadge status="CANCELLED" size="md" />
+            </div>
+          ),
+          code: `<EventOrderStatusBadge status="PAID"      size="md" />
+<EventOrderStatusBadge status="REFUNDED"  size="md" />
+<EventOrderStatusBadge status="CANCELLED" size="md" />`,
+        },
+      ],
+    },
+
+    {
+      id: 'event-ticket-row-meta',
+      title: 'TicketRowMeta + TicketRowActions',
+      category: 'Domain',
+      abbr: 'TM',
+      description: 'Bilet listesi satırı başlığı: etkinlik küçük resmi, durum rozeti (TicketRowMeta) ve yazdır / paylaş butonları (TicketRowActions).',
+      filePath: 'modules/domains/event/TicketRowMeta.tsx',
+      sourceCode: `import { TicketRowMeta, TicketRowActions } from '@/modules/domains/event/TicketRowMeta';
+
+const entry = {
+  event:  { image: '/img/event.jpg', title: 'Rock Festival 2026' },
+  ticket: { ticketId: 'TK-001', status: 'VALID' },
+};
+
+<div className="flex items-center justify-between px-1">
+  <TicketRowMeta   entry={entry} />
+  <TicketRowActions entry={entry} />
+</div>`,
+      variants: [
+        {
+          title: 'Default',
+          layout: 'stack' as const,
+          preview: (
+            <div className="flex items-center justify-between px-1 border border-border rounded-xl p-3">
+              <TicketRowMeta entry={MOCK_VALID_ENTRY} />
+              <TicketRowActions entry={MOCK_VALID_ENTRY} />
+            </div>
+          ),
+          code: `<div className="flex items-center justify-between px-1">
+  <TicketRowMeta   entry={entry} />
+  <TicketRowActions entry={entry} />
+</div>`,
+        },
+        {
+          title: 'Compact (vertical layout)',
+          layout: 'stack' as const,
+          preview: (
+            <div className="flex items-start justify-between px-1 border border-border rounded-xl p-3">
+              <TicketRowMeta entry={MOCK_USED_ENTRY} compact />
+              <TicketRowActions entry={MOCK_USED_ENTRY} compact />
+            </div>
+          ),
+          code: `<TicketRowMeta   entry={entry} compact />
+<TicketRowActions entry={entry} compact />`,
         },
       ],
     },

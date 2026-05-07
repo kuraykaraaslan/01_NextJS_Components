@@ -5,6 +5,7 @@ import { Badge } from '@/modules/ui/Badge';
 import { Card } from '@/modules/ui/Card';
 import { PageHeader } from '@/modules/ui/PageHeader';
 import { Slider } from '@/modules/ui/Slider';
+import { StatCard } from '@/modules/ui/StatCard';
 import type { ShowcaseComponent } from '../showcase.types';
 
 function SliderDemo() {
@@ -313,6 +314,38 @@ export function PageHeader({ title, subtitle, badge, actions, className }) {
             </div>
           ),
           code: `<Slider slides={slides} showArrows={false} loop={false} />`,
+        },
+      ],
+    },
+
+    {
+      id: 'stat-card',
+      title: 'StatCard',
+      category: 'Organism',
+      abbr: 'Sc',
+      description: 'Küçük metrik gösterim kartı; değer, etiket ve opsiyonel vurgu rengi.',
+      filePath: 'modules/ui/StatCard.tsx',
+      sourceCode: `import { StatCard } from '@/modules/ui/StatCard';
+
+<StatCard label="Total Users" value={1284} />
+<StatCard label="Active"      value={947}  accent="text-success" />
+<StatCard label="Cancelled"   value={12}   accent="text-error" />`,
+      variants: [
+        {
+          title: 'Variants',
+          layout: 'stack' as const,
+          preview: (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <StatCard label="Total Users"  value={1284} />
+              <StatCard label="Active"       value={947}  accent="text-success" />
+              <StatCard label="Transferred"  value={38}   accent="text-info" />
+              <StatCard label="Cancelled"    value={12}   accent="text-error" />
+            </div>
+          ),
+          code: `<StatCard label="Total Users" value={1284} />
+<StatCard label="Active"      value={947}  accent="text-success" />
+<StatCard label="Transferred" value={38}   accent="text-info" />
+<StatCard label="Cancelled"   value={12}   accent="text-error" />`,
         },
       ],
     },

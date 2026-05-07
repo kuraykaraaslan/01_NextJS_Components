@@ -6,8 +6,31 @@ import { Breadcrumb } from '@/modules/ui/Breadcrumb';
 import { TabGroup } from '@/modules/ui/TabGroup';
 import { Stepper } from '@/modules/ui/Stepper';
 import { TreeView } from '@/modules/ui/TreeView';
+import { TabButton } from '@/modules/ui/TabButton';
+import { ViewToggle, type ViewOrientation } from '@/modules/ui/ViewToggle';
 import { useEffect, useState } from 'react';
 import type { ShowcaseComponent } from '../showcase.types';
+
+function TabButtonDemo() {
+  const [tab, setTab] = useState<'all' | 'active' | 'archived'>('all');
+  return (
+    <div className="flex items-center gap-1 flex-wrap">
+      <TabButton active={tab === 'all'}      onClick={() => setTab('all')}      count={42}>All</TabButton>
+      <TabButton active={tab === 'active'}   onClick={() => setTab('active')}   count={18}>Active</TabButton>
+      <TabButton active={tab === 'archived'} onClick={() => setTab('archived')} count={24}>Archived</TabButton>
+    </div>
+  );
+}
+
+function ViewToggleDemo() {
+  const [view, setView] = useState<ViewOrientation>('horizontal');
+  return <ViewToggle value={view} onChange={setView} />;
+}
+
+function ViewToggleCustomDemo() {
+  const [view, setView] = useState<ViewOrientation>('vertical');
+  return <ViewToggle value={view} onChange={setView} labels={{ horizontal: 'Yatay', vertical: 'Dikey' }} />;
+}
 
 function PaginationDemo() {
   const [page, setPage] = useState(1);
@@ -380,6 +403,79 @@ export function Breadcrumb({ items, className }) {
           title: 'Flat list',
           preview: <TreeViewFlatDemo />,
           code: `function Demo() {\n  const [sel, setSel] = useState('ts');\n  return (\n    <TreeView label="Language selector" selectedId={sel} onSelect={setSel}\n      nodes={[\n        { id: 'ts', label: 'TypeScript' },\n        { id: 'js', label: 'JavaScript' },\n        { id: 'py', label: 'Python' },\n        { id: 'go', label: 'Go' },\n      ]}\n    />\n  );\n}`,
+        },
+      ],
+    },
+
+    {
+      id: 'tab-button',
+      title: 'TabButton',
+      category: 'Organism',
+      abbr: 'TB',
+      description: 'Pill tarzı sekme butonu; aktif/pasif renklendirme ve opsiyonel sayaç rozeti.',
+      filePath: 'modules/ui/TabButton.tsx',
+      sourceCode: `import { TabButton } from '@/modules/ui/TabButton';
+
+<TabButton active={tab === 'all'}    onClick={() => setTab('all')}    count={42}>All</TabButton>
+<TabButton active={tab === 'active'} onClick={() => setTab('active')} count={18}>Active</TabButton>`,
+      variants: [
+        {
+          title: 'Interactive',
+          layout: 'stack' as const,
+          preview: <TabButtonDemo />,
+          code: `const [tab, setTab] = useState('all');
+
+<TabButton active={tab === 'all'}      onClick={() => setTab('all')}      count={42}>All</TabButton>
+<TabButton active={tab === 'active'}   onClick={() => setTab('active')}   count={18}>Active</TabButton>
+<TabButton active={tab === 'archived'} onClick={() => setTab('archived')} count={24}>Archived</TabButton>`,
+        },
+        {
+          title: 'Without count',
+          layout: 'stack' as const,
+          preview: (
+            <div className="flex items-center gap-1">
+              <TabButton active onClick={() => {}}>Selected</TabButton>
+              <TabButton active={false} onClick={() => {}}>Default</TabButton>
+            </div>
+          ),
+          code: `<TabButton active onClick={...}>Selected</TabButton>
+<TabButton active={false} onClick={...}>Default</TabButton>`,
+        },
+      ],
+    },
+
+    {
+      id: 'view-toggle',
+      title: 'ViewToggle',
+      category: 'Organism',
+      abbr: 'VT',
+      description: 'Yatay / dikey görünüm geçiş kontrolü; ikonlu iki durumlu seçici.',
+      filePath: 'modules/ui/ViewToggle.tsx',
+      sourceCode: `import { ViewToggle, type ViewOrientation } from '@/modules/ui/ViewToggle';
+
+const [view, setView] = useState<ViewOrientation>('horizontal');
+
+<ViewToggle value={view} onChange={setView} />
+
+// With custom labels
+<ViewToggle
+  value={view}
+  onChange={setView}
+  labels={{ horizontal: 'Yatay', vertical: 'Dikey' }}
+  ariaLabel="Görünüm seçenekleri"
+/>`,
+      variants: [
+        {
+          title: 'Default (EN labels)',
+          layout: 'stack' as const,
+          preview: <ViewToggleDemo />,
+          code: `<ViewToggle value={view} onChange={setView} />`,
+        },
+        {
+          title: 'Custom labels',
+          layout: 'stack' as const,
+          preview: <ViewToggleCustomDemo />,
+          code: `<ViewToggle value={view} onChange={setView} labels={{ horizontal: 'Yatay', vertical: 'Dikey' }} />`,
         },
       ],
     },

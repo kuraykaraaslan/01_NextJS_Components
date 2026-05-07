@@ -1,17 +1,9 @@
 import { MY_ORDERS } from '@/app/theme/event/event.data';
 import { cn } from '@/libs/utils/cn';
+import { EventOrderStatusBadge } from '@/modules/domains/event/EventOrderStatusBadge';
 
 const FMT_CURRENCY = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
 const FMT_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-const STATUS_STYLES: Record<string, string> = {
-  PAID:     'bg-success-subtle text-success border-success/30',
-  REFUNDED: 'bg-warning-subtle text-warning border-warning/30',
-  CANCELLED:'bg-error-subtle text-error border-error/30',
-};
-const STATUS_LABELS: Record<string, string> = {
-  PAID: 'Ödendi', REFUNDED: 'İade Edildi', CANCELLED: 'İptal',
-};
 
 export default function OrdersPage() {
   const totalSpend = MY_ORDERS
@@ -79,12 +71,7 @@ export default function OrdersPage() {
 
             {/* right: status + total */}
             <div className="flex flex-col items-end justify-between shrink-0 gap-2">
-              <span className={cn(
-                'text-[11px] font-bold px-2 py-0.5 rounded-full border',
-                STATUS_STYLES[order.status] ?? STATUS_STYLES['PAID'],
-              )}>
-                {STATUS_LABELS[order.status] ?? order.status}
-              </span>
+              <EventOrderStatusBadge status={order.status} size="sm" />
               <p className="text-sm font-black text-text-primary tabular-nums">
                 {FMT_CURRENCY.format(order.total)}
               </p>

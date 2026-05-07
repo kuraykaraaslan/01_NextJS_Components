@@ -1,5 +1,8 @@
 'use client';
 import { Form } from '@/modules/app/Form';
+import { SectionCard } from '@/modules/app/SectionCard';
+import { InlineAlert } from '@/modules/app/InlineAlert';
+import { StepShell } from '@/modules/app/StepShell';
 import { Input } from '@/modules/ui/Input';
 import { Select } from '@/modules/ui/Select';
 import { MultiSelect } from '@/modules/ui/MultiSelect';
@@ -122,6 +125,157 @@ function FilterBarDemo({ compact = false }: { compact?: boolean }) {
 
 export function buildAppFormData(): ShowcaseComponent[] {
   return [
+    {
+      id: 'section-card',
+      title: 'SectionCard',
+      category: 'App',
+      abbr: 'SC',
+      description: 'Başlıklı form bölüm kartı; alt çizgili başlık ve içerik alanı. Hesap sayfalarındaki ayarlar / şifre değiştirme gibi bölümler için.',
+      filePath: 'modules/app/SectionCard.tsx',
+      sourceCode: `import { SectionCard } from '@/modules/app/SectionCard';
+
+<SectionCard title="Preferences">
+  <UserPreferencesForm ... />
+</SectionCard>
+
+<SectionCard title="Change Password">
+  <ChangePasswordForm ... />
+</SectionCard>`,
+      variants: [
+        {
+          title: 'Tek bölüm',
+          layout: 'stack' as const,
+          preview: (
+            <SectionCard title="Preferences">
+              <p className="text-sm text-text-secondary">Form fields go here.</p>
+            </SectionCard>
+          ),
+          code: `<SectionCard title="Preferences">
+  <Input id="name" label="Display name" value={name} onChange={...} />
+  <Toggle id="notify" label="Email notifications" checked={notify} onChange={setNotify} />
+</SectionCard>`,
+        },
+        {
+          title: 'Birden fazla bölüm',
+          layout: 'stack' as const,
+          preview: (
+            <div className="space-y-4 max-w-lg">
+              <SectionCard title="Profile">
+                <p className="text-sm text-text-secondary">Personal information fields.</p>
+              </SectionCard>
+              <SectionCard title="Security">
+                <p className="text-sm text-text-secondary">Password change form.</p>
+              </SectionCard>
+            </div>
+          ),
+          code: `<SectionCard title="Profile">
+  <UserProfileForm ... />
+</SectionCard>
+<SectionCard title="Security">
+  <ChangePasswordForm ... />
+</SectionCard>`,
+        },
+      ],
+    },
+
+    {
+      id: 'inline-alert',
+      title: 'InlineAlert',
+      category: 'App',
+      abbr: 'IA',
+      description: 'Form işlem sonuçları için satır içi küçük uyarı; success / error / warning / info variantları.',
+      filePath: 'modules/app/InlineAlert.tsx',
+      sourceCode: `import { InlineAlert } from '@/modules/app/InlineAlert';
+
+// Default: success
+<InlineAlert message="Changes saved." />
+
+// Error
+<InlineAlert variant="error" message="Something went wrong." />
+
+// Conditional display (e.g. after save)
+{saved && <InlineAlert message="Profile saved successfully." />}`,
+      variants: [
+        {
+          title: 'Tüm variantlar',
+          layout: 'stack' as const,
+          preview: (
+            <div className="space-y-2 max-w-sm">
+              <InlineAlert variant="success" message="Changes saved successfully." />
+              <InlineAlert variant="error"   message="Something went wrong. Please try again." />
+              <InlineAlert variant="warning" message="Please review your changes before saving." />
+              <InlineAlert variant="info"    message="This action cannot be undone." />
+            </div>
+          ),
+          code: `<InlineAlert variant="success" message="Changes saved successfully." />
+<InlineAlert variant="error"   message="Something went wrong." />
+<InlineAlert variant="warning" message="Please review before saving." />
+<InlineAlert variant="info"    message="This action cannot be undone." />`,
+        },
+      ],
+    },
+
+    {
+      id: 'step-shell',
+      title: 'StepShell',
+      category: 'App',
+      abbr: 'Ss',
+      description: 'Checkout ve sihirbaz akışları için adım kapsayıcısı; active / done / pending durumları, daraltılmış özet ve Edit butonu.',
+      filePath: 'modules/app/StepShell.tsx',
+      sourceCode: `import { StepShell } from '@/modules/app/StepShell';
+
+// Done step — shows summary, allows editing
+<StepShell
+  number={1}
+  title="Delivery address"
+  active={false}
+  done
+  summary={<AddressCard address={selected} />}
+  onEdit={() => setStep('address')}
+/>
+
+// Active step — shows children
+<StepShell number={2} title="Payment method" active done={false}>
+  <PaymentMethodSelector ... />
+  <Button onClick={() => setStep('details')}>Continue</Button>
+</StepShell>
+
+// Pending step — title dimmed, no content
+<StepShell number={3} title="Review &amp; pay" active={false} done={false} />`,
+      variants: [
+        {
+          title: 'Active / Done / Pending',
+          layout: 'stack' as const,
+          preview: (
+            <div className="space-y-3 max-w-lg">
+              <StepShell
+                number={1}
+                title="Delivery address"
+                active={false}
+                done
+                summary={<p className="text-sm text-text-secondary font-mono">123 Main St, İstanbul</p>}
+                onEdit={() => {}}
+              />
+              <StepShell number={2} title="Payment method" active done={false}>
+                <p className="text-sm text-text-secondary py-2">Select a payment method to continue.</p>
+                <Button size="sm">Continue</Button>
+              </StepShell>
+              <StepShell number={3} title="Review &amp; pay" active={false} done={false} />
+            </div>
+          ),
+          code: `<StepShell number={1} title="Delivery address" active={false} done
+  summary={<AddressCard address={address} />}
+  onEdit={() => setStep('address')}
+/>
+<StepShell number={2} title="Payment method" active done={false}>
+  <PaymentMethodSelector value={method} onChange={setMethod} />
+  <Button onClick={() => setStep('details')}>Continue</Button>
+</StepShell>
+<StepShell number={3} title="Review &amp; pay" active={false} done={false} />`,
+        },
+      ],
+    },
+
     {
       id: 'form',
       title: 'Form',

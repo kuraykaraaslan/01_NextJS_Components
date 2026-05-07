@@ -37,6 +37,7 @@ import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSumm
 import { CreditCardVisual } from '@/modules/domains/common/payment/CreditCardVisual';
 import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm';
 import { SavedCardSelector } from '@/modules/domains/common/payment/SavedCardSelector';
+import { CheckoutSuccessState } from '@/modules/domains/common/payment/CheckoutSuccessState';
 import { NotFoundPage } from '@/modules/app/NotFoundPage';
 import { ChatBox } from '@/modules/domains/common/chat/ChatBox';
 import { NotificationMenu, type NotificationItem } from '@/modules/domains/common/notification/NotificationMenu';
@@ -1440,6 +1441,47 @@ import { SubscriptionPlanCard } from '@/modules/domains/common/subscription/Subs
           layout: 'stack' as const,
           preview: <RegionalSalesPolar />,
           code: `<RegionalSalesPolar />`,
+        },
+      ],
+    },
+
+    {
+      id: 'common-checkout-success-state',
+      title: 'CheckoutSuccessState',
+      category: 'Domain',
+      abbr: 'CK',
+      description: 'Ödeme tamamlama sonrası başarı ekranı; onay ikonu, ödeme özeti ve opsiyonel teslimat adresi.',
+      filePath: 'modules/domains/common/payment/CheckoutSuccessState.tsx',
+      sourceCode: `import { CheckoutSuccessState } from '@/modules/domains/common/payment/CheckoutSuccessState';
+
+<CheckoutSuccessState
+  payment={payment}
+  address={deliveryAddress}
+  onReset={() => window.location.reload()}
+/>`,
+      variants: [
+        {
+          title: 'Başarı ekranı',
+          layout: 'stack' as const,
+          preview: (
+            <CheckoutSuccessState
+              payment={{
+                paymentId: 'pay_demo_001',
+                provider: 'Stripe',
+                providerPaymentId: 'pi_3NxYz2EwLHMpEt9Q1',
+                method: 'CREDIT_CARD',
+                status: 'PAID',
+                amount: 1299.90,
+                currency: 'TRY',
+              }}
+              onReset={() => {}}
+            />
+          ),
+          code: `<CheckoutSuccessState
+  payment={payment}
+  address={deliveryAddress}
+  onReset={() => window.location.reload()}
+/>`,
         },
       ],
     },

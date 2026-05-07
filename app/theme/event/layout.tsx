@@ -1,34 +1,13 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SkipLink } from '@/modules/ui/SkipLink';
 import { SearchBar } from '@/modules/ui/SearchBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faCheck, faXmark, faBars, faLocationDot, faTicket, faMusic, faTrophy, faMasksTheater, faFaceSmile, faStar, faLaptop, faSun, faMoon, faDesktop } from '@fortawesome/free-solid-svg-icons';
-
-/* ────────────────────────────────────────────────────────
-   Data
-──────────────────────────────────────────────────────── */
-
-const CITIES = [
-  { id: 'istanbul',  label: 'İstanbul',  count: 142 },
-  { id: 'ankara',    label: 'Ankara',    count: 58  },
-  { id: 'izmir',     label: 'İzmir',     count: 43  },
-  { id: 'bursa',     label: 'Bursa',     count: 21  },
-  { id: 'antalya',   label: 'Antalya',   count: 17  },
-  { id: 'adana',     label: 'Adana',     count: 9   },
-  { id: 'konya',     label: 'Konya',     count: 8   },
-  { id: 'gaziantep', label: 'Gaziantep', count: 6   },
-];
-
-const LANGUAGES = [
-  { id: 'tr', label: 'Türkçe',   flag: '🇹🇷' },
-  { id: 'en', label: 'English',  flag: '🇬🇧' },
-  { id: 'de', label: 'Deutsch',  flag: '🇩🇪' },
-  { id: 'fr', label: 'Français', flag: '🇫🇷' },
-  { id: 'ar', label: 'العربية',  flag: '🇸🇦' },
-  { id: 'ru', label: 'Русский',  flag: '🇷🇺' },
-];
+import { faXmark, faBars, faTicket, faMusic, faTrophy, faMasksTheater, faFaceSmile, faStar, faLaptop } from '@fortawesome/free-solid-svg-icons';
+import { CityPicker } from '@/modules/domains/event/CityPicker';
+import { NavLanguageSwitcher } from '@/modules/domains/event/NavLanguageSwitcher';
+import { NavThemeSwitcher } from '@/modules/domains/event/NavThemeSwitcher';
 
 const CATEGORIES = [
   { label: 'Konserler', href: '/theme/event/events?category=muzik',    icon: <FontAwesomeIcon icon={faMusic} className="w-4 h-4" aria-hidden="true" /> },
@@ -90,270 +69,7 @@ const SOCIAL        = ['IG', 'X', 'YT', 'TK'];
 const PAYMENT_BADGES = ['VISA', 'MC', 'AMEX', 'TROY', 'İyzico'];
 
 /* ────────────────────────────────────────────────────────
-   Shared hook: close popover on outside click + Escape
-──────────────────────────────────────────────────────── */
-
-function usePopover() {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onMouse = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
-    document.addEventListener('mousedown', onMouse);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onMouse);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
-
-  return { open, setOpen, ref };
-}
-
-/* ────────────────────────────────────────────────────────
-   Shared: dark-navbar dropdown shell
-──────────────────────────────────────────────────────── */
-
-function NavDropdown({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className="absolute top-full mt-2 z-[100] rounded-xl overflow-hidden shadow-2xl shadow-black/60"
-      style={{ border: '1px solid rgba(255,255,255,0.1)', background: '#1c2a3e' }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function NavDropdownHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className="px-3 pt-3 pb-2"
-      style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
-    >
-      <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>
-        {children}
-      </p>
-    </div>
-  );
-}
-
-function NavTriggerButton({
-  onClick,
-  expanded,
-  children,
-}: {
-  onClick: () => void;
-  expanded: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-haspopup="listbox"
-      aria-expanded={expanded}
-      className="flex items-center gap-1.5 text-xs font-medium transition-colors rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
-      style={{ color: 'rgba(255,255,255,0.55)' }}
-      onMouseOver={(e) => (e.currentTarget.style.color = '#fff')}
-      onMouseOut={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}
-    >
-      {children}
-      <FontAwesomeIcon
-        icon={faChevronDown}
-        className="h-3 w-3 transition-transform duration-200"
-        style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        aria-hidden="true"
-      />
-    </button>
-  );
-}
-
-/* ────────────────────────────────────────────────────────
-   CityPicker
-──────────────────────────────────────────────────────── */
-
-function CityPicker() {
-  const { open, setOpen, ref } = usePopover();
-  const [city, setCity] = useState(CITIES[0]);
-
-  return (
-    <div ref={ref} className="relative">
-      <NavTriggerButton onClick={() => setOpen((p) => !p)} expanded={open}>
-        <FontAwesomeIcon icon={faLocationDot} className="w-3 h-3" aria-hidden="true" />
-        <span>{city.label}</span>
-      </NavTriggerButton>
-
-      {open && (
-        <NavDropdown>
-          <NavDropdownHeader>Şehir Seç</NavDropdownHeader>
-          <ul role="listbox" className="py-1 max-h-64 overflow-y-auto w-52">
-            {CITIES.map((c) => {
-              const active = c.id === city.id;
-              return (
-                <li key={c.id}>
-                  <button
-                    role="option"
-                    aria-selected={active}
-                    onClick={() => { setCity(c); setOpen(false); }}
-                    className="w-full flex items-center justify-between px-3 py-2 text-sm text-left transition-colors"
-                    style={{
-                      color: active ? '#fff' : 'rgba(255,255,255,0.6)',
-                      background: active ? 'rgba(59,130,246,0.15)' : 'transparent',
-                      fontWeight: active ? 600 : 400,
-                    }}
-                    onMouseOver={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                    onMouseOut={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
-                  >
-                    <span>{c.label}</span>
-                    <span className="text-xs tabular-nums" style={{ color: 'rgba(255,255,255,0.28)' }}>{c.count}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-          <div className="px-3 py-2" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <button onClick={() => setOpen(false)} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
-              Tüm şehirler →
-            </button>
-          </div>
-        </NavDropdown>
-      )}
-    </div>
-  );
-}
-
-/* ────────────────────────────────────────────────────────
-   LanguageSwitcher
-──────────────────────────────────────────────────────── */
-
-function LanguageSwitcher() {
-  const { open, setOpen, ref } = usePopover();
-  const [lang, setLang] = useState(LANGUAGES[0]);
-
-  return (
-    <div ref={ref} className="relative">
-      <NavTriggerButton onClick={() => setOpen((p) => !p)} expanded={open}>
-        <span>{lang.flag}</span>
-        <span className="hidden sm:inline">{lang.label}</span>
-      </NavTriggerButton>
-
-      {open && (
-        <NavDropdown>
-          <NavDropdownHeader>Dil Seç</NavDropdownHeader>
-          <ul role="listbox" className="py-1 w-44">
-            {LANGUAGES.map((l) => {
-              const active = l.id === lang.id;
-              return (
-                <li key={l.id}>
-                  <button
-                    role="option"
-                    aria-selected={active}
-                    onClick={() => { setLang(l); setOpen(false); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors"
-                    style={{
-                      color: active ? '#fff' : 'rgba(255,255,255,0.6)',
-                      background: active ? 'rgba(59,130,246,0.15)' : 'transparent',
-                      fontWeight: active ? 600 : 400,
-                    }}
-                    onMouseOver={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                    onMouseOut={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
-                  >
-                    <span className="text-base leading-none">{l.flag}</span>
-                    <span>{l.label}</span>
-                    {active && <FontAwesomeIcon icon={faCheck} className="ml-auto w-3 h-3 text-blue-400" aria-hidden="true" />}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </NavDropdown>
-      )}
-    </div>
-  );
-}
-
-/* ────────────────────────────────────────────────────────
-   NavThemeSwitcher — dark-navbar styled, same logic as ThemeSwitcher
-──────────────────────────────────────────────────────── */
-
-type ThemeOption = 'light' | 'dark' | 'system';
-
-const THEME_OPTIONS: { id: ThemeOption; icon: React.ReactNode; label: string }[] = [
-  { id: 'light',  icon: <FontAwesomeIcon icon={faSun} className="w-3.5 h-3.5" aria-hidden="true" />,     label: 'Açık'   },
-  { id: 'dark',   icon: <FontAwesomeIcon icon={faMoon} className="w-3.5 h-3.5" aria-hidden="true" />,    label: 'Koyu'   },
-  { id: 'system', icon: <FontAwesomeIcon icon={faDesktop} className="w-3.5 h-3.5" aria-hidden="true" />, label: 'Sistem' },
-];
-
-function NavThemeSwitcher() {
-  const { open, setOpen, ref } = usePopover();
-  const [theme, setTheme] = useState<ThemeOption>('system');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const stored = localStorage.getItem('theme') as ThemeOption | null;
-    if (stored) setTheme(stored);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const isDark =
-      theme === 'dark' ||
-      (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.classList.toggle('dark', isDark);
-    localStorage.setItem('theme', theme);
-  }, [theme, mounted]);
-
-  const current = THEME_OPTIONS.find((t) => t.id === theme) ?? THEME_OPTIONS[2];
-
-  return (
-    <div ref={ref} className="relative">
-      <NavTriggerButton onClick={() => setOpen((p) => !p)} expanded={open}>
-        <span className="leading-none flex items-center">{mounted ? current.icon : <FontAwesomeIcon icon={faDesktop} className="w-3.5 h-3.5" aria-hidden="true" />}</span>
-        <span className="hidden sm:inline">{mounted ? current.label : 'Tema'}</span>
-      </NavTriggerButton>
-
-      {open && (
-        <NavDropdown>
-          <NavDropdownHeader>Tema</NavDropdownHeader>
-          <ul role="listbox" className="py-1 w-40">
-            {THEME_OPTIONS.map((opt) => {
-              const active = opt.id === theme;
-              return (
-                <li key={opt.id}>
-                  <button
-                    role="option"
-                    aria-selected={active}
-                    onClick={() => { setTheme(opt.id); setOpen(false); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors"
-                    style={{
-                      color: active ? '#fff' : 'rgba(255,255,255,0.6)',
-                      background: active ? 'rgba(59,130,246,0.15)' : 'transparent',
-                      fontWeight: active ? 600 : 400,
-                    }}
-                    onMouseOver={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                    onMouseOut={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
-                  >
-                    <span className="w-5 flex items-center justify-center">{opt.icon}</span>
-                    <span>{opt.label}</span>
-                    {active && <FontAwesomeIcon icon={faCheck} className="ml-auto w-3 h-3 text-blue-400" aria-hidden="true" />}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </NavDropdown>
-      )}
-    </div>
-  );
-}
-
-/* ────────────────────────────────────────────────────────
-   Divider — reusable vertical separator for top bar
+   Divider — vertical separator for top bar
 ──────────────────────────────────────────────────────── */
 
 function TopBarDivider() {
@@ -405,7 +121,7 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
           <div className="flex items-center gap-4">
             <NavThemeSwitcher />
             <TopBarDivider />
-            <LanguageSwitcher />
+            <NavLanguageSwitcher />
             <TopBarDivider />
             <a
               href="#"
@@ -574,7 +290,7 @@ export default function EventThemeLayout({ children }: { children: React.ReactNo
               >
                 <NavThemeSwitcher />
                 <TopBarDivider />
-                <LanguageSwitcher />
+                <NavLanguageSwitcher />
               </div>
 
               {CATEGORIES.map((cat) => (

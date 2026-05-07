@@ -1,20 +1,18 @@
 'use client';
 import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
-
 import { AddressSelector } from '@/modules/domains/common/address/AddressSelector';
 import { AddressForm } from '@/modules/domains/common/address/AddressForm';
 import { AddressCard } from '@/modules/domains/common/address/AddressCard';
 import { PaymentMethodSelector } from '@/modules/domains/common/payment/PaymentMethodSelector';
 import { SavedCardSelector } from '@/modules/domains/common/payment/SavedCardSelector';
 import { CreditCardForm } from '@/modules/domains/common/payment/CreditCardForm';
-import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSummaryCard';
 import { PaymentStatusBadge } from '@/modules/domains/common/payment/PaymentStatusBadge';
+import { CheckoutSuccessState } from '@/modules/domains/common/payment/CheckoutSuccessState';
 import { OrderTotalsCard } from '@/modules/domains/common/money/OrderTotalsCard';
 import { CouponInput } from '@/modules/domains/common/discount/CouponInput';
 import { CartPreview } from '@/modules/domains/common/cart/CartPreview';
 import { Button } from '@/modules/ui/Button';
+import { StepShell } from '@/modules/app/StepShell';
 
 import { SAVED_ADDRESSES, SAVED_CARDS, ORDER_TOTALS, DEMO_CART } from '../../common.data';
 import type { Address } from '@/modules/domains/common/AddressTypes';
@@ -135,7 +133,15 @@ export default function CheckoutPage() {
   /* ════ done ════ */
 
   if (step === 'success') {
-    return <SuccessState address={addresses[selectedAddr]} />;
+    return (
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10">
+        <CheckoutSuccessState
+          payment={MOCK_PAYMENT}
+          address={addresses[selectedAddr]}
+          onReset={() => window.location.reload()}
+        />
+      </div>
+    );
   }
 
   const currentIndex = stepIndex(step);
@@ -356,109 +362,3 @@ export default function CheckoutPage() {
   );
 }
 
-/* ════════════════════════════════════════════════════════════
-   StepShell — collapsible step wrapper
-════════════════════════════════════════════════════════════ */
-
-function StepShell({
-  number,
-  title,
-  active,
-  done,
-  onEdit,
-  summary,
-  children,
-}: {
-  number: number;
-  title: string;
-  active: boolean;
-  done: boolean;
-  onEdit?: () => void;
-  summary?: React.ReactNode;
-  children?: React.ReactNode;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border transition-all bg-surface-raised overflow-hidden ${
-        active ? 'border-primary shadow-sm' : 'border-border'
-      }`}
-    >
-      {/* header */}
-      <div className="flex items-center gap-3 px-5 py-4">
-        <span
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-            done
-              ? 'bg-success text-white'
-              : active
-              ? 'bg-primary text-primary-fg'
-              : 'bg-surface-overlay text-text-disabled'
-          }`}
-        >
-          {done ? <FontAwesomeIcon icon={faCheck} className="w-3 h-3" aria-hidden="true" /> : number}
-        </span>
-        <h2
-          className={`flex-1 text-sm font-semibold ${
-            active ? 'text-text-primary' : done ? 'text-text-secondary' : 'text-text-disabled'
-          }`}
-          dangerouslySetInnerHTML={{ __html: title }}
-        />
-        {done && onEdit && (
-          <Button variant="ghost" size="xs" onClick={onEdit} className="text-primary shrink-0">
-            Edit
-          </Button>
-        )}
-      </div>
-
-      {/* collapsed summary */}
-      {done && summary && (
-        <div className="px-5 pb-4 border-t border-border pt-3 opacity-70">
-          {summary}
-        </div>
-      )}
-
-      {/* active body */}
-      {active && children && (
-        <div className="px-5 pb-5 border-t border-border pt-4">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════
-   SuccessState
-════════════════════════════════════════════════════════════ */
-
-function SuccessState({ address }: { address?: Address }) {
-  return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10">
-      <div className="flex flex-col items-center justify-center py-16 space-y-6 text-center max-w-md mx-auto">
-        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-success-subtle">
-          <FontAwesomeIcon icon={faCheck} className="w-10 h-10 text-success" aria-hidden="true" />
-        </span>
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-text-primary">Payment successful!</h2>
-          <p className="text-text-secondary">
-            {FMT.format(ORDER_TOTALS.total)} was charged. A receipt has been sent to your email.
-          </p>
-        </div>
-
-        <div className="w-full space-y-4 text-left">
-          <PaymentSummaryCard payment={MOCK_PAYMENT} />
-
-          {address && (
-            <div className="rounded-xl border border-border bg-surface-raised p-4 space-y-2">
-              <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Delivering to</p>
-              <AddressCard address={address} />
-            </div>
-          )}
-        </div>
-
-        <Button variant="outline" onClick={() => window.location.reload()}>
-          Start over
-        </Button>
-      </div>
-    </div>
-  );
-}

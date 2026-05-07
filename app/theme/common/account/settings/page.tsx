@@ -2,37 +2,12 @@
 import { useState } from 'react';
 import { UserPreferencesForm } from '@/modules/domains/common/user/UserPreferencesForm';
 import { ChangePasswordForm } from '@/modules/domains/common/auth/ChangePasswordForm';
+import { SectionCard } from '@/modules/app/SectionCard';
+import { InlineAlert } from '@/modules/app/InlineAlert';
 import { DEMO_USER } from '../../common.data';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import type { UserPreferences, ChangePassword } from '@/modules/domains/common/types';
 
 type SaveState = 'idle' | 'saved' | 'error';
-
-function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded-xl border border-border bg-surface-raised p-6 space-y-4">
-      <h3 className="text-sm font-semibold text-text-primary border-b border-border pb-3">{title}</h3>
-      {children}
-    </div>
-  );
-}
-
-function Toast({ state }: { state: SaveState }) {
-  if (state === 'idle') return null;
-  return (
-    <div className={`rounded-lg px-4 py-2.5 text-sm font-medium ${
-      state === 'saved'
-        ? 'bg-success-subtle border border-success text-success-fg'
-        : 'bg-error-subtle border border-error text-error'
-    }`}>
-      {state === 'saved'
-        ? <><FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5 mr-1" aria-hidden="true" /> Changes saved.</>
-        : <><FontAwesomeIcon icon={faXmark} className="w-3.5 h-3.5 mr-1" aria-hidden="true" /> Something went wrong.</>
-      }
-    </div>
-  );
-}
 
 export default function SettingsPage() {
   const [prefState, setPrefState] = useState<SaveState>('idle');
@@ -56,7 +31,12 @@ export default function SettingsPage() {
       <h2 className="text-lg font-semibold text-text-primary">Settings</h2>
 
       <SectionCard title="Preferences">
-        <Toast state={prefState} />
+        {prefState !== 'idle' && (
+          <InlineAlert
+            variant={prefState === 'saved' ? 'success' : 'error'}
+            message={prefState === 'saved' ? 'Changes saved.' : 'Something went wrong.'}
+          />
+        )}
         <UserPreferencesForm
           initial={DEMO_USER.userPreferences}
           onSubmit={handlePreferences}
@@ -64,7 +44,12 @@ export default function SettingsPage() {
       </SectionCard>
 
       <SectionCard title="Change Password">
-        <Toast state={pwState} />
+        {pwState !== 'idle' && (
+          <InlineAlert
+            variant={pwState === 'saved' ? 'success' : 'error'}
+            message={pwState === 'saved' ? 'Changes saved.' : 'Something went wrong.'}
+          />
+        )}
         <ChangePasswordForm onSubmit={handlePassword} />
       </SectionCard>
     </div>

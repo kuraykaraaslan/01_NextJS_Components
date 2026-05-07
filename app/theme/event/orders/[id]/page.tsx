@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/modules/ui/Breadcrumb';
 import { TicketCard } from '@/modules/domains/event/TicketCard';
+import { EventOrderStatusBadge } from '@/modules/domains/event/EventOrderStatusBadge';
 import {
   MY_ORDERS,
   getOrderById,
   getVenueByEventId,
 } from '@/app/theme/event/event.data';
-import { cn } from '@/libs/utils/cn';
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -18,14 +18,6 @@ const FMT_CURRENCY = new Intl.NumberFormat('tr-TR', { style: 'currency', currenc
 const FMT_DATE = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 const FMT_DATETIME = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-const STATUS_STYLES: Record<string, string> = {
-  PAID:     'bg-success-subtle text-success border-success/30',
-  REFUNDED: 'bg-warning-subtle text-warning border-warning/30',
-  CANCELLED:'bg-error-subtle text-error border-error/30',
-};
-const STATUS_LABELS: Record<string, string> = {
-  PAID: 'Ödendi', REFUNDED: 'İade Edildi', CANCELLED: 'İptal',
-};
 
 export default async function OrderDetailPage({ params }: Props) {
   const { id } = await params;
@@ -66,12 +58,7 @@ export default async function OrderDetailPage({ params }: Props) {
               {venue && ` · ${venue.name}, ${venue.city}`}
             </p>
           </div>
-          <span className={cn(
-            'self-start text-xs font-bold px-3 py-1 rounded-full border shrink-0',
-            STATUS_STYLES[order.status] ?? STATUS_STYLES['PAID'],
-          )}>
-            {STATUS_LABELS[order.status] ?? order.status}
-          </span>
+          <EventOrderStatusBadge status={order.status} size="md" className="self-start shrink-0" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

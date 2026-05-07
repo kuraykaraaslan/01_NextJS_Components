@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { UserProfileCard } from '@/modules/domains/common/user/UserProfileCard';
 import { UserProfileForm } from '@/modules/domains/common/user/UserProfileForm';
 import { Button } from '@/modules/ui/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { InlineAlert } from '@/modules/app/InlineAlert';
 import { DEMO_USER } from '../../common.data';
 import type { SafeUser, UserProfile } from '@/modules/domains/common/types';
 
@@ -32,11 +31,7 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {saved && (
-        <div className="rounded-lg bg-success-subtle border border-success px-4 py-2.5 text-sm text-success-fg font-medium">
-          <FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5 mr-1" aria-hidden="true" /> Profile saved successfully.
-        </div>
-      )}
+      {saved && <InlineAlert message="Profile saved successfully." />}
 
       <UserProfileCard
         user={user}
