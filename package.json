@@ -30,12 +30,16 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.11.3",
+    "@hookform/resolvers": "^5.2.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "eslint-plugin-tailwindcss": "^3.18.3",
+    "react-hook-form": "^7.75.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
