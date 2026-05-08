@@ -238,6 +238,21 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'Domain — Jobs',
+    collapsible: true,
+    sectionStart: 'Domain — Jobs',
+    items: [
+      { id: 'jobs-status-badge',            title: 'JobStatusBadge',        category: 'Domain', abbr: 'JS', since: '2026-05' },
+      { id: 'jobs-type-badge',              title: 'JobTypeBadge',          category: 'Domain', abbr: 'JT', since: '2026-05' },
+      { id: 'jobs-work-mode-badge',         title: 'JobWorkModeBadge',      category: 'Domain', abbr: 'WM', since: '2026-05' },
+      { id: 'jobs-experience-badge',        title: 'JobExperienceBadge',    category: 'Domain', abbr: 'JE', since: '2026-05' },
+      { id: 'jobs-application-status-badge',title: 'ApplicationStatusBadge',category: 'Domain', abbr: 'AS', since: '2026-05' },
+      { id: 'jobs-job-meta',                title: 'JobMeta',               category: 'Domain', abbr: 'JM', since: '2026-05' },
+      { id: 'jobs-job-card',                title: 'JobCard',               category: 'Domain', abbr: 'JC', since: '2026-05' },
+      { id: 'jobs-company-card',            title: 'CompanyCard',           category: 'Domain', abbr: 'CC', since: '2026-05' },
+    ],
+  },
+  {
     label: 'Themes',
     collapsible: true,
     sectionStart: 'Themes',
@@ -247,6 +262,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'event',   title: 'Event Theme',   category: 'Theme', abbr: 'ET', href: '/theme/event',    since: '2025-04' },
       { id: 'api-doc', title: 'API Doc Theme', category: 'Theme', abbr: 'AD', href: '/theme/api-doc',  since: '2025-05' },
       { id: 'landing', title: 'Landing Theme', category: 'Theme', abbr: 'LT', href: '/theme/landing',  since: '2026-05' },
+      { id: 'jobs',    title: 'Jobs Theme',    category: 'Theme', abbr: 'JT', href: '/theme/jobs',     since: '2026-05' },
     ],
   }
 ];

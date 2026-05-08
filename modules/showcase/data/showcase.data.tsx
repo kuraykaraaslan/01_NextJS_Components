@@ -10,6 +10,7 @@ import { buildEventDomainData } from './sections/domain-event.showcase';
 import { buildMapData } from './sections/ui-molecule-map.showcase';
 import { buildApiDocDomainData } from './sections/domain-api-doc.showcase';
 import { buildLandingDomainData } from './sections/domain-landing.showcase';
+import { buildJobsDomainData } from './sections/domain-jobs.showcase';
 
 export function buildShowcaseData() {
   return [
@@ -23,5 +24,6 @@ export function buildShowcaseData() {
     ...buildMapData(),
     ...buildApiDocDomainData(),
     ...buildLandingDomainData(),
+    ...buildJobsDomainData(),
   ];
 }
