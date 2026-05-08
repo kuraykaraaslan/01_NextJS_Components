@@ -11,6 +11,14 @@ import { buildMapData } from './sections/ui-molecule-map.showcase';
 import { buildApiDocDomainData } from './sections/domain-api-doc.showcase';
 import { buildLandingDomainData } from './sections/domain-landing.showcase';
 import { buildJobsDomainData } from './sections/domain-jobs.showcase';
+import { buildFintechDomainData } from './sections/domain-fintech.showcase';
+import { buildCommerceDomainData } from './sections/domain-commerce.showcase';
+import { buildMediaDomainData } from './sections/domain-media.showcase';
+import { buildForumDomainData } from './sections/domain-forum.showcase';
+import { buildRealEstateDomainData } from './sections/domain-real-estate.showcase';
+import { buildFoodDomainData } from './sections/domain-food.showcase';
+import { buildTravelDomainData } from './sections/domain-travel.showcase';
+import { buildAIDomainData } from './sections/domain-ai.showcase';
 
 export function buildShowcaseData() {
   return [
@@ -25,5 +33,13 @@ export function buildShowcaseData() {
     ...buildApiDocDomainData(),
     ...buildLandingDomainData(),
     ...buildJobsDomainData(),
+    ...buildFintechDomainData(),
+    ...buildCommerceDomainData(),
+    ...buildMediaDomainData(),
+    ...buildForumDomainData(),
+    ...buildRealEstateDomainData(),
+    ...buildFoodDomainData(),
+    ...buildTravelDomainData(),
+    ...buildAIDomainData(),
   ];
 }

@@ -393,3 +393,8 @@ export type Restaurant = z.infer<typeof RestaurantSchema>
 export type MenuItem = z.infer<typeof MenuItemSchema>
 export type Order = z.infer<typeof OrderSchema>
 export type Delivery = z.infer<typeof DeliverySchema>
+
+export type RestaurantStatus = z.infer<typeof RestaurantStatusEnum>
+export type MenuItemStatus = z.infer<typeof MenuItemStatusEnum>
+export type OrderStatus = z.infer<typeof OrderStatusEnum>
+export type DeliveryStatus = z.infer<typeof DeliveryStatusEnum>

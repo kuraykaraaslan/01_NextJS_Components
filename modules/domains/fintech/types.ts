@@ -299,6 +299,14 @@ export const KYCSchema = z.object({
 ========================================================= */
 
 export type Currency = z.infer<typeof CurrencyEnum>
+export type WalletType = z.infer<typeof WalletTypeEnum>
+export type WalletStatus = z.infer<typeof WalletStatusEnum>
+export type TransactionType = z.infer<typeof TransactionTypeEnum>
+export type TransactionStatus = z.infer<typeof TransactionStatusEnum>
+export type PaymentMethod = z.infer<typeof PaymentMethodEnum>
+export type FXStatus = z.infer<typeof FXStatusEnum>
+export type KYCStatus = z.infer<typeof KYCStatusEnum>
+
 export type Wallet = z.infer<typeof WalletSchema>
 export type WalletAccount = z.infer<typeof WalletAccountSchema>
 
