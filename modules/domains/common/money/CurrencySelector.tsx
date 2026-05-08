@@ -1,6 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { isBrowser } from '@/libs/utils/isBrowser';
 import { getCountryDataList } from 'countries-list';
 import * as Flags from 'country-flag-icons/react/3x2';
 import { cn } from '@/libs/utils/cn';
@@ -66,6 +67,7 @@ export function CurrencySelector({
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!open) { setSearch(''); return; }
     setTimeout(() => searchRef.current?.focus(), 0);
 
@@ -167,7 +169,7 @@ export function CurrencySelector({
           <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 text-text-disabled" />
         </Button>
       </div>
-      {typeof window !== 'undefined' && createPortal(panel, document.body)}
+      {isBrowser && createPortal(panel, document.body)}
     </div>
   );
 }

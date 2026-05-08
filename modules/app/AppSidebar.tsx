@@ -1,6 +1,7 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { useEffect, useState } from 'react';
+import { isBrowser } from '@/libs/utils/isBrowser';
 import { Badge } from '@/modules/ui/Badge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronDown } from '@fortawesome/free-solid-svg-icons';
@@ -62,7 +63,7 @@ export function AppSidebar({
     return initial;
   });
   const [isDesktop, setIsDesktop] = useState(() => {
-    if (typeof window === 'undefined') {
+    if (!isBrowser) {
       return true;
     }
     return window.matchMedia('(min-width: 1024px)').matches;
@@ -74,6 +75,7 @@ export function AppSidebar({
       setIsDesktop(event.matches);
     };
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDesktop(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleChange);
 
