@@ -2,10 +2,14 @@
 import { useState } from 'react';
 import { Pagination } from '@/modules/ui/Pagination';
 import { TransactionRow } from '@/modules/domains/fintech/transaction/TransactionRow';
+import { TransactionVolumeChart } from '@/modules/domains/fintech/chart/TransactionVolumeChart';
+import { PortfolioDonutChart } from '@/modules/domains/fintech/chart/PortfolioDonutChart';
+import { CryptoPriceCard } from '@/modules/domains/fintech/crypto/CryptoPriceCard';
+import { CurrencyExchangePanel } from '@/modules/domains/fintech/fx/CurrencyExchangePanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faArrowRightArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import type { TransactionType, TransactionStatus } from '@/modules/domains/fintech/types';
-import { TRANSACTIONS } from '../fintech.data';
+import { TRANSACTIONS, DAILY_VOLUMES, PORTFOLIO_ALLOCATION, CRYPTO_ASSETS } from '../fintech.data';
 
 const TYPE_OPTIONS: { label: string; value: TransactionType | 'ALL' }[] = [
   { label: 'All Types',  value: 'ALL' },
@@ -57,9 +61,36 @@ export default function TransactionsPage() {
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Transactions</h1>
         <p className="text-text-secondary mt-1">
-          Your complete payment and transfer history.
+          Payment history, portfolio, FX exchange, and live crypto markets.
         </p>
       </div>
+
+      {/* Charts row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PortfolioDonutChart assets={PORTFOLIO_ALLOCATION} />
+        <TransactionVolumeChart data={DAILY_VOLUMES} />
+      </div>
+
+      {/* Crypto markets */}
+      <div>
+        <h2 className="text-base font-semibold text-text-primary mb-3">Crypto Markets</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {CRYPTO_ASSETS.map((asset, i) => (
+            <CryptoPriceCard
+              key={i}
+              symbol={asset.symbol}
+              name={asset.name}
+              price={asset.price}
+              change24h={asset.change24h}
+              priceHistory={asset.priceHistory}
+              quoteCurrency={asset.quoteCurrency}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* FX Exchange panel */}
+      <CurrencyExchangePanel />
 
       {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-3 p-4 rounded-xl border border-border bg-surface-raised">

@@ -1,5 +1,64 @@
 import type { Wallet, Transaction } from '@/modules/domains/fintech/types';
 
+/* ── Chart data ── */
+
+export type DailyVolume = { date: string; deposit: number; withdraw: number; payment: number; transfer: number };
+
+export const DAILY_VOLUMES: DailyVolume[] = [
+  { date: '05/01', deposit: 5000, withdraw: 0,    payment: 349.99, transfer: 0    },
+  { date: '05/02', deposit: 0,    withdraw: 0,    payment: 349.99, transfer: 0    },
+  { date: '05/03', deposit: 0,    withdraw: 0,    payment: 0,      transfer: 1000 },
+  { date: '05/04', deposit: 0,    withdraw: 2000, payment: 0,      transfer: 0    },
+  { date: '05/05', deposit: 249,  withdraw: 0,    payment: 0,      transfer: 0    },
+  { date: '05/06', deposit: 1200, withdraw: 0,    payment: 750,    transfer: 0    },
+  { date: '05/07', deposit: 0,    withdraw: 0,    payment: 299,    transfer: 500  },
+];
+
+export const PORTFOLIO_ALLOCATION = [
+  { currency: 'TRY', usdEquivalent: 766  },
+  { currency: 'USD', usdEquivalent: 3420 },
+  { currency: 'EUR', usdEquivalent: 1298 },
+  { currency: 'BTC', usdEquivalent: 3421 },
+  { currency: 'ETH', usdEquivalent: 4611 },
+];
+
+export const CRYPTO_ASSETS = [
+  {
+    symbol: 'BTC',
+    name: 'Bitcoin',
+    price: 68420.50,
+    change24h: 2.34,
+    priceHistory: [65200, 66800, 64500, 67200, 68900, 67600, 68420],
+    quoteCurrency: 'USD',
+  },
+  {
+    symbol: 'ETH',
+    name: 'Ethereum',
+    price: 3842.20,
+    change24h: -1.12,
+    priceHistory: [3620, 3780, 3540, 3820, 3950, 3810, 3842],
+    quoteCurrency: 'USD',
+  },
+  {
+    symbol: 'BTC',
+    name: 'Bitcoin',
+    price: 2219733,
+    change24h: 3.01,
+    priceHistory: [2116000, 2168000, 2094000, 2181000, 2237000, 2195000, 2219733],
+    quoteCurrency: 'TRY',
+  },
+  {
+    symbol: 'ETH',
+    name: 'Ethereum',
+    price: 124679,
+    change24h: -0.88,
+    priceHistory: [117490, 122614, 114907, 123960, 128163, 123630, 124679],
+    quoteCurrency: 'TRY',
+  },
+];
+
+/* ── Wallets & Transactions ── */
+
 export const WALLETS: Wallet[] = [
   {
     walletId: 'wallet-001',
@@ -36,6 +95,30 @@ export const WALLETS: Wallet[] = [
     lockedBalance: 1_200.00,
     createdAt: new Date('2024-06-10'),
     updatedAt: new Date('2026-04-01'),
+  },
+  {
+    walletId: 'wallet-004',
+    userId: 'user-001',
+    type: 'USER',
+    status: 'ACTIVE',
+    currency: 'BTC',
+    balance: 0.05,
+    availableBalance: 0.05,
+    lockedBalance: 0,
+    createdAt: new Date('2025-11-01'),
+    updatedAt: new Date('2026-05-07'),
+  },
+  {
+    walletId: 'wallet-005',
+    userId: 'user-001',
+    type: 'USER',
+    status: 'ACTIVE',
+    currency: 'ETH',
+    balance: 1.2,
+    availableBalance: 1.2,
+    lockedBalance: 0,
+    createdAt: new Date('2025-11-01'),
+    updatedAt: new Date('2026-05-07'),
   },
 ];
 
@@ -189,5 +272,56 @@ export const TRANSACTIONS: Transaction[] = [
     reference: 'FX-20260507',
     description: 'USD to EUR exchange',
     createdAt: new Date('2026-05-07T15:45:00Z'),
+  },
+  {
+    transactionId: 'txn-013',
+    walletId: 'wallet-004',
+    type: 'DEPOSIT',
+    status: 'COMPLETED',
+    amount: 0.02,
+    currency: 'BTC',
+    fee: 0.0001,
+    reference: 'CRYPTO-20260430',
+    description: 'BTC deposit from external wallet',
+    createdAt: new Date('2026-04-30T10:00:00Z'),
+    completedAt: new Date('2026-04-30T10:15:00Z'),
+  },
+  {
+    transactionId: 'txn-014',
+    walletId: 'wallet-004',
+    type: 'WITHDRAW',
+    status: 'COMPLETED',
+    amount: 0.005,
+    currency: 'BTC',
+    fee: 0.0002,
+    reference: 'CRYPTO-20260505',
+    description: 'BTC transfer to hardware wallet',
+    createdAt: new Date('2026-05-05T14:00:00Z'),
+    completedAt: new Date('2026-05-05T14:20:00Z'),
+  },
+  {
+    transactionId: 'txn-015',
+    walletId: 'wallet-005',
+    type: 'DEPOSIT',
+    status: 'COMPLETED',
+    amount: 0.5,
+    currency: 'ETH',
+    fee: 0.002,
+    reference: 'CRYPTO-20260502',
+    description: 'ETH purchase via crypto exchange',
+    createdAt: new Date('2026-05-02T09:00:00Z'),
+    completedAt: new Date('2026-05-02T09:05:00Z'),
+  },
+  {
+    transactionId: 'txn-016',
+    walletId: 'wallet-005',
+    type: 'FX',
+    status: 'PENDING',
+    amount: 0.3,
+    currency: 'ETH',
+    fee: 0.001,
+    reference: 'FX-CRYPTO-20260507',
+    description: 'ETH to USD conversion',
+    createdAt: new Date('2026-05-07T16:00:00Z'),
   },
 ];
