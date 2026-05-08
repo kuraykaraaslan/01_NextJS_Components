@@ -1,8 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useTransition } from 'react';
 import { cn } from '@/libs/utils/cn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 export type ComponentStatus = 'stable' | 'beta' | 'deprecated';
 
@@ -39,6 +39,29 @@ type NavContentProps = {
 };
 
 function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps) {
+  const [rawQuery, setRawQuery] = useState('');
+  const [query, setQuery] = useState('');
+  const [, startTransition] = useTransition();
+
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    setRawQuery(e.target.value);
+    startTransition(() => setQuery(e.target.value));
+  }
+
+  const isSearching = query.trim().length > 0;
+  const filteredGroups = useMemo(() => {
+    if (!isSearching) return groups;
+    const q = query.toLowerCase();
+    return groups
+      .map((g) => ({
+        ...g,
+        items: g.items.filter(
+          (i) => i.title.toLowerCase().includes(q) || i.category.toLowerCase().includes(q),
+        ),
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [groups, query, isSearching]);
+
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => {
     const initial = new Set<string>();
     for (const g of groups) {
@@ -53,6 +76,7 @@ function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps
   useEffect(() => {
     const group = groups.find((g) => g.items.some((i) => i.id === selectedId));
     if (group) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setExpandedGroups((prev) => {
         if (prev.has(group.label)) return prev;
         const next = new Set(prev);
@@ -89,9 +113,39 @@ function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps
         )}
       </div>
 
+      {!collapsed && (
+        <div className="px-3 py-2 border-b border-border">
+          <div className="relative">
+            <FontAwesomeIcon
+              icon={faMagnifyingGlass}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-text-secondary pointer-events-none"
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              value={rawQuery}
+              onChange={handleSearch}
+              placeholder="Search components…"
+              aria-label="Search components"
+              className={cn(
+                'w-full rounded-md border border-border bg-surface-base pl-7 pr-3 py-1.5 text-sm text-text-primary',
+                'placeholder:text-text-secondary',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+              )}
+            />
+          </div>
+        </div>
+      )}
+
       <nav aria-label="Component navigation" className="flex-1 overflow-y-auto px-2 py-3 space-y-1">
-        {groups.map((group) => {
-          const isExpanded = collapsed || expandedGroups.has(group.label);
+        {isSearching && filteredGroups.length === 0 && (
+          <div className="flex flex-col items-center gap-2 py-8 text-text-secondary">
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="w-5 h-5 opacity-40" aria-hidden="true" />
+            <p className="text-sm">No results for &ldquo;{query}&rdquo;</p>
+          </div>
+        )}
+        {filteredGroups.map((group) => {
+          const isExpanded = isSearching || collapsed || expandedGroups.has(group.label);
           const hasActive = group.items.some((i) => i.id === selectedId);
           return (
             <div key={group.label}>
@@ -224,6 +278,7 @@ function NavContent({ groups, selectedId, onSelect, collapsed }: NavContentProps
     </>
   );
 }
+
 
 type SidebarProps = NavContentProps & {
   mobileOpen: boolean;
