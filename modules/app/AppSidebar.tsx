@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { isBrowser } from '@/libs/utils/isBrowser';
 import { Badge } from '@/modules/ui/Badge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronDown, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 export type AppSidebarNavItem = {
   id: string;
@@ -36,6 +36,7 @@ type AppSidebarProps = {
   defaultCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
   footer?: AppSidebarFooter;
+  searchable?: boolean;
   className?: string;
 };
 
@@ -48,9 +49,11 @@ export function AppSidebar({
   defaultCollapsed = false,
   onCollapsedChange,
   footer,
+  searchable = true,
   className,
 }: AppSidebarProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
+  const [searchQuery, setSearchQuery] = useState('');
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => {
     const resolvedGroups: AppSidebarNavGroup[] = navGroups ?? (navItems ? [{ items: navItems }] : []);
     const initial = new Set<string>();
@@ -86,7 +89,13 @@ export function AppSidebar({
 
   const isCollapsed = collapsed ?? internalCollapsed;
   const effectiveCollapsed = isDesktop ? isCollapsed : false;
-  const groups: AppSidebarNavGroup[] = navGroups ?? (navItems ? [{ items: navItems }] : []);
+  const q = searchQuery.trim().toLowerCase();
+  const rawGroups: AppSidebarNavGroup[] = navGroups ?? (navItems ? [{ items: navItems }] : []);
+  const groups: AppSidebarNavGroup[] = q
+    ? rawGroups
+        .map((g) => ({ ...g, items: g.items.filter((i) => i.label.toLowerCase().includes(q)) }))
+        .filter((g) => g.items.length > 0)
+    : rawGroups;
   const footerContent = typeof footer === 'function'
     ? (footer as (context: AppSidebarFooterRenderContext) => React.ReactNode)({ collapsed: effectiveCollapsed })
     : footer;
@@ -131,6 +140,24 @@ export function AppSidebar({
           <FontAwesomeIcon icon={faChevronLeft} className={cn('w-4 h-4 transition-transform', isCollapsed ? 'rotate-180' : '')} aria-hidden="true" />
         </button>
       </div>
+
+      {searchable && !effectiveCollapsed && (
+        <div className="px-3 py-2 border-b border-border shrink-0">
+          <div className="relative">
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-text-disabled" aria-hidden="true" />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Escape' && setSearchQuery('')}
+              placeholder="Search…"
+              autoComplete="off"
+              aria-label="Search navigation"
+              className="w-full rounded-md border border-border bg-surface-base pl-7 pr-3 py-1.5 text-xs text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-border-focus"
+            />
+          </div>
+        </div>
+      )}
 
       <nav className="flex-1 min-h-0 overflow-y-auto px-2 py-3 space-y-4 sidebar-scrollbar-hover" aria-label="Sidebar navigation">
         {groups.map((group, gi) => {

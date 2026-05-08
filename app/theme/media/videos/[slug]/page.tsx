@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faPlay,
   faThumbsUp,
   faShare,
   faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons';
+import { VideoPlayer } from '@/modules/ui/VideoPlayer';
 import { VideoMeta } from '@/modules/domains/media/video/VideoMeta';
 import { ChannelCard } from '@/modules/domains/media/channel/ChannelCard';
 import { VideoCard } from '@/modules/domains/media/video/VideoCard';
@@ -41,24 +41,18 @@ export default async function VideoDetailPage({
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main column */}
           <div className="flex-1 min-w-0 space-y-6">
-            {/* Player placeholder */}
-            <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black flex items-center justify-center">
-              {/* Blurred thumbnail as backdrop */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={video.thumbnailUrl}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm"
-                aria-hidden="true"
-              />
-              <button
-                type="button"
-                className="relative flex h-20 w-20 items-center justify-center rounded-full bg-white/90 shadow-lg hover:bg-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                aria-label="Play video"
-              >
-                <FontAwesomeIcon icon={faPlay} className="w-8 h-8 text-gray-900 translate-x-1" aria-hidden="true" />
-              </button>
-            </div>
+            <VideoPlayer
+              src="https://placeholdervideo.dev/1920x1080"
+              poster={video.thumbnailUrl}
+              title={video.title}
+              qualities={[
+                { label: '1080p HD', value: '1080' },
+                { label: '720p', value: '720' },
+                { label: '480p', value: '480' },
+                { label: 'Auto', value: 'auto' },
+              ]}
+              defaultQuality="auto"
+            />
 
             {/* Title */}
             <div>

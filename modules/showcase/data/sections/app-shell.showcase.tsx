@@ -159,6 +159,22 @@ function AppSidebarExpandedDemo() {
   );
 }
 
+function AppSidebarSearchDemo() {
+  const [activeId, setActiveId] = useState('dashboard');
+  return (
+    <div className="flex justify-center py-4">
+      <div className="border border-border rounded-xl overflow-hidden bg-surface-raised flex" style={{ height: 320 }}>
+        <AppSidebar
+          navGroups={NAV_GROUPS}
+          activeId={activeId}
+          onSelect={setActiveId}
+          searchable
+        />
+      </div>
+    </div>
+  );
+}
+
 function AppSidebarCollapsedDemo() {
   const [activeId, setActiveId] = useState('dashboard');
   return (
@@ -268,6 +284,7 @@ export function AppShell({ logo, compactLogo, sidebarCollapsed = false, sidebar,
       onSelect={setActiveId}
       collapsed={sidebarCollapsed}
       onCollapsedChange={setSidebarCollapsed}
+      searchable
       footer={<Avatar name="Jane Doe" size="sm" status="online" />}
     />
   }
@@ -308,7 +325,7 @@ export function AppShell({ logo, compactLogo, sidebarCollapsed = false, sidebar,
       title: 'AppSidebar',
       category: 'App',
       abbr: 'Ab',
-      description: 'Daraltılabilir kenar çubuğu. navGroups veya navItems alır; collapsed toggle dahili. footer slotu ile kullanıcı bilgisi veya herhangi bir içerik gösterilebilir.',
+      description: 'Daraltılabilir kenar çubuğu. navGroups veya navItems alır; collapsed toggle dahili. searchable prop ile yerleşik arama filtresi; footer slotu ile kullanıcı bilgisi veya herhangi bir içerik gösterilebilir.',
       filePath: 'modules/app/AppSidebar.tsx',
       sourceCode: `'use client';
 import { cn } from '@/libs/utils/cn';
@@ -384,6 +401,17 @@ export function AppSidebar({ navGroups, navItems, activeId, onSelect, collapsed,
       {!collapsed && <p className="text-xs font-semibold">Jane Doe</p>}
     </div>
   )}
+/>`,
+        },
+        {
+          title: 'Arama filtreli',
+          layout: 'stack' as const,
+          preview: <AppSidebarSearchDemo />,
+          code: `<AppSidebar
+  navGroups={navGroups}
+  activeId={activeId}
+  onSelect={setActiveId}
+  searchable
 />`,
         },
         {

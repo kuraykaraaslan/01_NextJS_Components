@@ -13,6 +13,7 @@ import { ThemeSwitcher } from '@/modules/app/ThemeSwitcher';
 import { UserMenu } from '@/modules/domains/common/user/UserMenu';
 import { GithubButton } from './GithubButton';
 import { HomePanel } from './HomePanel';
+import { LayoutSwitcher, type VariantLayout } from './LayoutSwitcher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 
@@ -119,6 +120,7 @@ export function ShowcaseShell({ selectedId }: { selectedId?: string | null }) {
   const dataMap = Object.fromEntries(data.map((c) => [c.id, c]));
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [variantLayout, setVariantLayout] = useState<VariantLayout>('side');
   const isHome = !selectedId;
   const selected = selectedId ? dataMap[selectedId] : null;
 
@@ -183,6 +185,9 @@ export function ShowcaseShell({ selectedId }: { selectedId?: string | null }) {
       topbar={
         <AppTopBar>
           <div className="ml-auto flex items-center gap-1">
+            {selectedId && (
+              <LayoutSwitcher value={variantLayout} onChange={setVariantLayout} />
+            )}
             <GithubButton />
             <ThemeSwitcher />
             <UserMenu onlyAvatar
@@ -222,10 +227,22 @@ export function ShowcaseShell({ selectedId }: { selectedId?: string | null }) {
             <PropsEditor {...selected.playground} />
           )}
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <div className={cn(
+            'grid gap-4',
+            variantLayout === 'grid'
+              ? 'grid-cols-1 xl:grid-cols-2'
+              : 'grid-cols-1'
+          )}>
             {selected.variants.map((variant: any) => (
-              <div key={variant.title} className={variant.layout === 'stack' ? 'xl:col-span-2' : ''}>
-                <VariantBlock variant={variant} />
+              <div
+                key={variant.title}
+                className={variantLayout === 'grid' && variant.layout === 'stack' ? 'xl:col-span-2' : ''}
+              >
+                <VariantBlock
+                  variant={variantLayout === 'side' || variantLayout === 'stack'
+                    ? { ...variant, layout: variantLayout }
+                    : variant}
+                />
               </div>
             ))}
           </div>

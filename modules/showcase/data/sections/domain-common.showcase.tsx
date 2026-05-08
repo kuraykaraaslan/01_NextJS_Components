@@ -25,6 +25,7 @@ import { LocationPicker } from '@/modules/domains/common/location/LocationPicker
 import { GeoPointDisplay } from '@/modules/domains/common/location/GeoPointDisplay';
 import { ProcessingStatusIndicator } from '@/modules/domains/common/status/ProcessingStatusIndicator';
 import { CurrencySelector } from '@/modules/domains/common/money/CurrencySelector';
+import { CountrySelector } from '@/modules/domains/common/location/CountrySelector';
 import { DirectionProvider } from '@/modules/domains/common/i18n/DirectionProvider';
 import type { ProcessingStatus } from '@/modules/domains/common/BaseTypes';
 import { UserProfileCard } from '@/modules/domains/common/user/UserProfileCard';
@@ -1175,6 +1176,20 @@ import { PaymentSummaryCard } from '@/modules/domains/common/payment/PaymentSumm
       ],
     },
     {
+      id: 'common-country-selector',
+      title: 'CountrySelector',
+      category: 'Domain',
+      abbr: 'Co',
+      description: 'Country dropdown built from countries-list. Shows flag + full name + ISO2 code. Supports search by name or code, error/hint states.',
+      filePath: 'modules/domains/common/location/CountrySelector.tsx',
+      sourceCode: `const [country, setCountry] = useState('TR');\n\n<CountrySelector value={country} onChange={setCountry} />`,
+      variants: [
+        { title: 'Default', preview: <CountrySelectorDemo />, code: `<CountrySelector value={country} onChange={setCountry} />` },
+        { title: 'With hint & error', preview: <CountrySelectorStatesDemo />, code: `<CountrySelector value="" onChange={setCountry} hint="Used for shipping address." />\n<CountrySelector value="" onChange={setCountry} error="Please select a country." required />` },
+        { title: 'No label', preview: <CountrySelectorNoLabelDemo />, code: `<CountrySelector value="US" onChange={setCountry} label="" />` },
+      ],
+    },
+    {
       id: 'common-direction-provider',
       title: 'DirectionProvider',
       category: 'Domain',
@@ -1909,6 +1924,37 @@ function SubscriptionPlanStatesDemo() {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6">
       <SubscriptionPlanCard plan={DEMO_PLANS[1]} isCurrent onSelect={() => {}} />
       <SubscriptionPlanCard plan={{ ...DEMO_PLANS[2], isPopular: false }} onSelect={() => {}} />
+    </div>
+  );
+}
+
+/* ─── CountrySelector demos ─── */
+
+function CountrySelectorDemo() {
+  const [country, setCountry] = useState('TR');
+  return (
+    <div className="w-full max-w-xs mx-auto p-4">
+      <CountrySelector value={country} onChange={setCountry} />
+      <p className="text-xs text-text-secondary mt-2">Selected: <span className="font-mono">{country}</span></p>
+    </div>
+  );
+}
+
+function CountrySelectorStatesDemo() {
+  const [country, setCountry] = useState('');
+  return (
+    <div className="w-full max-w-xs mx-auto p-4 space-y-4">
+      <CountrySelector value={country} onChange={setCountry} hint="Used for shipping address." />
+      <CountrySelector value={country} onChange={setCountry} error="Please select a country." required />
+    </div>
+  );
+}
+
+function CountrySelectorNoLabelDemo() {
+  const [country, setCountry] = useState('US');
+  return (
+    <div className="w-full max-w-xs mx-auto p-4">
+      <CountrySelector value={country} onChange={setCountry} label="" />
     </div>
   );
 }

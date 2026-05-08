@@ -7,7 +7,7 @@ import {
   faCubes,
   faBuilding,
   faComments,
-  faSparkles,
+  faBolt,
 } from '@fortawesome/free-solid-svg-icons';
 import { MODELS, CHAT_SESSIONS } from './ai.data';
 
@@ -45,7 +45,7 @@ export default function AIThemePage() {
         <div className="mx-auto max-w-7xl px-6 pt-16 pb-20">
           <div className="max-w-3xl mx-auto text-center space-y-6 motion-safe:animate-[ai-fade_0.8s_ease-out]">
             <Badge variant="primary" size="sm">
-              <FontAwesomeIcon icon={faSparkles} className="w-3 h-3" aria-hidden="true" />
+              <FontAwesomeIcon icon={faBolt} className="w-3 h-3" aria-hidden="true" />
               6 models available now
             </Badge>
             <h1 className="text-4xl sm:text-5xl font-bold text-text-primary leading-tight tracking-tight">

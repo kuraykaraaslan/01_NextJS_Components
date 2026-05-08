@@ -53,7 +53,7 @@ export default async function RestaurantDetailPage({ params }: Props) {
         aria-hidden="true"
       />
 
-      <div className="mx-auto max-w-7xl px-6 -mt-10">
+      <div className="mx-auto max-w-7xl px-6 -mt-10 relative z-10">
         <div className="bg-surface-base rounded-2xl border border-border shadow-md p-6 flex flex-col sm:flex-row sm:items-end gap-4 mb-8">
           <div className="flex-1 min-w-0 space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
@@ -123,7 +123,6 @@ export default async function RestaurantDetailPage({ params }: Props) {
                       isVegan: item.isVegan,
                       status: item.status,
                     }}
-                    onAddToCart={() => {}}
                   />
                 ))}
               </div>

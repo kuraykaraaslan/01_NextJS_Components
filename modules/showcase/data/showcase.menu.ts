@@ -119,6 +119,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'common-geo-point-display',           title: 'GeoPointDisplay',          category: 'Domain', abbr: 'GP', since: '2025-04', status: 'beta' },
       { id: 'common-processing-status-indicator', title: 'ProcessingStatusIndicator',category: 'Domain', abbr: 'PI', since: '2025-04' },
       { id: 'common-currency-selector',           title: 'CurrencySelector',         category: 'Domain', abbr: 'CS', since: '2025-04' },
+      { id: 'common-country-selector',            title: 'CountrySelector',           category: 'Domain', abbr: 'Co', since: '2026-05' },
       { id: 'common-direction-provider',          title: 'DirectionProvider',        category: 'Domain', abbr: 'DP', since: '2025-04' },
       { id: 'common-credit-card-visual',          title: 'CreditCardVisual',         category: 'Domain', abbr: 'CV', since: '2025-05', status: 'beta' },
       { id: 'common-credit-card-form',            title: 'CreditCardForm',           category: 'Domain', abbr: 'CF', since: '2025-05', status: 'beta' },

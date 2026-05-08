@@ -12,7 +12,7 @@ import {
   faCity,
   faHome,
   faWarehouse,
-  faTrees,
+  faTree,
   faChartLine,
   faBriefcase,
 } from '@fortawesome/free-solid-svg-icons';
@@ -30,7 +30,7 @@ const TYPE_META: Record<PropertyType, { label: string; icon: typeof faHome }> = 
   APARTMENT:  { label: 'Apartments',  icon: faBuilding   },
   HOUSE:      { label: 'Houses',      icon: faHome       },
   VILLA:      { label: 'Villas',      icon: faHome       },
-  LAND:       { label: 'Land',        icon: faTrees      },
+  LAND:       { label: 'Land',        icon: faTree       },
   COMMERCIAL: { label: 'Commercial',  icon: faWarehouse  },
   OFFICE:     { label: 'Office',      icon: faBriefcase  },
 };
