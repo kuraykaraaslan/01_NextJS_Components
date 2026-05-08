@@ -23,12 +23,12 @@ const layers = [
 ];
 
 const themes: { label: string; href?: string; desc: string; soon?: boolean }[] = [
-  { label: 'Blog',            href: '/theme/blog',   desc: 'Editorial content publishing' },
-  { label: 'Event Platform',  href: '/theme/event',  desc: 'Events, tickets & venue management' },
-  { label: 'E-commerce Shop', desc: 'Product catalog & checkout',    soon: true },
-  { label: 'News Site',       desc: 'Breaking news & article feeds',  soon: true },
-  { label: 'Vehicle Rental',  desc: 'Moovy — mobility booking UI',   soon: true },
-  { label: 'SaaS Dashboard',  desc: 'Metrics, billing & team admin', soon: true },
+  { label: 'Blog',            href: '/theme/blog',    desc: 'Editorial content publishing' },
+  { label: 'Event Platform',  href: '/theme/event',   desc: 'Events, tickets & venue management' },
+  { label: 'SaaS Landing',    href: '/theme/landing', desc: 'Marketing site with pricing & hero' },
+  { label: 'E-commerce Shop', desc: 'Product catalog & checkout',   soon: true },
+  { label: 'News Site',       desc: 'Breaking news & article feeds', soon: true },
+  { label: 'Vehicle Rental',  desc: 'Moovy — mobility booking UI',  soon: true },
 ];
 
 export function HomePanel() {

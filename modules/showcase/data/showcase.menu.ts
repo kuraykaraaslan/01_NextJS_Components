@@ -173,6 +173,27 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'Domain — Landing',
+    collapsible: true,
+    sectionStart: 'Domain — Landing',
+    items: [
+      { id: 'landing-hero-section',        title: 'HeroSection',        category: 'Domain', abbr: 'HS', since: '2026-05' },
+      { id: 'landing-feature-card',        title: 'FeatureCard',        category: 'Domain', abbr: 'FC', since: '2026-05' },
+      { id: 'landing-feature-grid',        title: 'FeatureGrid',        category: 'Domain', abbr: 'FG', since: '2026-05' },
+      { id: 'landing-pricing-plan-card',   title: 'PricingPlanCard',    category: 'Domain', abbr: 'PP', since: '2026-05' },
+      { id: 'landing-pricing-grid',        title: 'PricingGrid',        category: 'Domain', abbr: 'PG', since: '2026-05' },
+      { id: 'landing-testimonial-card',    title: 'TestimonialCard',    category: 'Domain', abbr: 'TC', since: '2026-05' },
+      { id: 'landing-testimonial-grid',    title: 'TestimonialGrid',    category: 'Domain', abbr: 'TG', since: '2026-05' },
+      { id: 'landing-faq-accordion',       title: 'FaqAccordion',       category: 'Domain', abbr: 'FA', since: '2026-05' },
+      { id: 'landing-stats-bar',           title: 'StatsBar',           category: 'Domain', abbr: 'SB', since: '2026-05' },
+      { id: 'landing-team-member-card',    title: 'TeamMemberCard',     category: 'Domain', abbr: 'TM', since: '2026-05' },
+      { id: 'landing-partner-logos-strip', title: 'PartnerLogosStrip',  category: 'Domain', abbr: 'PL', since: '2026-05' },
+      { id: 'landing-how-it-works',        title: 'HowItWorksSection',  category: 'Domain', abbr: 'HW', since: '2026-05' },
+      { id: 'landing-announcement-bar',    title: 'AnnouncementBar',    category: 'Domain', abbr: 'AB', since: '2026-05' },
+      { id: 'landing-mega-menu',           title: 'MegaMenu',           category: 'Domain', abbr: 'MM', since: '2026-05' },
+    ],
+  },
+  {
     label: 'Domain — API Doc',
     collapsible: true,
     sectionStart: 'Domain — API Doc',
@@ -221,10 +242,11 @@ const NAV_GROUPS: NavGroup[] = [
     collapsible: true,
     sectionStart: 'Themes',
     items: [
-      { id: 'common',  title: 'Common Theme',  category: 'Theme', abbr: 'CT', href: '/theme/common',  since: '2025-04' },
-      { id: 'blog',    title: 'Blog Theme',    category: 'Theme', abbr: 'BT', href: '/theme/blog',    since: '2025-04' },
-      { id: 'event',   title: 'Event Theme',   category: 'Theme', abbr: 'ET', href: '/theme/event',   since: '2025-04' },
-      { id: 'api-doc', title: 'API Doc Theme', category: 'Theme', abbr: 'AD', href: '/theme/api-doc', since: '2025-05' },
+      { id: 'common',  title: 'Common Theme',  category: 'Theme', abbr: 'CT', href: '/theme/common',   since: '2025-04' },
+      { id: 'blog',    title: 'Blog Theme',    category: 'Theme', abbr: 'BT', href: '/theme/blog',     since: '2025-04' },
+      { id: 'event',   title: 'Event Theme',   category: 'Theme', abbr: 'ET', href: '/theme/event',    since: '2025-04' },
+      { id: 'api-doc', title: 'API Doc Theme', category: 'Theme', abbr: 'AD', href: '/theme/api-doc',  since: '2025-05' },
+      { id: 'landing', title: 'Landing Theme', category: 'Theme', abbr: 'LT', href: '/theme/landing',  since: '2026-05' },
     ],
   }
 ];
