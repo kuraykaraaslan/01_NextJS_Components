@@ -58,7 +58,7 @@ export function TicketRowMeta({ entry, compact }: MetaProps) {
 
 export function TicketRowActions({ entry, compact }: MetaProps) {
   const canPrint = entry.ticket.status === 'VALID';
-  const shareUrl = `/shared-ticket/${entry.ticket.ticketId}`;
+  const shareUrl = `/theme/event/shared-ticket/${entry.ticket.ticketId}`;
   return (
     <div className={cn('flex items-center shrink-0', compact ? 'gap-1' : 'gap-1.5')}>
       {canPrint && (

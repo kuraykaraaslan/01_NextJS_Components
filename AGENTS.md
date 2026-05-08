@@ -249,12 +249,17 @@ Each theme typically covers:
 
 ### Adding a new theme
 
-1. Create `app/theme/<vertical>/` directory.
-2. Write `layout.tsx` (header + footer, `'use client'`).
-3. Write `page.tsx` (homepage, Server Component).
-4. Add sub-pages as needed (`<section>/page.tsx`, `[slug]/page.tsx`).
-5. Put all sample data in `<vertical>.data.ts` (or per-section `*.data.ts` files).
-6. Register the theme in the table above.
+**Required order — do not skip or reorder steps:**
+
+1. **Types** — Define Zod schemas and TypeScript types in `modules/domain/<vertical>/types.ts`.
+2. **Domain components** — Build all components under `modules/domain/<vertical>/`.
+3. **Component showcase** — For each new domain component:
+   - Add a `ShowcaseComponent` entry with at least 2 variants in `modules/showcase/data/sections/domain-<vertical>.showcase.tsx` (create the file if it does not exist).
+   - Import and spread the builder in `modules/showcase/data/showcase.data.tsx`.
+   - Add every component to `showcase.menu.ts` under a `'Domain'` category group — the sidebar will not show it otherwise.
+4. **Theme pages** — Create `app/theme/<vertical>/` with `layout.tsx`, `page.tsx`, and sub-pages. All sample data goes in `<vertical>.data.ts`.
+5. **Theme showcase entry** — Add a `ShowcaseComponent` entry (category `'Domain'`, or a dedicated `'Theme'` category if one exists) that links to the live theme route. Register it in `showcase.menu.ts` so it appears in the sidebar alongside the component entries for the same vertical.
+6. **Register the theme** in the Existing themes table above.
 
 ---
 
