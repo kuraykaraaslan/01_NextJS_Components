@@ -22,13 +22,21 @@ const layers = [
   { num: '5', path: 'app/theme/',        desc: 'Full-page multi-product demos',                color: 'bg-error-subtle text-error-fg' },
 ];
 
-const themes: { label: string; href?: string; desc: string; soon?: boolean }[] = [
-  { label: 'Blog',            href: '/theme/blog',    desc: 'Editorial content publishing' },
-  { label: 'Event Platform',  href: '/theme/event',   desc: 'Events, tickets & venue management' },
-  { label: 'SaaS Landing',    href: '/theme/landing', desc: 'Marketing site with pricing & hero' },
-  { label: 'E-commerce Shop', desc: 'Product catalog & checkout',   soon: true },
-  { label: 'News Site',       desc: 'Breaking news & article feeds', soon: true },
-  { label: 'Vehicle Rental',  desc: 'Moovy — mobility booking UI',  soon: true },
+const themes: { label: string; href: string; desc: string }[] = [
+  { label: 'AI Playground',   href: '/theme/ai',          desc: 'Chat & content generation interface' },
+  { label: 'API Docs',        href: '/theme/api-doc',     desc: 'Developer API documentation portal' },
+  { label: 'Blog',            href: '/theme/blog',        desc: 'Editorial content publishing' },
+  { label: 'E-commerce',      href: '/theme/commerce',    desc: 'Product catalog & checkout' },
+  { label: 'Common Pages',    href: '/theme/common',      desc: 'Auth, account & shared UI patterns' },
+  { label: 'Event Platform',  href: '/theme/event',       desc: 'Events, tickets & venue management' },
+  { label: 'Fintech',         href: '/theme/fintech',     desc: 'Financial dashboard & transactions' },
+  { label: 'Food Delivery',   href: '/theme/food',        desc: 'Restaurant ordering & delivery' },
+  { label: 'Forum',           href: '/theme/forum',       desc: 'Community discussion & Q&A' },
+  { label: 'Jobs Board',      href: '/theme/jobs',        desc: 'Job listings & career portal' },
+  { label: 'SaaS Landing',    href: '/theme/landing',     desc: 'Marketing site with pricing & hero' },
+  { label: 'Media Platform',  href: '/theme/media',       desc: 'Video & media streaming' },
+  { label: 'Real Estate',     href: '/theme/real-estate', desc: 'Property listings & search' },
+  { label: 'Travel',          href: '/theme/travel',      desc: 'Flight & hotel booking' },
 ];
 
 export function HomePanel() {
@@ -148,35 +156,21 @@ export function HomePanel() {
           Live Themes
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {themes.map((t) =>
-            t.soon ? (
-              <div
-                key={t.label}
-                className="flex flex-col gap-1 rounded-lg border border-border bg-surface-overlay px-4 py-3 opacity-60 cursor-not-allowed"
-                aria-disabled="true"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-text-secondary">{t.label}</span>
-                  <span className="text-[10px] font-medium bg-surface-sunken text-text-disabled rounded px-1.5 py-0.5">Soon</span>
-                </div>
-                <span className="text-xs text-text-secondary">{t.desc}</span>
-              </div>
-            ) : (
-              <a
-                key={t.href}
-                href={t.href}
-                className={cn(
-                  'group flex flex-col gap-1 rounded-lg border border-border bg-surface-base px-4 py-3 transition-colors',
-                  'hover:border-primary hover:bg-primary-subtle',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
-                )}
-              >
-                <span className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors">{t.label}</span>
-                <span className="text-xs text-text-secondary">{t.desc}</span>
-                <span className="text-[10px] font-mono text-text-disabled mt-0.5">{t.href}</span>
-              </a>
-            )
-          )}
+          {themes.map((t) => (
+            <a
+              key={t.href}
+              href={t.href}
+              className={cn(
+                'group flex flex-col gap-1 rounded-lg border border-border bg-surface-base px-4 py-3 transition-colors',
+                'hover:border-primary hover:bg-primary-subtle',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
+              )}
+            >
+              <span className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors">{t.label}</span>
+              <span className="text-xs text-text-secondary">{t.desc}</span>
+              <span className="text-[10px] font-mono text-text-disabled mt-0.5">{t.href}</span>
+            </a>
+          ))}
         </div>
       </div>
 
