@@ -12,6 +12,9 @@ type AppShellProps = {
   mobileSidebarTitle?: string;
   sidebar?: React.ReactNode;
   topbar?: React.ReactNode;
+  asideClassName?: string;
+  headerClassName?: string;
+  mainClassName?: string;
   children?: React.ReactNode;
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
@@ -23,6 +26,9 @@ export function AppShell({
   mobileSidebarTitle = 'Navigation',
   sidebar,
   topbar,
+  asideClassName,
+  headerClassName,
+  mainClassName,
   children,
   className,
   ...rest
@@ -33,7 +39,7 @@ export function AppShell({
   return (
     <div className={cn('flex h-screen overflow-hidden bg-surface-base', className)} {...rest}>
       {sidebar && (
-        <aside className="relative hidden lg:flex flex-col h-full min-h-0 shrink-0 border-r border-border bg-surface-raised">
+        <aside className={cn('relative hidden lg:flex flex-col h-full min-h-0 shrink-0 border-r border-border bg-surface-raised', asideClassName)}>
           {logoContent && (
             <div className={cn(
               'absolute inset-x-0 top-0 z-10 flex items-center h-14 border-b border-border bg-surface-raised overflow-hidden',
@@ -49,7 +55,7 @@ export function AppShell({
       )}
       <div className="flex flex-1 flex-col min-w-0 min-h-0">
         {topbar && (
-          <header className="sticky top-0 z-30 flex items-center h-14 px-4 border-b border-border bg-surface-raised/90 backdrop-blur shrink-0">
+          <header className={cn('sticky top-0 z-30 flex items-center h-14 px-4 border-b border-border bg-surface-raised/90 backdrop-blur shrink-0', headerClassName)}>
             {sidebar && (
               <button
                 type="button"
@@ -63,7 +69,7 @@ export function AppShell({
             <div className="flex min-w-0 flex-1">{topbar}</div>
           </header>
         )}
-        <main id="main-content" className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <main id="main-content" className={cn('flex-1 overflow-y-auto p-4 sm:p-6', mainClassName)}>
           {children}
         </main>
       </div>
