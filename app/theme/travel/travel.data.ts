@@ -268,12 +268,12 @@ export const HOTELS: TravelHotel[] = [
 ========================================================= */
 
 export const POPULAR_DESTINATIONS = [
-  { name: 'Istanbul',  code: 'IST', gradient: 'from-red-500 to-orange-400' },
-  { name: 'London',    code: 'LHR', gradient: 'from-blue-600 to-indigo-500' },
-  { name: 'Dubai',     code: 'DXB', gradient: 'from-amber-500 to-yellow-400' },
-  { name: 'Paris',     code: 'CDG', gradient: 'from-pink-500 to-rose-400'   },
-  { name: 'New York',  code: 'JFK', gradient: 'from-slate-600 to-gray-500'  },
-  { name: 'Rome',      code: 'FCO', gradient: 'from-green-600 to-teal-500'  },
+  { name: 'Istanbul', code: 'IST', gradient: 'from-red-500 to-orange-400',  hotelCount: 3200, imageUrl: 'https://picsum.photos/seed/istanbul/300/200'  },
+  { name: 'London',   code: 'LHR', gradient: 'from-blue-600 to-indigo-500', hotelCount: 4800, imageUrl: 'https://picsum.photos/seed/london/300/200'    },
+  { name: 'Dubai',    code: 'DXB', gradient: 'from-amber-500 to-yellow-400',hotelCount: 2100, imageUrl: 'https://picsum.photos/seed/dubai/300/200'     },
+  { name: 'Paris',    code: 'CDG', gradient: 'from-pink-500 to-rose-400',   hotelCount: 5600, imageUrl: 'https://picsum.photos/seed/paris/300/200'     },
+  { name: 'New York', code: 'JFK', gradient: 'from-slate-600 to-gray-500',  hotelCount: 6200, imageUrl: 'https://picsum.photos/seed/newyork/300/200'   },
+  { name: 'Rome',     code: 'FCO', gradient: 'from-green-600 to-teal-500',  hotelCount: 2900, imageUrl: 'https://picsum.photos/seed/rome/300/200'      },
 ];
 
 /* =========================================================

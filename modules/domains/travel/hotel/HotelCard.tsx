@@ -20,6 +20,7 @@ type HotelCardProps = {
     reviewCount?: number | null;
   };
   href?: string;
+  dealBadge?: string;
   className?: string;
 };
 
@@ -39,7 +40,7 @@ function StarRating({ stars }: { stars: number }) {
   );
 }
 
-export function HotelCard({ hotel, href, className }: HotelCardProps) {
+export function HotelCard({ hotel, href, dealBadge, className }: HotelCardProps) {
   const body = (
     <div className="flex flex-col">
       {/* Image */}
@@ -57,6 +58,12 @@ export function HotelCard({ hotel, href, className }: HotelCardProps) {
         )}
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+        {/* Deal badge */}
+        {dealBadge && (
+          <div className="absolute top-2 left-2 bg-error text-text-inverse text-xs font-bold px-2 py-1 rounded-md shadow">
+            {dealBadge}
+          </div>
+        )}
       </div>
 
       {/* Content */}
