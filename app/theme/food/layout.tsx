@@ -10,8 +10,12 @@ import {
   faCartShopping,
   faBars,
   faMagnifyingGlass,
+  faLocationDot,
+  faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faXTwitter as faXTwitterBrand } from '@fortawesome/free-brands-svg-icons';
+
+const CART_ITEM_COUNT = 2;
 
 const NAV_ITEMS = [
   { label: 'Home',        href: '/theme/food',              icon: faUtensils },
@@ -68,14 +72,25 @@ export default function FoodThemeLayout({ children }: { children: React.ReactNod
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="flex items-center gap-4 h-16">
               {/* Logo */}
-              <a href="/theme/food" className="inline-flex items-center gap-2 shrink-0 mr-2">
+              <a href="/theme/food" className="inline-flex items-center gap-2 shrink-0">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-fg">
                   <FontAwesomeIcon icon={faUtensils} className="w-4 h-4" aria-hidden="true" />
                 </span>
-                <span className="text-lg font-extrabold tracking-tight text-text-primary hidden sm:block">
+                <span className="text-base font-extrabold tracking-tight text-text-primary hidden sm:block">
                   Yum<span className="text-primary">Dash</span>
                 </span>
               </a>
+
+              {/* Delivery address chip */}
+              <button
+                type="button"
+                className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-surface-raised text-sm text-text-primary hover:border-border-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+                aria-label="Change delivery address"
+              >
+                <FontAwesomeIcon icon={faLocationDot} className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+                <span className="font-medium">New York, NY</span>
+                <FontAwesomeIcon icon={faChevronDown} className="w-2.5 h-2.5 text-text-secondary" aria-hidden="true" />
+              </button>
 
               {/* Desktop nav */}
               <nav className="hidden md:flex items-center gap-1 flex-1" aria-label="Primary navigation">
@@ -92,25 +107,31 @@ export default function FoodThemeLayout({ children }: { children: React.ReactNod
               </nav>
 
               {/* Desktop search */}
-              <div className="hidden md:flex items-center gap-2 rounded-xl border border-border bg-surface-raised px-3 py-2 w-64 focus-within:ring-2 focus-within:ring-border-focus transition-shadow">
+              <div className="hidden md:flex items-center gap-2 rounded-xl border border-border bg-surface-raised px-3 py-2 w-52 focus-within:ring-2 focus-within:ring-border-focus transition-shadow">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="w-4 h-4 text-text-secondary shrink-0" aria-hidden="true" />
                 <input
                   type="search"
-                  placeholder="Search restaurants…"
+                  placeholder="Search…"
                   className="flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-secondary outline-none"
                   aria-label="Search restaurants"
                 />
               </div>
 
               {/* Cart + mobile hamburger */}
-              <div className="ml-auto flex items-center gap-2 shrink-0">
+              <div className="ml-auto md:ml-0 flex items-center gap-2 shrink-0">
+                {/* Cart with badge */}
                 <a
                   href="/theme/food/cart"
-                  className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border text-sm font-medium text-text-secondary hover:text-text-primary hover:border-border-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
-                  aria-label="Cart"
+                  className="relative hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border text-sm font-medium text-text-secondary hover:text-text-primary hover:border-border-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+                  aria-label={`Cart, ${CART_ITEM_COUNT} items`}
                 >
                   <FontAwesomeIcon icon={faCartShopping} className="w-4 h-4" aria-hidden="true" />
                   <span>Cart</span>
+                  {CART_ITEM_COUNT > 0 && (
+                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-fg text-[10px] font-bold" aria-hidden="true">
+                      {CART_ITEM_COUNT}
+                    </span>
+                  )}
                 </a>
 
                 {/* Mobile hamburger */}

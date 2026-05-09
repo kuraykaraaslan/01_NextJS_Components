@@ -26,7 +26,53 @@ export type RestaurantData = {
   minimumOrderAmount: number;
   deliveryFee: number;
   status: RestaurantStatus;
+  promoText?: string;
 };
+
+export type FoodCategory = {
+  id: string;
+  label: string;
+  cuisineFilter?: string;
+};
+
+export type PromoBanner = {
+  id: string;
+  title: string;
+  subtitle: string;
+  badgeLabel: string;
+};
+
+export const FOOD_CATEGORIES: FoodCategory[] = [
+  { id: 'all',      label: 'All' },
+  { id: 'deals',    label: 'Deals' },
+  { id: 'pizza',    label: 'Pizza',   cuisineFilter: 'Italian' },
+  { id: 'burgers',  label: 'Burgers', cuisineFilter: 'American' },
+  { id: 'japanese', label: 'Japanese', cuisineFilter: 'Japanese' },
+  { id: 'healthy',  label: 'Healthy', cuisineFilter: 'Vegan' },
+  { id: 'indian',   label: 'Indian',  cuisineFilter: 'Indian' },
+  { id: 'mexican',  label: 'Mexican', cuisineFilter: 'Mexican' },
+];
+
+export const PROMO_BANNERS: PromoBanner[] = [
+  {
+    id: 'pb-01',
+    title: 'Free Delivery',
+    subtitle: '$0 delivery fee on your first 5 orders',
+    badgeLabel: 'New users',
+  },
+  {
+    id: 'pb-02',
+    title: '20% Off Italian',
+    subtitle: 'Use code PASTA20 at checkout',
+    badgeLabel: 'Limited time',
+  },
+  {
+    id: 'pb-03',
+    title: 'Double Points',
+    subtitle: 'Earn 2× loyalty points this weekend',
+    badgeLabel: 'Weekend deal',
+  },
+];
 
 export type MenuItemData = {
   menuItemId: string;
@@ -75,6 +121,7 @@ export const RESTAURANTS: RestaurantData[] = [
     minimumOrderAmount: 15,
     deliveryFee: 2.99,
     status: 'ACTIVE',
+    promoText: '20% off',
   },
   {
     restaurantId: 'r-02',
@@ -109,6 +156,7 @@ export const RESTAURANTS: RestaurantData[] = [
     minimumOrderAmount: 12,
     deliveryFee: 1.99,
     status: 'ACTIVE',
+    promoText: 'Free delivery',
   },
   {
     restaurantId: 'r-04',
@@ -160,6 +208,7 @@ export const RESTAURANTS: RestaurantData[] = [
     minimumOrderAmount: 12,
     deliveryFee: 0,
     status: 'ACTIVE',
+    promoText: 'Free delivery',
   },
 ];
 

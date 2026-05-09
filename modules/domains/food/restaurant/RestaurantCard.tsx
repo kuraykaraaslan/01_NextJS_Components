@@ -1,8 +1,7 @@
 'use client';
 import { cn } from '@/libs/utils/cn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faClock } from '@fortawesome/free-solid-svg-icons';
-import { RestaurantStatusBadge } from './RestaurantStatusBadge';
+import { faStar, faClock, faMotorcycle } from '@fortawesome/free-solid-svg-icons';
 import type { RestaurantStatus } from '../types';
 
 type RestaurantCardProps = {
@@ -10,14 +9,14 @@ type RestaurantCardProps = {
     restaurantId: string;
     name: string;
     slug: string;
-    description?: string | null;
     cuisineTypes: string[];
-    address: string;
-    city: string;
     rating?: number;
+    reviewCount?: number;
     deliveryTimeMin?: number;
     deliveryTimeMax?: number;
+    deliveryFee?: number;
     status: RestaurantStatus;
+    promoText?: string;
   };
   href?: string;
   className?: string;
@@ -41,82 +40,70 @@ function getGradient(cuisineTypes: string[]): string {
   return CUISINE_GRADIENTS.default;
 }
 
-function StarRating({ rating }: { rating: number }) {
-  const full = Math.floor(rating);
-  const hasHalf = rating - full >= 0.5;
-  return (
-    <span className="flex items-center gap-1 text-warning">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <FontAwesomeIcon
-          key={i}
-          icon={faStar}
-          className={cn(
-            'w-3 h-3',
-            i < full ? 'text-warning' : hasHalf && i === full ? 'text-warning opacity-50' : 'text-border-strong'
-          )}
-          aria-hidden="true"
-        />
-      ))}
-      <span className="text-xs font-medium text-text-secondary ml-0.5">{rating.toFixed(1)}</span>
-    </span>
-  );
-}
-
 export function RestaurantCard({ restaurant, href, className }: RestaurantCardProps) {
   const gradient = getGradient(restaurant.cuisineTypes);
+  const isOpen = restaurant.status === 'ACTIVE';
 
   const body = (
     <div className="flex flex-col overflow-hidden h-full">
-      {/* Image placeholder */}
-      <div className={cn('h-36 bg-gradient-to-br flex-shrink-0', gradient)} aria-hidden="true" />
-
-      <div className="p-4 flex flex-col gap-3 flex-1">
-        {/* Name + status */}
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="text-base font-semibold text-text-primary line-clamp-1 leading-snug flex-1">
-            {restaurant.name}
-          </h3>
-          <RestaurantStatusBadge status={restaurant.status} size="sm" />
-        </div>
-
-        {/* Description */}
-        {restaurant.description && (
-          <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
-            {restaurant.description}
-          </p>
+      {/* Image / gradient cover */}
+      <div className={cn('relative h-44 bg-gradient-to-br shrink-0', gradient)} aria-hidden="true">
+        {/* Promo badge */}
+        {restaurant.promoText && (
+          <span className="absolute top-3 left-3 inline-block rounded-md bg-[var(--text-primary)] px-2 py-1 text-xs font-bold text-[var(--surface-base)] tracking-wide">
+            {restaurant.promoText}
+          </span>
         )}
-
-        {/* Cuisine tags */}
-        {restaurant.cuisineTypes.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {restaurant.cuisineTypes.slice(0, 3).map((c) => (
-              <span
-                key={c}
-                className="inline-block rounded-full bg-surface-sunken px-2 py-0.5 text-xs text-text-secondary"
-              >
-                {c}
-              </span>
-            ))}
-            {restaurant.cuisineTypes.length > 3 && (
-              <span className="inline-block rounded-full bg-surface-sunken px-2 py-0.5 text-xs text-text-secondary">
-                +{restaurant.cuisineTypes.length - 3}
-              </span>
-            )}
+        {/* Closed overlay */}
+        {!isOpen && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+            <span className="rounded-full bg-surface-base px-3 py-1 text-xs font-semibold text-text-primary">
+              Temporarily closed
+            </span>
           </div>
         )}
+      </div>
 
-        {/* Footer: rating + delivery time */}
-        <div className="mt-auto border-t border-border pt-3 flex items-center justify-between gap-2">
-          {typeof restaurant.rating === 'number' && restaurant.rating > 0 ? (
-            <StarRating rating={restaurant.rating} />
-          ) : (
-            <span className="text-xs text-text-secondary">No ratings yet</span>
+      {/* Info */}
+      <div className="p-3 flex flex-col gap-1">
+        <h3 className="text-sm font-bold text-text-primary line-clamp-1 leading-snug">
+          {restaurant.name}
+        </h3>
+
+        <p className="text-xs text-text-secondary line-clamp-1">
+          {restaurant.cuisineTypes.join(' · ')}
+        </p>
+
+        {/* Metrics row */}
+        <div className="flex items-center gap-1.5 text-xs text-text-secondary mt-0.5 flex-wrap">
+          {typeof restaurant.rating === 'number' && (
+            <>
+              <span className="flex items-center gap-0.5 font-semibold text-text-primary">
+                <FontAwesomeIcon icon={faStar} className="w-3 h-3 text-warning" aria-hidden="true" />
+                {restaurant.rating.toFixed(1)}
+              </span>
+              <span className="text-border-strong" aria-hidden="true">·</span>
+            </>
           )}
 
-          {restaurant.deliveryTimeMin && restaurant.deliveryTimeMax && (
-            <span className="flex items-center gap-1 text-xs text-text-secondary">
-              <FontAwesomeIcon icon={faClock} className="w-3 h-3" aria-hidden="true" />
-              {restaurant.deliveryTimeMin}–{restaurant.deliveryTimeMax} min
+          {restaurant.deliveryTimeMin != null && restaurant.deliveryTimeMax != null && (
+            <>
+              <span className="flex items-center gap-0.5">
+                <FontAwesomeIcon icon={faClock} className="w-3 h-3" aria-hidden="true" />
+                {restaurant.deliveryTimeMin}–{restaurant.deliveryTimeMax} min
+              </span>
+              <span className="text-border-strong" aria-hidden="true">·</span>
+            </>
+          )}
+
+          {typeof restaurant.deliveryFee === 'number' && (
+            <span className="flex items-center gap-0.5">
+              <FontAwesomeIcon icon={faMotorcycle} className="w-3 h-3" aria-hidden="true" />
+              {restaurant.deliveryFee === 0 ? (
+                <span className="text-success font-medium">Free</span>
+              ) : (
+                `$${restaurant.deliveryFee.toFixed(2)}`
+              )}
             </span>
           )}
         </div>
@@ -125,8 +112,9 @@ export function RestaurantCard({ restaurant, href, className }: RestaurantCardPr
   );
 
   const baseClass = cn(
-    'group rounded-xl border border-border bg-surface-raised flex flex-col overflow-hidden h-full',
-    href && 'hover:shadow-md hover:border-border-focus transition-all duration-200',
+    'group rounded-xl border border-border bg-surface-raised flex flex-col overflow-hidden h-full transition-all duration-200',
+    isOpen && href && 'hover:shadow-lg hover:border-border-focus cursor-pointer',
+    !isOpen && 'opacity-70',
     className
   );
 
@@ -135,6 +123,7 @@ export function RestaurantCard({ restaurant, href, className }: RestaurantCardPr
       <a
         href={href}
         className={cn(baseClass, 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus')}
+        aria-label={restaurant.name}
       >
         {body}
       </a>

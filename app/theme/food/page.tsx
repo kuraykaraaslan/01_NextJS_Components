@@ -1,43 +1,36 @@
 import { Button } from '@/modules/ui/Button';
-import { Badge } from '@/modules/ui/Badge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faLocationDot,
   faMagnifyingGlass,
   faArrowRight,
-  faStore,
-  faBoltLightning,
-  faShieldHalved,
+  faTag,
+  faFire,
+  faLeaf,
+  faUtensils,
   faStar,
+  faMotorcycle,
+  faPercent,
+  faMugHot,
 } from '@fortawesome/free-solid-svg-icons';
 import { RestaurantCard } from '@/modules/domains/food/restaurant/RestaurantCard';
-import { RESTAURANTS, CUISINE_TYPES } from './food.data';
+import { RESTAURANTS, FOOD_CATEGORIES, PROMO_BANNERS } from './food.data';
 
-const HOW_IT_WORKS = [
-  {
-    step: 1,
-    icon: faMagnifyingGlass,
-    title: 'Browse restaurants',
-    description: 'Explore hundreds of local restaurants filtered by cuisine, rating, and delivery time.',
-  },
-  {
-    step: 2,
-    icon: faStore,
-    title: 'Choose your meal',
-    description: 'Pick your favourite dishes, customise your order, and add everything to your cart.',
-  },
-  {
-    step: 3,
-    icon: faBoltLightning,
-    title: 'Fast delivery',
-    description: 'Track your order in real time as a courier brings it right to your door.',
-  },
-];
+const CATEGORY_ICONS: Record<string, typeof faTag> = {
+  all:      faUtensils,
+  deals:    faTag,
+  pizza:    faFire,
+  burgers:  faFire,
+  japanese: faStar,
+  healthy:  faLeaf,
+  indian:   faPercent,
+  mexican:  faMugHot,
+};
 
-const STATS = [
-  { label: 'Restaurants',      value: '600+',  icon: faStore },
-  { label: 'Orders delivered', value: '1.2M+', icon: faBoltLightning },
-  { label: 'Avg. rating',      value: '4.7',   icon: faStar },
-  { label: 'Cities covered',   value: '40+',   icon: faShieldHalved },
+const PROMO_GRADIENTS = [
+  'from-primary to-blue-600',
+  'from-orange-500 to-red-500',
+  'from-secondary to-purple-600',
 ];
 
 export default function FoodThemePage() {
@@ -45,95 +38,117 @@ export default function FoodThemePage() {
 
   return (
     <div className="bg-surface-base text-text-primary">
-      <style>{`
-        @keyframes food-fade {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes food-float {
-          0%, 100% { transform: translateY(0); }
-          50%       { transform: translateY(-10px); }
-        }
-      `}</style>
 
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-[radial-gradient(55%_55%_at_70%_-5%,_var(--primary-subtle),_transparent_70%)]" />
-          <div className="absolute -top-20 left-10 h-80 w-80 rounded-full bg-primary/10 blur-3xl motion-safe:animate-[food-float_18s_ease-in-out_infinite]" />
-          <div className="absolute top-32 -right-20 h-64 w-64 rounded-full bg-secondary/10 blur-3xl motion-safe:animate-[food-float_22s_ease-in-out_infinite]" />
-        </div>
+      {/* ── Hero: Delivery / Pickup toggle + address ── */}
+      <section className="border-b border-border bg-surface-base">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14 text-center">
+          {/* Delivery / Pickup toggle */}
+          <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-surface-overlay mb-6">
+            <button
+              type="button"
+              className="px-5 py-2 rounded-lg text-sm font-semibold bg-surface-base text-text-primary shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+            >
+              Delivery
+            </button>
+            <button
+              type="button"
+              className="px-5 py-2 rounded-lg text-sm font-medium text-text-secondary hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+            >
+              Pickup
+            </button>
+          </div>
 
-        <div className="mx-auto max-w-7xl px-6 pt-16 pb-20">
-          <div className="max-w-3xl mx-auto text-center space-y-6 motion-safe:animate-[food-fade_0.8s_ease-out]">
-            <Badge variant="primary" size="sm">Free delivery on your first order</Badge>
-            <h1 className="text-4xl sm:text-5xl font-bold text-text-primary leading-tight tracking-tight">
-              Order Food From Your<br />
-              <span className="text-primary">Favorite Restaurants</span>
-            </h1>
-            <p className="text-lg text-text-secondary max-w-xl mx-auto leading-relaxed">
-              Discover local gems and popular chains. Fresh meals delivered to your door in minutes.
-            </p>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary mb-3 tracking-tight">
+            Order food to your door
+          </h1>
+          <p className="text-text-secondary text-sm sm:text-base mb-8">
+            From the best local restaurants — delivered fast.
+          </p>
 
-            {/* Search */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
-              <div className="flex-1 relative">
-                <FontAwesomeIcon
-                  icon={faMagnifyingGlass}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none"
-                  aria-hidden="true"
-                />
-                <input
-                  type="search"
-                  placeholder="Search restaurants or cuisines…"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-surface-raised text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-border-focus transition"
-                />
-              </div>
-              <Button as="a" href="/theme/food/restaurants" variant="primary" size="lg" className="shrink-0 px-6">
-                Search
-              </Button>
+          {/* Address + Search bar */}
+          <div className="flex flex-col sm:flex-row items-stretch gap-2 max-w-2xl mx-auto">
+            <div className="flex-1 flex items-center gap-2 px-4 py-3 rounded-xl border border-border bg-surface-base shadow-sm focus-within:ring-2 focus-within:ring-border-focus transition">
+              <FontAwesomeIcon icon={faLocationDot} className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+              <input
+                type="text"
+                placeholder="Enter delivery address…"
+                defaultValue="New York, NY 10001"
+                className="flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-secondary outline-none"
+                aria-label="Delivery address"
+              />
             </div>
+            <Button as="a" href="/theme/food/restaurants" variant="primary" size="lg" className="shrink-0 sm:px-8 justify-center">
+              <FontAwesomeIcon icon={faMagnifyingGlass} className="w-4 h-4 mr-2" aria-hidden="true" />
+              Find food
+            </Button>
+          </div>
+        </div>
+      </section>
 
-            {/* Cuisine filters */}
-            <div className="flex flex-wrap justify-center gap-2 pt-2">
-              {CUISINE_TYPES.map((cuisine) => (
+      {/* ── Category scroll ── */}
+      <section className="border-b border-border bg-surface-base">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div
+            className="flex gap-2 overflow-x-auto py-4 scrollbar-hide"
+            role="list"
+            aria-label="Food categories"
+          >
+            {FOOD_CATEGORIES.map((cat, i) => {
+              const icon = CATEGORY_ICONS[cat.id] ?? faUtensils;
+              const isActive = i === 0;
+              return (
                 <a
-                  key={cuisine}
-                  href={`/theme/food/restaurants`}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border border-border bg-surface-raised text-text-secondary hover:border-border-focus hover:text-text-primary transition-colors"
+                  key={cat.id}
+                  href="/theme/food/restaurants"
+                  role="listitem"
+                  className={[
+                    'inline-flex items-center gap-2 shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+                    isActive
+                      ? 'bg-text-primary text-surface-base'
+                      : 'border border-border bg-surface-base text-text-secondary hover:border-border-strong hover:text-text-primary',
+                  ].join(' ')}
                 >
-                  {cuisine}
+                  <FontAwesomeIcon icon={icon} className="w-3.5 h-3.5" aria-hidden="true" />
+                  {cat.label}
                 </a>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── Stats bar ── */}
-      <section className="border-y border-border bg-surface-raised">
-        <div className="mx-auto max-w-7xl px-6 py-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center gap-1 px-4 py-2 text-center">
-                <FontAwesomeIcon icon={stat.icon} className="w-5 h-5 text-primary" aria-hidden="true" />
-                <span className="text-2xl font-bold text-text-primary">{stat.value}</span>
-                <span className="text-xs text-text-secondary">{stat.label}</span>
-              </div>
-            ))}
-          </div>
+      {/* ── Promo banners ── */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-2">
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {PROMO_BANNERS.map((banner, i) => (
+            <a
+              key={banner.id}
+              href="/theme/food/restaurants"
+              className={[
+                'shrink-0 w-64 sm:w-72 rounded-2xl bg-gradient-to-br p-5 flex flex-col gap-2 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus',
+                PROMO_GRADIENTS[i % PROMO_GRADIENTS.length],
+              ].join(' ')}
+            >
+              <span className="inline-block self-start rounded-full bg-white/25 px-2 py-0.5 text-xs font-semibold text-white">
+                {banner.badgeLabel}
+              </span>
+              <p className="text-lg font-extrabold text-white leading-tight">{banner.title}</p>
+              <p className="text-xs text-white/80 leading-snug">{banner.subtitle}</p>
+            </a>
+          ))}
         </div>
       </section>
 
-      {/* ── Featured restaurants ── */}
-      <section className="mx-auto max-w-7xl px-6 py-14">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-text-primary">Featured Restaurants</h2>
+      {/* ── Popular near you ── */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-text-primary">Popular near you</h2>
           <a
             href="/theme/food/restaurants"
-            className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline"
+            className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
           >
-            View all <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />
+            See all
+            <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />
           </a>
         </div>
 
@@ -148,25 +163,45 @@ export default function FoodThemePage() {
         </div>
       </section>
 
-      {/* ── How it works ── */}
-      <section className="bg-surface-raised border-y border-border">
-        <div className="mx-auto max-w-7xl px-6 py-14">
-          <h2 className="text-xl font-semibold text-text-primary text-center mb-10">How YumDash Works</h2>
-          <div className="grid gap-8 sm:grid-cols-3">
-            {HOW_IT_WORKS.map((step) => (
-              <div key={step.step} className="flex flex-col items-center text-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-fg shadow-md">
-                  <FontAwesomeIcon icon={step.icon} className="w-6 h-6" aria-hidden="true" />
+      {/* ── Offers near you ── */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-8">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-text-primary">Offers near you</h2>
+          <a
+            href="/theme/food/restaurants"
+            className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus rounded"
+          >
+            See all
+            <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />
+          </a>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {RESTAURANTS.filter((r) => r.promoText).map((r) => (
+            <RestaurantCard
+              key={r.restaurantId}
+              restaurant={r}
+              href={`/theme/food/restaurants/${r.slug}`}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ── Why YumDash ── */}
+      <section className="border-t border-border bg-surface-raised">
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="grid gap-8 sm:grid-cols-3 text-center">
+            {[
+              { icon: faLocationDot, title: 'Live tracking',   body: 'Follow your order in real time from the restaurant to your door.' },
+              { icon: faMotorcycle,  title: 'Fast delivery',   body: 'Average delivery under 30 minutes from hundreds of local restaurants.' },
+              { icon: faLeaf,        title: 'Fresh every time', body: 'Partners commit to quality standards so your food arrives perfect.' },
+            ].map((item) => (
+              <div key={item.title} className="flex flex-col items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-subtle text-primary">
+                  <FontAwesomeIcon icon={item.icon} className="w-5 h-5" aria-hidden="true" />
                 </div>
-                <div className="space-y-1.5">
-                  <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-subtle text-primary text-xs font-bold">
-                    {step.step}
-                  </div>
-                  <h3 className="text-base font-semibold text-text-primary">{step.title}</h3>
-                  <p className="text-sm text-text-secondary leading-relaxed max-w-xs mx-auto">
-                    {step.description}
-                  </p>
-                </div>
+                <h3 className="text-sm font-bold text-text-primary">{item.title}</h3>
+                <p className="text-xs text-text-secondary leading-relaxed max-w-xs">{item.body}</p>
               </div>
             ))}
           </div>
@@ -174,14 +209,14 @@ export default function FoodThemePage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="rounded-2xl bg-primary px-8 py-10 text-center space-y-4">
-          <h2 className="text-2xl font-bold text-primary-fg">Hungry? Order in seconds.</h2>
-          <p className="text-primary-fg/80 max-w-md mx-auto text-sm leading-relaxed">
-            Join over a million happy customers. Explore menus from your favourite restaurants today.
+      <section className="mx-auto max-w-7xl px-6 py-12">
+        <div className="rounded-2xl bg-[var(--text-primary)] px-8 py-10 text-center space-y-4">
+          <h2 className="text-2xl font-extrabold text-[var(--surface-base)]">Hungry? Let&apos;s go.</h2>
+          <p className="text-[var(--surface-base)]/70 max-w-sm mx-auto text-sm leading-relaxed">
+            Join over a million happy customers ordering from their favourite restaurants every day.
           </p>
           <Button as="a" href="/theme/food/restaurants" variant="secondary" size="lg">
-            Order Now
+            Order now
           </Button>
         </div>
       </section>
