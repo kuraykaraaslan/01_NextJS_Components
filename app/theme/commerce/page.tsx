@@ -1,133 +1,177 @@
 import { Button } from '@/modules/ui/Button';
 import { Badge } from '@/modules/ui/Badge';
+import { Slider } from '@/modules/ui/Slider';
 import { ProductCard } from '@/modules/domains/commerce/product/ProductCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowRight,
-  faBoxOpen,
-  faTags,
-  faUsers,
+  faTruck,
+  faRotateLeft,
+  faShieldHalved,
   faStar,
+  faBolt,
+  faFire,
+  faTag,
 } from '@fortawesome/free-solid-svg-icons';
 import { PRODUCTS, CATEGORIES } from './commerce.data';
 
-const STATS = [
-  { label: 'Products',         value: '2,400+', icon: faBoxOpen },
-  { label: 'Categories',       value: '50+',    icon: faTags    },
-  { label: 'Happy Customers',  value: '18,000+',icon: faUsers   },
+/* ── Hero slides ────────────────────────────────────────── */
+const HERO_SLIDES = [
+  {
+    eyebrow: 'New Season',
+    title: 'Fresh Tech,\nFaster You',
+    subtitle: 'Laptops, headphones, accessories — curated for makers and creators.',
+    cta: 'Shop Electronics',
+    href: '/theme/commerce/products?category=electronics',
+    image: PRODUCTS[0].image,
+    accent: 'var(--success-fg)',
+  },
+  {
+    eyebrow: 'Limited Deals',
+    title: 'Save Up to\n50% Today',
+    subtitle: 'Hand-picked discounts across every category. While stocks last.',
+    cta: 'See All Deals',
+    href: '/theme/commerce/products',
+    image: PRODUCTS[1].image,
+    accent: 'var(--secondary)',
+  },
+  {
+    eyebrow: 'Just Arrived',
+    title: 'Books Worth\nYour Time',
+    subtitle: 'From TypeScript deep-dives to design fundamentals — grow your skills.',
+    cta: 'Browse Books',
+    href: '/theme/commerce/products?category=books',
+    image: PRODUCTS[4].image,
+    accent: 'var(--primary)',
+  },
+];
+
+/* ── Trust pillars ──────────────────────────────────────── */
+const TRUST_PILLARS = [
+  { icon: faTruck,        label: 'Free shipping over $100' },
+  { icon: faRotateLeft,   label: '30-day easy returns' },
+  { icon: faShieldHalved, label: 'Secure checkout' },
+  { icon: faStar,         label: '18 k+ happy customers' },
 ];
 
 export default function CommerceHomePage() {
-  const featuredProducts = PRODUCTS.slice(0, 4);
+  const bestsellers = [...PRODUCTS].sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 4);
+  const deals       = PRODUCTS.filter((p) => p.salePrice != null);
+  const newArrivals = PRODUCTS.slice(4, 8);
 
   return (
     <div className="bg-surface-base text-text-primary">
-      <style>{`
-        @keyframes commerce-fade {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes commerce-float {
-          0%, 100% { transform: translateY(0); }
-          50%       { transform: translateY(-12px); }
-        }
-      `}</style>
 
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-[radial-gradient(55%_55%_at_70%_-5%,_var(--primary-subtle),_transparent_70%)]" />
-          <div className="absolute -top-20 right-0 h-96 w-96 rounded-full bg-primary/10 blur-3xl motion-safe:animate-[commerce-float_18s_ease-in-out_infinite]" />
-          <div className="absolute top-40 -left-20 h-80 w-80 rounded-full bg-secondary/10 blur-3xl motion-safe:animate-[commerce-float_24s_ease-in-out_infinite]" />
-        </div>
+      {/* ── Hero Carousel ── */}
+      <Slider
+        slides={HERO_SLIDES.map((slide) => (
+          <div key={slide.title} className="relative bg-surface-raised overflow-hidden">
+            {/* Accent blob */}
+            <div
+              className="absolute inset-y-0 right-0 w-1/2 opacity-10 rounded-l-[6rem]"
+              style={{ backgroundColor: `${slide.accent}` }}
+              aria-hidden="true"
+            />
 
-        <div className="mx-auto max-w-7xl px-6 pt-16 pb-20">
-          <div className="max-w-2xl space-y-6 motion-safe:animate-[commerce-fade_0.8s_ease-out]">
-            <Badge variant="primary" size="sm">
-              <FontAwesomeIcon icon={faStar} className="w-3 h-3 mr-1" aria-hidden="true" />
-              New arrivals this week
-            </Badge>
-            <h1 className="text-4xl sm:text-5xl font-bold text-text-primary leading-tight tracking-tight">
-              Discover Products<br />
-              <span className="text-primary">You Will Love</span>
-            </h1>
-            <p className="text-lg text-text-secondary leading-relaxed max-w-xl">
-              From cutting-edge electronics to everyday essentials — shop thousands of curated products with fast shipping and easy returns.
-            </p>
+            <div className="mx-auto max-w-7xl px-6 py-16 flex items-center gap-10">
+              {/* Text */}
+              <div className="flex-1 max-w-md space-y-5 z-10">
+                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: slide.accent }}>
+                  {slide.eyebrow}
+                </p>
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-text-primary leading-tight whitespace-pre-line">
+                  {slide.title}
+                </h1>
+                <p className="text-base text-text-secondary leading-relaxed">
+                  {slide.subtitle}
+                </p>
+                <Button
+                  as="a"
+                  href={slide.href}
+                  variant="primary"
+                  size="lg"
+                  iconRight={<FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" />}
+                  className="!bg-[var(--success-fg)] hover:!bg-[var(--success)] !border-[var(--success-fg)]"
+                >
+                  {slide.cta}
+                </Button>
+              </div>
 
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Button
-                as="a"
-                href="/theme/commerce/products"
-                variant="primary"
-                size="lg"
-                iconRight={<FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" />}
-              >
-                Shop Now
-              </Button>
-              <Button
-                as="a"
-                href="/theme/commerce/orders"
-                variant="outline"
-                size="lg"
-              >
-                Track Orders
-              </Button>
+              {/* Product image */}
+              {slide.image && (
+                <div className="hidden md:block w-72 h-52 xl:w-96 xl:h-64 shrink-0 rounded-2xl overflow-hidden shadow-xl">
+                  <img src={slide.image} alt="" className="w-full h-full object-cover" aria-hidden="true" />
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </section>
+        ))}
+        autoPlay
+        autoPlayInterval={5000}
+        showDots
+        showArrows
+        loop
+        className="rounded-none border-b border-border"
+      />
 
-      {/* ── Stats bar ── */}
-      <section className="border-y border-border bg-surface-raised">
-        <div className="mx-auto max-w-7xl px-6 py-6">
-          <div className="grid grid-cols-3 divide-x divide-border">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center gap-1 px-4 text-center">
-                <FontAwesomeIcon icon={stat.icon} className="w-5 h-5 text-primary" aria-hidden="true" />
-                <span className="text-2xl font-bold text-text-primary">{stat.value}</span>
-                <span className="text-xs text-text-secondary">{stat.label}</span>
-              </div>
+      {/* ── Trust strip ── */}
+      <div className="border-b border-border bg-surface-raised">
+        <div className="mx-auto max-w-7xl px-6">
+          <ul className="flex flex-wrap justify-center sm:justify-between divide-y sm:divide-y-0 sm:divide-x divide-border">
+            {TRUST_PILLARS.map((p) => (
+              <li key={p.label} className="flex items-center gap-2 px-5 py-3 text-xs text-text-secondary">
+                <FontAwesomeIcon icon={p.icon} className="w-4 h-4 text-[var(--success-fg)] shrink-0" aria-hidden="true" />
+                {p.label}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
-      </section>
+      </div>
 
-      {/* ── Category filter ── */}
-      <section className="mx-auto max-w-7xl px-6 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-text-primary">Browse Categories</h2>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <a
-            href="/theme/commerce/products"
-            className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border border-primary bg-primary-subtle text-primary hover:bg-primary hover:text-primary-fg transition-colors"
-          >
-            All
-          </a>
+      {/* ── Category cards ── */}
+      <section className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="text-xl font-bold text-text-primary mb-6">Shop by Category</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {CATEGORIES.map((cat) => (
             <a
               key={cat.categoryId}
               href={`/theme/commerce/products?category=${cat.slug}`}
-              className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border border-border bg-surface-raised text-text-secondary hover:border-border-focus hover:text-text-primary transition-colors"
+              className="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-surface-sunken block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
             >
-              {cat.title}
+              {cat.image && (
+                <img
+                  src={cat.image}
+                  alt={cat.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              )}
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-3">
+                <p className="text-sm font-semibold text-white">{cat.title}</p>
+                <p className="text-[10px] text-white/70 mt-0.5 flex items-center gap-1">
+                  Shop now
+                  <FontAwesomeIcon icon={faArrowRight} className="w-2.5 h-2.5" aria-hidden="true" />
+                </p>
+              </div>
             </a>
           ))}
         </div>
       </section>
 
-      {/* ── Featured products ── */}
-      <section className="mx-auto max-w-7xl px-6 pb-14">
+      {/* ── Best Sellers ── */}
+      <section className="mx-auto max-w-7xl px-6 pb-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-text-primary">Featured Products</h2>
-          <a href="/theme/commerce/products" className="flex items-center gap-1.5 text-sm text-primary font-medium hover:underline">
-            View all <FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" aria-hidden="true" />
+          <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <FontAwesomeIcon icon={faFire} className="w-5 h-5 text-error" aria-hidden="true" />
+            Best Sellers
+          </h2>
+          <a href="/theme/commerce/products" className="text-sm text-[var(--success-fg)] font-medium hover:underline flex items-center gap-1">
+            View all <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3" aria-hidden="true" />
           </a>
         </div>
-
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featuredProducts.map((product) => (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {bestsellers.map((product) => (
             <ProductCard
               key={product.productId}
               product={product}
@@ -137,21 +181,76 @@ export default function CommerceHomePage() {
         </div>
       </section>
 
-      {/* ── CTA banner ── */}
-      <section className="mx-auto max-w-7xl px-6 pb-16">
-        <div className="rounded-2xl bg-primary px-8 py-10 text-center space-y-4">
-          <h2 className="text-2xl font-bold text-primary-fg">Ready to start shopping?</h2>
-          <p className="text-primary-fg/80 max-w-md mx-auto text-sm leading-relaxed">
-            Join 18,000+ happy customers. Free shipping on orders over $100. Easy 30-day returns.
-          </p>
+      {/* ── Promo banner ── */}
+      <section className="mx-auto max-w-7xl px-6 pb-12">
+        <div className="rounded-2xl bg-[var(--success-fg)] px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 text-center sm:text-left">
+            <Badge variant="warning" size="sm">
+              <FontAwesomeIcon icon={faTruck} className="w-3 h-3 mr-1" aria-hidden="true" />
+              Free Shipping
+            </Badge>
+            <h2 className="text-2xl font-extrabold text-[var(--text-inverse)]">
+              Orders over $100 — always free
+            </h2>
+            <p className="text-sm text-[var(--success-subtle)] leading-relaxed max-w-sm">
+              No membership needed. No minimum fees. Just fast, free delivery on thousands of items.
+            </p>
+          </div>
           <Button
             as="a"
             href="/theme/commerce/products"
             variant="secondary"
             size="lg"
+            iconRight={<FontAwesomeIcon icon={faArrowRight} className="w-3.5 h-3.5" />}
           >
-            Explore All Products
+            Start Shopping
           </Button>
+        </div>
+      </section>
+
+      {/* ── Today's Deals ── */}
+      {deals.length > 0 && (
+        <section className="mx-auto max-w-7xl px-6 pb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+              <FontAwesomeIcon icon={faTag} className="w-5 h-5 text-[var(--warning)]" aria-hidden="true" />
+              {"Today's Deals"}
+            </h2>
+            <a href="/theme/commerce/products" className="text-sm text-[var(--success-fg)] font-medium hover:underline flex items-center gap-1">
+              All deals <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3" aria-hidden="true" />
+            </a>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {deals.map((product) => (
+              <ProductCard
+                key={product.productId}
+                product={product}
+                href={`/theme/commerce/products/${product.slug}`}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── New Arrivals ── */}
+      <section className="mx-auto max-w-7xl px-6 pb-16">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <FontAwesomeIcon icon={faBolt} className="w-5 h-5 text-[var(--success)]" aria-hidden="true" />
+            New Arrivals
+          </h2>
+          <a href="/theme/commerce/products" className="text-sm text-[var(--success-fg)] font-medium hover:underline flex items-center gap-1">
+            View all <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3" aria-hidden="true" />
+          </a>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {newArrivals.map((product) => (
+            <ProductCard
+              key={product.productId}
+              product={product}
+              href={`/theme/commerce/products/${product.slug}`}
+            />
+          ))}
         </div>
       </section>
     </div>

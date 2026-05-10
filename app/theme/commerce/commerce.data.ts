@@ -69,6 +69,8 @@ export type CommerceProduct = {
   currency: string;
   stockStatus: StockStatus;
   tags: string[];
+  rating: number;
+  reviewCount: number;
 };
 
 export const PRODUCTS: CommerceProduct[] = [
@@ -86,6 +88,8 @@ export const PRODUCTS: CommerceProduct[] = [
     currency: 'USD',
     stockStatus: 'IN_STOCK',
     tags: ['Apple', 'Laptop', 'M3', 'MacBook'],
+    rating: 4.7,
+    reviewCount: 2847,
   },
   {
     productId: 'p-02',
@@ -102,6 +106,8 @@ export const PRODUCTS: CommerceProduct[] = [
     currency: 'USD',
     stockStatus: 'LOW_STOCK',
     tags: ['Sony', 'Headphones', 'Audio', 'Noise Cancelling'],
+    rating: 4.6,
+    reviewCount: 5392,
   },
   {
     productId: 'p-03',
@@ -117,6 +123,8 @@ export const PRODUCTS: CommerceProduct[] = [
     currency: 'USD',
     stockStatus: 'IN_STOCK',
     tags: ['Clothing', 'Cotton', 'T-Shirt', 'Organic'],
+    rating: 4.2,
+    reviewCount: 892,
   },
   {
     productId: 'p-04',
@@ -133,6 +141,8 @@ export const PRODUCTS: CommerceProduct[] = [
     currency: 'USD',
     stockStatus: 'IN_STOCK',
     tags: ['SaaS', 'E-commerce', 'Annual', 'Pro'],
+    rating: 4.8,
+    reviewCount: 364,
   },
   {
     productId: 'p-05',
@@ -148,6 +158,8 @@ export const PRODUCTS: CommerceProduct[] = [
     currency: 'USD',
     stockStatus: 'IN_STOCK',
     tags: ['Book', 'TypeScript', 'Programming', 'E-book'],
+    rating: 4.9,
+    reviewCount: 1203,
   },
   {
     productId: 'p-06',
@@ -163,6 +175,8 @@ export const PRODUCTS: CommerceProduct[] = [
     currency: 'USD',
     stockStatus: 'OUT_OF_STOCK',
     tags: ['Keyboard', 'Mechanical', 'TKL', 'RGB'],
+    rating: 4.4,
+    reviewCount: 2156,
   },
   {
     productId: 'p-07',
@@ -178,6 +192,8 @@ export const PRODUCTS: CommerceProduct[] = [
     currency: 'USD',
     stockStatus: 'IN_STOCK',
     tags: ['Design', 'Consultation', 'UI/UX', 'Service'],
+    rating: 5.0,
+    reviewCount: 47,
   },
   {
     productId: 'p-08',
@@ -194,6 +210,8 @@ export const PRODUCTS: CommerceProduct[] = [
     currency: 'USD',
     stockStatus: 'BACKORDER',
     tags: ['Clothing', 'Trousers', 'Slim Fit', 'Chino'],
+    rating: 4.1,
+    reviewCount: 678,
   },
 ];
 
