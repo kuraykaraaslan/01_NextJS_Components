@@ -1,6 +1,35 @@
 import type { TopicStatus, ForumPostStatus } from '@/modules/domains/forum/types';
 
 /* =========================================================
+   GROUPS
+========================================================= */
+
+export type ForumGroup = {
+  groupId: string;
+  title: string;
+  categoryIds: string[];
+};
+
+export const CATEGORY_GROUPS: ForumGroup[] = [
+  { groupId: 'grp-01', title: 'Community', categoryIds: ['cat-01', 'cat-02', 'cat-03'] },
+  { groupId: 'grp-02', title: 'Off the Clock', categoryIds: ['cat-04', 'cat-05'] },
+];
+
+/* =========================================================
+   BOARD STATISTICS
+========================================================= */
+
+export const BOARD_STATS = {
+  totalTopics: 784,
+  totalPosts: 10682,
+  totalMembers: 18402,
+  newestMember: 'pixel_wizard',
+  onlineCount: 23,
+  registeredOnline: 5,
+  guestOnline: 18,
+};
+
+/* =========================================================
    CATEGORIES
 ========================================================= */
 
@@ -12,6 +41,7 @@ export type ForumCategoryData = {
   topicCount: number;
   postCount: number;
   lastActivityAt: string;
+  moderators?: string[];
 };
 
 export const FORUM_CATEGORIES: ForumCategoryData[] = [
@@ -23,6 +53,7 @@ export const FORUM_CATEGORIES: ForumCategoryData[] = [
     topicCount: 342,
     postCount: 4810,
     lastActivityAt: '2026-05-08T09:12:00Z',
+    moderators: ['admin', 'mod_jane'],
   },
   {
     categoryId: 'cat-02',
@@ -32,6 +63,7 @@ export const FORUM_CATEGORIES: ForumCategoryData[] = [
     topicCount: 198,
     postCount: 3204,
     lastActivityAt: '2026-05-08T08:45:00Z',
+    moderators: ['admin', 'veteran_member'],
   },
   {
     categoryId: 'cat-03',
@@ -41,6 +73,7 @@ export const FORUM_CATEGORIES: ForumCategoryData[] = [
     topicCount: 87,
     postCount: 912,
     lastActivityAt: '2026-05-07T22:30:00Z',
+    moderators: ['mod_jane'],
   },
   {
     categoryId: 'cat-04',
@@ -50,6 +83,7 @@ export const FORUM_CATEGORIES: ForumCategoryData[] = [
     topicCount: 134,
     postCount: 1567,
     lastActivityAt: '2026-05-07T18:00:00Z',
+    moderators: ['admin'],
   },
   {
     categoryId: 'cat-05',
@@ -59,6 +93,7 @@ export const FORUM_CATEGORIES: ForumCategoryData[] = [
     topicCount: 23,
     postCount: 189,
     lastActivityAt: '2026-05-06T12:00:00Z',
+    moderators: ['admin', 'moderator_team'],
   },
 ];
 
