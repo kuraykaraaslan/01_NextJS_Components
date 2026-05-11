@@ -15,7 +15,7 @@
   "permissions": {
     "allow": [
       "Bash(curl -s http://localhost:3000)",
-      "Bash(grep -n \"// ─── \\\\|^  {$\\\\|^    {$\" /home/kuray/01_NextJS_Components/modules/showcase/data/showcase.data.tsx)",
+      "Bash(grep -n \"// ─── \\\\|^  {$\\\\|^    {$\" /home/kuray/next_js_components/modules/showcase/data/showcase.data.tsx)",
       "Bash(echo \"EXIT:$?\")",
       "Bash(xargs ls *)"
     ],

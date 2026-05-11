@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function GithubButton() {
     function onClick() {
-        window.open("https://github.com/kuraykaraaslan/01_NextJS_Components", "_blank");
+        window.open("https://github.com/kuraykaraaslan/next_js_components", "_blank");
     }
 
     return (
