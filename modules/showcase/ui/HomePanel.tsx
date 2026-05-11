@@ -38,6 +38,7 @@ const themes: { label: string; href: string; desc: string; screenshot: string }[
   { label: 'Media Platform',  href: '/theme/media',       desc: 'Video & media streaming',                   screenshot: '/assets/img/screenshot-media.png' },
   { label: 'Real Estate',     href: '/theme/real-estate', desc: 'Property listings & search',                screenshot: '/assets/img/screenshot-real-estate.png' },
   { label: 'Travel',          href: '/theme/travel',      desc: 'Flight & hotel booking',                    screenshot: '/assets/img/screenshot-travel.png' },
+  { label: 'Social',          href: '/theme/social',      desc: 'Social network with feed, chat & marketplace', screenshot: '/assets/img/screenshot-social.png' },
 ];
 
 export function HomePanel() {
