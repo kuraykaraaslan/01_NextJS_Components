@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { cn } from '@/libs/utils/cn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -22,21 +23,21 @@ const layers = [
   { num: '5', path: 'app/theme/',        desc: 'Full-page multi-product demos',                color: 'bg-error-subtle text-error-fg' },
 ];
 
-const themes: { label: string; href: string; desc: string }[] = [
-  { label: 'AI Playground',   href: '/theme/ai',          desc: 'Chat & content generation interface' },
-  { label: 'API Docs',        href: '/theme/api-doc',     desc: 'Developer API documentation portal' },
-  { label: 'Blog',            href: '/theme/blog',        desc: 'Editorial content publishing' },
-  { label: 'E-commerce',      href: '/theme/commerce',    desc: 'Product catalog & checkout' },
-  { label: 'Common Pages',    href: '/theme/common',      desc: 'Auth, account & shared UI patterns' },
-  { label: 'Event Platform',  href: '/theme/event',       desc: 'Events, tickets & venue management' },
-  { label: 'Fintech',         href: '/theme/fintech',     desc: 'Financial dashboard & transactions' },
-  { label: 'Food Delivery',   href: '/theme/food',        desc: 'Restaurant ordering & delivery' },
-  { label: 'Forum',           href: '/theme/forum',       desc: 'Community discussion & Q&A' },
-  { label: 'Jobs Board',      href: '/theme/jobs',        desc: 'Job listings & career portal' },
-  { label: 'SaaS Landing',    href: '/theme/landing',     desc: 'Marketing site with pricing & hero' },
-  { label: 'Media Platform',  href: '/theme/media',       desc: 'Video & media streaming' },
-  { label: 'Real Estate',     href: '/theme/real-estate', desc: 'Property listings & search' },
-  { label: 'Travel',          href: '/theme/travel',      desc: 'Flight & hotel booking' },
+const themes: { label: string; href: string; desc: string; screenshot: string }[] = [
+  { label: 'AI Playground',   href: '/theme/ai',          desc: 'Chat & content generation interface',       screenshot: '/assets/img/screenshot-ai.png' },
+  { label: 'API Docs',        href: '/theme/api-doc',     desc: 'Developer API documentation portal',        screenshot: '/assets/img/screenshot-api-doc.png' },
+  { label: 'Blog',            href: '/theme/blog',        desc: 'Editorial content publishing',              screenshot: '/assets/img/screenshot-blog.png' },
+  { label: 'E-commerce',      href: '/theme/commerce',    desc: 'Product catalog & checkout',                screenshot: '/assets/img/screenshot-commerce.png' },
+  { label: 'Common Pages',    href: '/theme/common',      desc: 'Auth, account & shared UI patterns',        screenshot: '/assets/img/screenshot-common.png' },
+  { label: 'Event Platform',  href: '/theme/event',       desc: 'Events, tickets & venue management',        screenshot: '/assets/img/screenshot-event.png' },
+  { label: 'Fintech',         href: '/theme/fintech',     desc: 'Financial dashboard & transactions',        screenshot: '/assets/img/screenshot-fintech.png' },
+  { label: 'Food Delivery',   href: '/theme/food',        desc: 'Restaurant ordering & delivery',            screenshot: '/assets/img/screenshot-food.png' },
+  { label: 'Forum',           href: '/theme/forum',       desc: 'Community discussion & Q&A',                screenshot: '/assets/img/screenshot-forum.png' },
+  { label: 'Jobs Board',      href: '/theme/jobs',        desc: 'Job listings & career portal',              screenshot: '/assets/img/screenshot-jobs.png' },
+  { label: 'SaaS Landing',    href: '/theme/landing',     desc: 'Marketing site with pricing & hero',        screenshot: '/assets/img/screenshot-landing.png' },
+  { label: 'Media Platform',  href: '/theme/media',       desc: 'Video & media streaming',                   screenshot: '/assets/img/screenshot-media.png' },
+  { label: 'Real Estate',     href: '/theme/real-estate', desc: 'Property listings & search',                screenshot: '/assets/img/screenshot-real-estate.png' },
+  { label: 'Travel',          href: '/theme/travel',      desc: 'Flight & hotel booking',                    screenshot: '/assets/img/screenshot-travel.png' },
 ];
 
 export function HomePanel() {
@@ -161,14 +162,25 @@ export function HomePanel() {
               key={t.href}
               href={t.href}
               className={cn(
-                'group flex flex-col gap-1 rounded-lg border border-border bg-surface-base px-4 py-3 transition-colors',
-                'hover:border-primary hover:bg-primary-subtle',
+                'group flex flex-col rounded-lg border border-border bg-surface-base overflow-hidden transition-colors',
+                'hover:border-primary',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus'
               )}
             >
-              <span className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors">{t.label}</span>
-              <span className="text-xs text-text-secondary">{t.desc}</span>
-              <span className="text-[10px] font-mono text-text-disabled mt-0.5">{t.href}</span>
+              <div className="relative w-full aspect-video overflow-hidden bg-surface-sunken">
+                <Image
+                  src={t.screenshot}
+                  alt={t.label}
+                  fill
+                  className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 25vw"
+                />
+              </div>
+              <div className="flex flex-col gap-1 px-4 py-3">
+                <span className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors">{t.label}</span>
+                <span className="text-xs text-text-secondary">{t.desc}</span>
+                <span className="text-[10px] font-mono text-text-disabled mt-0.5">{t.href}</span>
+              </div>
             </a>
           ))}
         </div>
