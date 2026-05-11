@@ -353,6 +353,19 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'Domain — Social',
+    collapsible: true,
+    sectionStart: 'Domain — Social',
+    items: [
+      { id: 'social-post-status-badge',         title: 'PostStatusBadge',         category: 'Domain', abbr: 'PS', since: '2026-05' },
+      { id: 'social-post-privacy-badge',         title: 'PostPrivacyBadge',        category: 'Domain', abbr: 'PP', since: '2026-05' },
+      { id: 'social-post-card',                  title: 'PostCard',                category: 'Domain', abbr: 'PC', since: '2026-05' },
+      { id: 'social-profile-card',               title: 'SocialProfileCard',       category: 'Domain', abbr: 'SC', since: '2026-05' },
+      { id: 'social-notification-item',          title: 'SocialNotificationItem',  category: 'Domain', abbr: 'NI', since: '2026-05' },
+      { id: 'social-marketplace-listing-card',   title: 'MarketplaceListingCard',  category: 'Domain', abbr: 'ML', since: '2026-05' },
+    ],
+  },
+  {
     label: 'Themes',
     collapsible: true,
     sectionStart: 'Themes',
@@ -371,6 +384,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'food',         title: 'Food Theme',         category: 'Theme', abbr: 'FD', href: '/theme/food',          since: '2026-05' },
       { id: 'travel',       title: 'Travel Theme',       category: 'Theme', abbr: 'TV', href: '/theme/travel',        since: '2026-05' },
       { id: 'ai',           title: 'AI Theme',           category: 'Theme', abbr: 'AT', href: '/theme/ai',            since: '2026-05' },
+      { id: 'social',       title: 'Social Theme',       category: 'Theme', abbr: 'SO', href: '/theme/social',         since: '2026-05' },
     ],
   }
 ];

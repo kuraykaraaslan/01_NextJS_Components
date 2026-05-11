@@ -360,7 +360,7 @@ export const ForumUserProfileSchema = z.object({
   userId: IdSchema,
 
   username: z.string(),
-  displayName: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
 
   avatar: z.string().nullable().optional(),
   signature: z.string().nullable().optional(),

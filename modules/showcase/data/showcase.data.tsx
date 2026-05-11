@@ -19,6 +19,7 @@ import { buildRealEstateDomainData } from './sections/domain-real-estate.showcas
 import { buildFoodDomainData } from './sections/domain-food.showcase';
 import { buildTravelDomainData } from './sections/domain-travel.showcase';
 import { buildAIDomainData } from './sections/domain-ai.showcase';
+import { buildSocialDomainData } from './sections/domain-social.showcase';
 
 export function buildShowcaseData() {
   return [
@@ -41,5 +42,6 @@ export function buildShowcaseData() {
     ...buildFoodDomainData(),
     ...buildTravelDomainData(),
     ...buildAIDomainData(),
+    ...buildSocialDomainData(),
   ];
 }
