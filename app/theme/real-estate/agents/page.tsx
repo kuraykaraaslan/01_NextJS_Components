@@ -11,7 +11,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Avatar } from '@/modules/ui/Avatar';
 import { Badge } from '@/modules/ui/Badge';
-import { Button } from '@/modules/ui/Button';
 import { AGENTS, PROPERTIES } from '../real-estate.data';
 
 const STATS = [
@@ -233,13 +232,12 @@ export default function AgentsPage() {
                   >
                     View Profile
                   </a>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => { window.location.href = `mailto:${agent.email}`; }}
+                  <a
+                    href={`mailto:${agent.email}`}
+                    className="inline-flex items-center justify-center rounded-lg bg-primary text-primary-fg text-sm font-medium px-3 py-2 hover:bg-primary-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
                   >
                     Contact
-                  </Button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -254,9 +252,12 @@ export default function AgentsPage() {
           <p className="text-sm text-text-secondary max-w-md mx-auto leading-relaxed">
             Join our network of certified agents and reach thousands of buyers and renters every month.
           </p>
-          <Button variant="primary" size="md">
+          <a
+            href="/theme/real-estate/contact"
+            className="inline-flex items-center justify-center rounded-lg bg-primary text-primary-fg text-sm font-medium px-5 py-2.5 hover:bg-primary-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+          >
             Apply to Join EstateView
-          </Button>
+          </a>
         </div>
       </section>
     </div>
