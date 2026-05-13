@@ -20,6 +20,7 @@ import { buildFoodDomainData } from './sections/domain-food.showcase';
 import { buildTravelDomainData } from './sections/domain-travel.showcase';
 import { buildAIDomainData } from './sections/domain-ai.showcase';
 import { buildSocialDomainData } from './sections/domain-social.showcase';
+import { buildIoTDomainData } from './sections/domain-iot.showcase';
 
 export function buildShowcaseData() {
   return [
@@ -43,5 +44,6 @@ export function buildShowcaseData() {
     ...buildTravelDomainData(),
     ...buildAIDomainData(),
     ...buildSocialDomainData(),
+    ...buildIoTDomainData(),
   ];
 }

@@ -366,6 +366,19 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'Domain — IoT',
+    collapsible: true,
+    sectionStart: 'Domain — IoT',
+    items: [
+      { id: 'iot-device-status-badge',   title: 'DeviceStatusBadge',   category: 'Domain', abbr: 'DS', since: '2026-05' },
+      { id: 'iot-device-type-badge',     title: 'DeviceTypeBadge',     category: 'Domain', abbr: 'DT', since: '2026-05' },
+      { id: 'iot-alert-severity-badge',  title: 'AlertSeverityBadge',  category: 'Domain', abbr: 'AS', since: '2026-05' },
+      { id: 'iot-device-card',           title: 'DeviceCard',          category: 'Domain', abbr: 'DC', since: '2026-05' },
+      { id: 'iot-cloud-workspace-card',  title: 'CloudWorkspaceCard',  category: 'Domain', abbr: 'CW', since: '2026-05' },
+      { id: 'iot-ruleset-editor',        title: 'RulesetEditor',        category: 'Domain', abbr: 'RE', since: '2026-05' },
+    ],
+  },
+  {
     label: 'Themes',
     collapsible: true,
     sectionStart: 'Themes',
@@ -385,6 +398,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'travel',       title: 'Travel Theme',       category: 'Theme', abbr: 'TV', href: '/theme/travel',        since: '2026-05' },
       { id: 'ai',           title: 'AI Theme',           category: 'Theme', abbr: 'AT', href: '/theme/ai',            since: '2026-05' },
       { id: 'social',       title: 'Social Theme',       category: 'Theme', abbr: 'SO', href: '/theme/social',         since: '2026-05' },
+      { id: 'iot',          title: 'IoT Theme',          category: 'Theme', abbr: 'IT', href: '/theme/iot',            since: '2026-05' },
     ],
   }
 ];

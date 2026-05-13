@@ -1,0 +1,114 @@
+'use client';
+import { AppShell } from '@/modules/app/AppShell';
+import { AppSidebar, type AppSidebarNavGroup } from '@/modules/app/AppSidebar';
+import { Button } from '@/modules/ui/Button';
+import { Avatar } from '@/modules/ui/Avatar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faServer,
+  faMicrochip,
+  faBell,
+  faCloud,
+  faGear,
+  faCircleUser,
+  faArrowRightFromBracket,
+  faChevronDown,
+  faDiagramProject,
+} from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
+
+const NAV_GROUPS: AppSidebarNavGroup[] = [
+  {
+    items: [
+      { id: 'dashboard',  label: 'Dashboard',   icon: <FontAwesomeIcon icon={faServer}    className="w-4 h-4" aria-hidden="true" />, href: '/theme/iot' },
+      { id: 'devices',    label: 'Devices',      icon: <FontAwesomeIcon icon={faMicrochip}       className="w-4 h-4" aria-hidden="true" />, href: '/theme/iot/devices',   badge: 7 },
+      { id: 'alerts',     label: 'Alerts',       icon: <FontAwesomeIcon icon={faBell}           className="w-4 h-4" aria-hidden="true" />, href: '/theme/iot/alerts',    badge: 3 },
+      { id: 'workspaces', label: 'Workspaces',   icon: <FontAwesomeIcon icon={faCloud}          className="w-4 h-4" aria-hidden="true" />, href: '/theme/iot/workspaces' },
+      { id: 'rulesets',   label: 'Rulesets',     icon: <FontAwesomeIcon icon={faDiagramProject} className="w-4 h-4" aria-hidden="true" />, href: '/theme/iot/rulesets'   },
+      { id: 'settings',   label: 'Settings',     icon: <FontAwesomeIcon icon={faGear}           className="w-4 h-4" aria-hidden="true" />, href: '/theme/iot'            },
+    ],
+  },
+];
+
+function SidebarFooter({ collapsed }: { collapsed: boolean }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-colors hover:bg-surface-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
+      >
+        <Avatar src="" name="Alex Müller" size="sm" />
+        {!collapsed && (
+          <div className="flex flex-1 min-w-0 items-center justify-between">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-text-primary">Alex Müller</p>
+              <p className="truncate text-xs text-text-secondary">alex@acme.io</p>
+            </div>
+            <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 text-text-secondary" aria-hidden="true" />
+          </div>
+        )}
+      </button>
+      {open && (
+        <div className="absolute bottom-full left-0 right-0 mb-1 rounded-xl border border-border bg-surface-base shadow-lg py-1 z-50">
+          <div className="border-b border-border px-4 py-2.5">
+            <p className="text-sm font-semibold text-text-primary">Alex Müller</p>
+            <p className="text-xs text-text-secondary">alex@acme.io · OWNER</p>
+          </div>
+          <a href="/theme/iot" className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-surface-overlay hover:text-text-primary transition-colors">
+            <FontAwesomeIcon icon={faCircleUser} className="w-4 h-4" aria-hidden="true" />
+            Profile
+          </a>
+          <button className="flex w-full items-center gap-3 px-4 py-2 text-sm text-error hover:bg-error-subtle transition-colors">
+            <FontAwesomeIcon icon={faArrowRightFromBracket} className="w-4 h-4" aria-hidden="true" />
+            Sign out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function IoTThemeLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AppShell
+      mobileSidebarTitle="Nexus"
+      logo={
+        <a href="/theme/iot" className="flex items-center gap-2.5">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-fg">
+            <FontAwesomeIcon icon={faServer} className="w-3.5 h-3.5" aria-hidden="true" />
+          </div>
+          <span className="text-sm font-bold text-text-primary tracking-tight">Nexus</span>
+        </a>
+      }
+      sidebar={
+        <AppSidebar
+          navGroups={NAV_GROUPS}
+          activeId="dashboard"
+          searchable
+          footer={({ collapsed }) => <SidebarFooter collapsed={collapsed} />}
+        />
+      }
+      topbar={
+        <div className="flex w-full items-center justify-between">
+          <span className="text-sm font-semibold text-text-primary">Smart Factory Alpha</span>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="xs" iconOnly aria-label="Notifications" as="a" href="/theme/iot/alerts">
+              <span className="relative">
+                <FontAwesomeIcon icon={faBell} className="w-4 h-4" aria-hidden="true" />
+                <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-error ring-2 ring-surface-raised" />
+              </span>
+            </Button>
+            <Avatar src="" name="Alex Müller" size="xs" />
+          </div>
+        </div>
+      }
+      mainClassName="overflow-hidden p-0"
+    >
+      <main id="main-content" className="h-full overflow-y-auto">
+        {children}
+      </main>
+    </AppShell>
+  );
+}
